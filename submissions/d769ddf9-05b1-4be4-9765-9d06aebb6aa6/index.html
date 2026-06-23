@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정유하의 수학 별나라 모험</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Jua', sans-serif;
+    background: #0a0015;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* 별 배경 */
+  #starCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  /* 행성 장식 */
+  .planet {
+    position: fixed;
+    border-radius: 50%;
+    z-index: 0;
+    animation: floatPlanet 6s ease-in-out infinite;
+  }
+  .planet1 {
+    width: 120px; height: 120px;
+    background: radial-gradient(circle at 35% 35%, #ff6b9d, #c0392b);
+    bottom: 10%; left: 5%;
+    box-shadow: 0 0 30px #ff6b9d88;
+    animation-delay: 0s;
+  }
+  .planet2 {
+    width: 80px; height: 80px;
+    background: radial-gradient(circle at 35% 35%, #a29bfe, #6c5ce7);
+    top: 15%; right: 8%;
+    box-shadow: 0 0 20px #a29bfe88;
+    animation-delay: 2s;
+  }
+  .planet3 {
+    width: 50px; height: 50px;
+    background: radial-gradient(circle at 35% 35%, #55efc4, #00b894);
+    top: 55%; right: 15%;
+    box-shadow: 0 0 15px #55efc488;
+    animation-delay: 4s;
+  }
+  .ring {
+    position: fixed;
+    bottom: 12%; left: 3%;
+    width: 120px; height: 30px;
+    border: 6px solid #ff6b9d88;
+    border-radius: 50%;
+    z-index: 0;
+    animation: floatPlanet 6s ease-in-out infinite;
+  }
+  @keyframes floatPlanet {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  /* UFO */
+  .ufo {
+    position: fixed;
+    top: 20%; left: 50%;
+    transform: translateX(-50%);
+    font-size: 3rem;
+    z-index: 0;
+    animation: ufoFloat 4s ease-in-out infinite;
+  }
+  @keyframes ufoFloat {
+    0%, 100% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+    50% { transform: translateX(-50%) translateY(-20px) rotate(5deg); }
+  }
+
+  /* 메인 컨테이너 */
+  #app {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 학생 이름 표시 */
+  #studentName {
+    position: fixed;
+    top: 15px; left: 20px;
+    color: #fdcb6e;
+    font-size: 1.1rem;
+    z-index: 100;
+    text-shadow: 0 0 10px #fdcb6e;
+  }
+
+  /* 트로피 카운터 */
+  #trophyCounter {
+    position: fixed;
+    top: 10px; right: 20px;
+    background: rgba(255,215,0,0.15);
+    border: 2px solid #ffd700;
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: #ffd700;
+    font-size: 1.2rem;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 0 15px #ffd70055;
+  }
+
+  /* 시작 화면 */
+  #startScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .game-title {
+    text-align: center;
+    color: #fff;
+  }
+  .game-title h1 {
+    font-size: 2.8rem;
+    background: linear-gradient(135deg, #fd79a8, #a29bfe, #74b9ff, #55efc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 10px #a29bfe);
+    margin-bottom: 10px;
+  }
+  .game-title p {
+    color: #b2bec3;
+    font-size: 1.1rem;
+  }
+
+  .alien-deco {
+    font-size: 5rem;
+    animation: alienBounce 1.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px #55efc4);
+  }
+  @keyframes alienBounce {
+    0%, 100% { transform: scale(1) rotate(-5deg); }
+    50% { transform: scale(1.1) rotate(5deg); }
+  }
+
+  #startBtn {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+    border: none;
+    padding: 20px 60px;
+    font-size: 1.8rem;
+    font-family: 'Jua', sans-serif;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 30px #6c5ce788, 0 8px 25px rgba(0,0,0,0.3);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  #startBtn::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+    animation: btnShine 2s infinite;
+  }
+  @keyframes btnShine {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  #startBtn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 50px #a29bfe, 0 12px 30px rgba(0,0,0,0.4);
+  }
+  #startBtn:active { transform: scale(0.96); }
+
+  /* 게임 화면 */
+  #gameScreen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 700px;
+    padding: 20px;
+    padding-top: 70px;
+  }
+
+  /* 진행 바 */
+  #progressBar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .progress-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.3);
+    transition: all 0.5s;
+    position: relative;
+  }
+  .progress-dot.done {
+    background: linear-gradient(135deg, #fdcb6e, #e17055);
+    border-color: #ffd700;
+    color: white;
+    box-shadow: 0 0 15px #fdcb6e;
+  }
+  .progress-dot.milestone {
+    width: 42px; height: 42px;
+    background: rgba(255,215,0,0.1);
+    border: 2px solid #ffd70055;
+    font-size: 1.2rem;
+    color: #ffd70066;
+  }
+  .progress-dot.milestone.done {
+    background: radial-gradient(circle, #fff 0%, #ffd700 50%, #e17055 100%);
+    box-shadow: 0 0 25px #ffd700, 0 0 50px #ffd70088;
+    animation: milestoneGlow 1s ease-out;
+  }
+  @keyframes milestoneGlow {
+    0% { transform: scale(1.5); }
+    100% { transform: scale(1); }
+  }
+
+  /* 문제 카드 */
+  #questionCard {
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 30px;
+    padding: 40px;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+    transition: all 0.3s;
+  }
+
+  .question-type-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+  }
+  .question-type-badge.hard {
+    background: linear-gradient(135deg, #e17055, #fd79a8);
+    animation: hardBadgePulse 1s ease-in-out infinite alternate;
+  }
+  @keyframes hardBadgePulse {
+    from { box-shadow: 0 0 5px #e17055; }
+    to { box-shadow: 0 0 20px #fd79a8; }
+  }
+
+  #questionNumber {
+    color: #b2bec3;
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  #questionText {
+    color: #fff;
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    text-shadow: 0 0 20px rgba(255,255,255,0.3);
+  }
+
+  /* 선택지 버튼들 */
+  #choicesContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  .choice-btn {
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 18px;
+    font-size: 1.4rem;
+    font-family: 'Jua', sans-serif;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .choice-btn:hover:not(:disabled) {
+    background: rgba(162,155,254,0.3);
+    border-color: #a29bfe;
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #a29bfe55;
+  }
+  .choice-btn.correct {
+    background: linear-gradient(135deg, #00b894, #55efc4);
+    border-color: #55efc4;
+    box-shadow: 0 0 30px #55efc488;
+    animation: correctPop 0.4s ease;
+  }
+  .choice-btn.wrong {
+    background: linear-gradient(135deg, #d63031, #e17055);
+    border-color: #e17055;
+    animation: wrongShake 0.4s ease;
+  }
+  @keyframes correctPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+  @keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+  .choice-btn:disabled { cursor: default; }
+
+  /* 피드백 메시지 */
+  #feedback {
+    font-size: 1.5rem;
+    min-height: 2rem;
+    color: #fdcb6e;
+    text-align: center;
+    text-shadow: 0 0 10px #fdcb6e;
+    transition: opacity 0.3s;
+  }
+
+  /* 점수 */
+  #scoreDisplay {
+    color: #a29bfe;
+    font-size: 1.1rem;
+    margin-top: 10px;
+  }
+
+  /* 트로피 획득 오버레이 */
+  #trophyOverlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: overlayFadeIn 0.3s ease;
+  }
+  @keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  #trophyOverlay.active { display: flex; }
+
+  .trophy-icon-big {
+    font-size: 8rem;
+    animation: trophyBounce 0.6s ease infinite alternate;
+    filter: drop-shadow(0 0 30px #ffd700);
+  }
+  @keyframes trophyBounce {
+    from { transform: scale(1) rotate(-5deg); }
+    to { transform: scale(1.1) rotate(5deg); }
+  }
+  .trophy-text {
+    color: #ffd700;
+    font-size: 2.5rem;
+    text-shadow: 0 0 20px #ffd700;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  /* 파티클 */
+  .particle {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 300;
+    animation: particleFly 1.5s ease-out forwards;
+  }
+  @keyframes particleFly {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
+  }
+
+  /* 반응형 */
+  @media (max-width: 480px) {
+    .game-title h1 { font-size: 2rem; }
+    #questionText { font-size: 1.7rem; }
+    .choice-btn { font-size: 1.1rem; padding: 14px; }
+    #questionCard { padding: 25px 20px; }
+    .progress-dot { width: 28px; height: 28px; font-size: 0.8rem; }
+    .progress-dot.milestone { width: 34px; height: 34px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+
+<div class="planet planet1"></div>
+<div class="ring"></div>
+<div class="planet2"></div>
+<div class="planet3"></div>
+<div class="ufo">🛸</div>
+
+<div id="studentName">👩‍🚀 정유하</div>
+
+<div id="trophyCounter">
+  🏆 <span id="trophyCount">0</span>개
+</div>
+
+<div id="app">
+
+  <!-- 시작 화면 -->
+  <div id="startScreen">
+    <div class="alien-deco">👾</div>
+    <div class="game-title">
+      <h1>수학 별나라 모험</h1>
+      <p>정유하의 우주 수학 탐험! 🚀</p>
+    </div>
+    <button id="startBtn" onclick="startGame()">🚀 시작하기</button>
+  </div>
+
+  <!-- 게임 화면 -->
+  <div id="gameScreen">
+    <div id="progressBar"></div>
+
+    <div id="questionCard">
+      <div id="questionBadge" class="question-type-badge">📚 연습 문제</div>
+      <div id="questionNumber">1 / 30</div>
+      <div id="questionText">문제 로딩 중...</div>
+      <div id="choicesContainer"></div>
+    </div>
+
+    <div id="feedback">⭐</div>
+    <div id="scoreDisplay">맞은 개수: 0 / 0</div>
+  </div>
+
+</div>
+
+<!-- 트로피 획득 오버레이 -->
+<div id="trophyOverlay">
+  <div class="trophy-icon-big">🏆</div>
+  <div class="trophy-text">트로피를 획득했습니다!<br>🎉 대단해요! 🎉</div>
+</div>
+
+<script>
+// ===== 별 배경 =====
+const canvas = document.getElementById('starCanvas');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+for (let i = 0; i < 200; i++) {
+  stars.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 2 + 0.3,
+    speed: Math.random() * 0.3 + 0.05,
+    alpha: Math.random(),
+    dAlpha: (Math.random() - 0.5) * 0.02
+  });
+}
+
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    s.alpha += s.dAlpha;
+    if (s.alpha <= 0 || s.alpha >= 1) s.dAlpha *= -1;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${Math.max(0, Math.min(1, s.alpha))})`;
+    ctx.fill();
+    s.y += s.speed;
+    if (s.y > canvas.height) {
+      s.y = 0;
+      s.x = Math.random() * canvas.width;
+    }
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+// ===== 게임 로직 =====
+let currentQ = 0;
+let correctCount = 0;
+let trophyCount = 0;
+let totalAnswered = 0;
+let canAnswer = true;
+
+// 분수 덧셈/뺄셈 문제 생성 (5-1학기) - 쉬운 버전
+function makeFractionEasy() {
+  // 같은 분모 또는 간단한 분모
+  const types = ['same', 'simple'];
+  const t = types[Math.floor(Math.random() * types.length)];
+  let q, answer, answerStr;
+
+  if (t === 'same') {
+    const denom = [4, 5, 6, 8, 9, 10][Math.floor(Math.random() * 6)];
+    let a = Math.floor(Math.random() * (denom - 2)) + 1;
+    let b = Math.floor(Math.random() * (denom - 1)) + 1;
+    const op = Math.random() < 0.5 ? '+' : '-';
+    if (op === '-' && a < b) { let tmp = a; a = b; b = tmp; }
+    const numResult = op === '+' ? a + b : a - b;
+    // 대분수 형태 처리
+    if (op === '+' && numResult > denom) {
+      const whole = Math.floor(numResult / denom);
+      const rem = numResult % denom;
+      answerStr = rem === 0 ? `${whole}` : `${whole} ${rem}/${denom}`;
+    } else {
+      answerStr = `${numResult}/${denom}`;
+    }
+    q = `${a}/${denom} ${op} ${b}/${denom} = ?`;
+    answer = answerStr;
+  } else {
+    // 분모가 배수 관계 (2, 4) or (3, 6) or (2, 6)
+    const pairs = [[2,4],[3,6],[2,6],[4,8],[3,9]];
+    const pair = pairs[Math.floor(Math.random() * pairs.length)];
+    const [d1, d2] = pair;
+    const a = Math.floor(Math.random() * (d1 - 1)) + 1;
+    const b = Math.floor(Math.random() * (d2 - 1)) + 1;
+    const op = Math.random() < 0.5 ? '+' : '-';
+    // 통분
+    const commonD = d2;
+    const a2 = a * (d2 / d1);
+    let numResult = op === '+' ? a2 + b : a2 - b;
+    if (numResult < 0) {
+      // swap
+      const newA = b; const newB = a2;
+      const nr2 = newA - newB;
+      const g2 = gcd(Math.abs(nr2), commonD);
+      const rn = nr2 / g2, rd = commonD / g2;
+      answerStr = rd === 1 ? `${rn}` : `${rn}/${rd}`;
+      q = `${b}/${d2} - ${a}/${d1} = ?`;
+      answer = answerStr;
+    } else {
+      const g = gcd(numResult, commonD);
+      const rn = numResult / g, rd = commonD / g;
+      if (numResult > commonD) {
+        const whole = Math.floor(numResult / commonD);
+        const rem = numResult % commonD;
+        const g2 = gcd(rem, commonD);
+        const rn2 = rem / g2, rd2 = commonD / g2;
+        answerStr = rem === 0 ? `${whole}` : `${whole} ${rn2}/${rd2}`;
+      } else {
+        answerStr = rd === 1 ? `${rn}` : `${rn}/${rd}`;
+      }
+      q = `${a}/${d1} ${op} ${b}/${d2} = ?`;
+      answer = answerStr;
+    }
+  }
+  return { question: q, answer, type: 'fraction' };
+}
+
+// 소수 곱셈 문제 생성 (5-2학기) - 쉬운 버전
+function makeDecimalEasy() {
+  const ops = ['×'];
+  // 쉬운 소수 × 자연수 또는 소수 × 소수
+  const subType = Math.floor(Math.random() * 2);
+  let q, answer;
+  if (subType === 0) {
+    // 소수(1자리) × 한 자리 자연수
+    const a = (Math.floor(Math.random() * 9) + 1) / 10;
+    const b = Math.floor(Math.random() * 9) + 2;
+    answer = Math.round(a * b * 10) / 10;
+    q = `${a.toFixed(1)} × ${b} = ?`;
+  } else {
+    // 소수(1자리) × 소수(1자리)
+    const a = (Math.floor(Math.random() * 8) + 1) / 10;
+    const b = (Math.floor(Math.random() * 8) + 1) / 10;
+    answer = Math.round(a * b * 100) / 100;
+    q = `${a.toFixed(1)} × ${b.toFixed(1)} = ?`;
+  }
+  return { question: q, answer: String(answer), type: 'decimal' };
+}
+
+// 어려운 문제 (10문제마다)
+function makeHardFraction() {
+  // 대분수 덧뺄셈
+  const denom = [6, 8, 9, 12][Math.floor(Math.random() * 4)];
+  const whole1 = Math.floor(Math.random() * 3) + 1;
+  const whole2 = Math.floor(Math.random() * 2) + 1;
+  const num1 = Math.floor(Math.random() * (denom - 1)) + 1;
+  const num2 = Math.floor(Math.random() * (denom - 1)) + 1;
+  const op = Math.random() < 0.5 ? '+' : '-';
+  const totalNum1 = whole1 * denom + num1;
+  const totalNum2 = whole2 * denom + num2;
+  let resultNum = op === '+' ? totalNum1 + totalNum2 : Math.abs(totalNum1 - totalNum2);
+  const rWhole = Math.floor(resultNum / denom);
+  const rNum = resultNum % denom;
+  const g = gcd(rNum, denom);
+  const ansNum = rNum / g, ansDen = denom / g;
+  let answerStr;
+  if (rNum === 0) answerStr = `${rWhole}`;
+  else answerStr = `${rWhole} ${ansNum}/${ansDen}`;
+  const q = `${whole1} ${num1}/${denom} ${op} ${whole2} ${num2}/${denom} = ?`;
+  return { question: q, answer: answerStr, type: 'hard_fraction' };
+}
+
+function makeHardDecimal() {
+  // 소수 두 자리 × 자연수 또는 소수 × 소수(두 자리)
+  const subType = Math.floor(Math.random() * 2);
+  let q, answer;
+  if (subType === 0) {
+    const a = (Math.floor(Math.random() * 90) + 10) / 100;
+    const b = Math.floor(Math.random() * 8) + 2;
+    answer = Math.round(a * b * 1000) / 1000;
+    q = `${a.toFixed(2)} × ${b} = ?`;
+  } else {
+    const a = (Math.floor(Math.random() * 8) + 1) / 10;
+    const b = (Math.floor(Math.random() * 8) + 1) / 10;
+    const c = Math.floor(Math.random() * 5) + 2;
+    answer = Math.round(a * b * c * 1000) / 1000;
+    q = `${a.toFixed(1)} × ${b.toFixed(1)} × ${c} = ?`;
+  }
+  return { question: q, answer: String(answer), type: 'hard_decimal' };
+}
+
+function gcd(a, b) {
+  a = Math.abs(a); b = Math.abs(b);
+  if (b === 0) return a;
+  return gcd(b, a % b);
+}
+
+// 오답 보기 생성
+function makeWrongAnswers(correct, type) {
+  const wrongs = new Set();
+  wrongs.add(correct);
+
+  // 분수/대분수 타입
+  if (type === 'fraction' || type === 'hard_fraction') {
+    // 분모를 바꾸거나 분자를 바꾸거나 정수부분 바꾸기
+    const parse = (s) => {
+      const parts = s.trim().split(' ');
+      if (parts.length === 2) {
+        const [w, fr] = parts;
+        const [n, d] = fr.split('/');
+        return { whole: parseInt(w), num: parseInt(n), den: parseInt(d) };
+      } else if (s.includes('/')) {
+        const [n, d] = s.split('/');
+        return { whole: 0, num: parseInt(n), den: parseInt(d) };
+      } else {
+        return { whole: parseInt(s), num: 0, den: 1 };
+      }
+    };
+    const c = parse(correct);
+    const variations = [
+      { whole: c.whole + 1, num: c.num, den: c.den },
+      { whole: c.whole > 0 ? c.whole - 1 : 0, num: c.num, den: c.den },
+      { whole: c.whole, num: c.num + 1, den: c.den },
+      { whole: c.whole, num: c.num > 1 ? c.num - 1 : c.num + 2, den: c.den },
+      { whole: c.whole + 1, num: c.num > 0 ? c.num - 1 : 1, den: c.den },
+    ];
+    for (const v of variations) {
+      if (v.num < 0 || v.den <= 0 || v.whole < 0) continue;
+      let str;
+      if (v.num === 0) str =
