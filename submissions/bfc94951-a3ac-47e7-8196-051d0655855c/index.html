@@ -3,139 +3,147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>김원진의 반짝 보석 게임 💎</title>
+<title>💎 김원진의 보석 공주 게임 💎</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cute+Font&family=Jua&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: 'Jua', sans-serif;
-    background: linear-gradient(135deg, #1a0030 0%, #3d0060 30%, #6a0080 60%, #1a0030 100%);
+    background: linear-gradient(135deg, #ff9ff3, #f8a5c2, #ffeaa7, #dfe6e9);
+    background-size: 400% 400%;
+    animation: bgShift 6s ease infinite;
     min-height: 100vh;
-    overflow: hidden;
-    position: relative;
-  }
-
-  /* 배경 반짝임 */
-  .bg-sparkle {
-    position: fixed;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: white;
-    animation: sparkleFloat linear infinite;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  @keyframes sparkleFloat {
-    0% { opacity: 0; transform: translateY(100vh) scale(0); }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { opacity: 0; transform: translateY(-10vh) scale(1); }
-  }
-
-  /* 시작 화면 */
-  #startScreen {
-    position: fixed;
-    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 100;
-    background: linear-gradient(135deg, #1a0030 0%, #3d0060 30%, #6a0080 60%, #1a0030 100%);
+    overflow-x: hidden;
   }
 
-  .title-crown {
-    font-size: 60px;
-    animation: bounce 1s ease-in-out infinite alternate;
+  @keyframes bgShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
-  @keyframes bounce {
-    from { transform: translateY(0); }
-    to { transform: translateY(-15px); }
+  /* 반짝이 별들 */
+  .sparkle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .sparkle-star {
+    position: fixed;
+    font-size: 18px;
+    animation: twinkle 2s infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1.2); }
   }
 
-  .game-title {
-    font-size: 42px;
-    font-weight: bold;
-    background: linear-gradient(90deg, #ff9de2, #ffd700, #ff9de2, #b5e8ff);
-    background-size: 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 2s linear infinite;
+  /* 시작 화면 */
+  #startScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
     text-align: center;
-    margin: 10px 0;
-    text-shadow: none;
-    filter: drop-shadow(0 0 10px rgba(255,180,255,0.8));
+    padding: 30px;
+  }
+
+  .start-title {
+    font-size: 3em;
+    color: #fff;
+    text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff69b4, 2px 2px 0 #d63031;
+    animation: titlePulse 1.5s ease-in-out infinite;
+    margin-bottom: 10px;
+  }
+
+  @keyframes titlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
   }
 
   .student-name {
-    font-size: 24px;
-    color: #ffd6f7;
-    text-shadow: 0 0 10px #ff88cc;
+    font-size: 1.4em;
+    color: #fff;
+    text-shadow: 1px 1px 3px #ff69b4;
     margin-bottom: 20px;
+    background: rgba(255,255,255,0.3);
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 2px solid #fff;
   }
 
-  @keyframes shimmer {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
+  .start-box {
+    background: rgba(255,255,255,0.85);
+    border-radius: 30px;
+    padding: 40px;
+    box-shadow: 0 0 40px #ff69b480, 0 0 80px #ffd70040;
+    border: 3px solid #ffb6c1;
+    max-width: 420px;
+    width: 100%;
+  }
+
+  .crown {
+    font-size: 5em;
+    animation: crownBounce 1s ease-in-out infinite;
+    display: block;
+    margin-bottom: 10px;
+  }
+  @keyframes crownBounce {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-15px) rotate(5deg); }
   }
 
   .gem-preview {
     display: flex;
-    gap: 15px;
+    justify-content: center;
+    gap: 10px;
     margin: 20px 0;
-    animation: float 2s ease-in-out infinite alternate;
+    font-size: 2em;
+    animation: gemFloat 2s ease-in-out infinite;
+  }
+  @keyframes gemFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
   }
 
-  @keyframes float {
-    from { transform: translateY(0); }
-    to { transform: translateY(-10px); }
+  .start-desc {
+    color: #a855f7;
+    font-size: 1em;
+    line-height: 1.8;
+    margin: 15px 0;
   }
 
-  .preview-gem {
-    font-size: 40px;
-    filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
-    animation: gemSpin 3s linear infinite;
-  }
-
-  .preview-gem:nth-child(2) { animation-delay: 0.5s; }
-  .preview-gem:nth-child(3) { animation-delay: 1s; }
-  .preview-gem:nth-child(4) { animation-delay: 1.5s; }
-
-  @keyframes gemSpin {
-    0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 8px rgba(255,200,255,0.9)); }
-    50% { transform: scale(1.2) rotate(10deg); filter: drop-shadow(0 0 15px rgba(255,255,100,0.9)); }
-  }
-
-  .start-btn {
-    margin-top: 25px;
-    padding: 18px 60px;
-    font-size: 28px;
-    font-family: 'Jua', sans-serif;
-    background: linear-gradient(135deg, #ff6eb4, #ff3d9a, #d400ff);
+  .btn-start {
+    background: linear-gradient(135deg, #ff6b9d, #c44dff, #ff6b9d);
+    background-size: 200% 200%;
+    animation: btnGlow 2s ease infinite;
     color: white;
     border: none;
+    padding: 18px 50px;
+    font-size: 1.5em;
+    font-family: 'Jua', sans-serif;
     border-radius: 50px;
     cursor: pointer;
-    box-shadow: 0 0 30px rgba(255,100,200,0.8), 0 0 60px rgba(200,0,255,0.4);
-    transition: all 0.2s;
-    animation: btnPulse 1.5s ease-in-out infinite alternate;
-    letter-spacing: 2px;
+    box-shadow: 0 5px 25px #ff6b9d80;
+    transition: transform 0.1s;
+    margin-top: 10px;
   }
+  .btn-start:hover { transform: scale(1.08); }
+  .btn-start:active { transform: scale(0.96); }
 
-  .start-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 40px rgba(255,100,200,1), 0 0 80px rgba(200,0,255,0.6);
-  }
-
-  @keyframes btnPulse {
-    from { box-shadow: 0 0 20px rgba(255,100,200,0.6), 0 0 40px rgba(200,0,255,0.3); }
-    to { box-shadow: 0 0 40px rgba(255,100,200,1), 0 0 80px rgba(200,0,255,0.7); }
+  @keyframes btnGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
   /* 게임 화면 */
@@ -143,168 +151,163 @@
     display: none;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
+    z-index: 10;
+    width: 100%;
     padding: 10px;
-    position: relative;
-    z-index: 1;
   }
 
-  .top-bar {
+  .game-header {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 600px;
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,180,255,0.4);
-    border-radius: 20px;
-    padding: 10px 20px;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
     margin-bottom: 10px;
-    color: white;
+    width: 100%;
+    max-width: 560px;
   }
 
   .info-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 15px;
+    padding: 8px 18px;
+    box-shadow: 0 3px 15px #ff69b440;
+    border: 2px solid #ffb6c1;
+    text-align: center;
+    min-width: 100px;
   }
 
   .info-label {
-    font-size: 12px;
-    color: #ffb6e6;
-    letter-spacing: 1px;
+    font-size: 0.75em;
+    color: #a855f7;
   }
-
   .info-value {
-    font-size: 22px;
-    color: #ffd700;
-    text-shadow: 0 0 10px rgba(255,215,0,0.8);
+    font-size: 1.4em;
+    color: #e84393;
     font-weight: bold;
   }
 
-  .stage-title {
-    font-size: 16px;
-    color: #ffd6f7;
-    text-align: center;
-  }
-
-  .name-display {
-    font-size: 13px;
-    color: #ffb6e6;
-    text-align: center;
-    margin-bottom: 5px;
-  }
-
-  /* 진행 바 */
-  .progress-bar-wrap {
+  .stage-bar {
+    background: rgba(255,255,255,0.85);
+    border-radius: 15px;
+    padding: 8px 18px;
+    box-shadow: 0 3px 15px #ff69b440;
+    border: 2px solid #ffb6c1;
     width: 100%;
-    max-width: 600px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 20px;
-    height: 14px;
-    margin-bottom: 8px;
-    overflow: hidden;
-    border: 1px solid rgba(255,180,255,0.3);
+    max-width: 560px;
+    margin-bottom: 10px;
+    text-align: center;
   }
 
-  .progress-bar-fill {
+  .progress-wrap {
+    background: #ffd6e7;
+    border-radius: 20px;
+    height: 18px;
+    overflow: hidden;
+    margin-top: 5px;
+    position: relative;
+  }
+  .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #ff6eb4, #ffd700, #ff6eb4);
-    background-size: 200%;
+    background: linear-gradient(90deg, #ff6b9d, #c44dff);
     border-radius: 20px;
     transition: width 0.4s ease;
-    animation: shimmer 1.5s linear infinite;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+  .progress-text {
+    font-size: 0.8em;
+    color: #a855f7;
+    margin-top: 3px;
   }
 
   /* 게임 보드 */
   #boardContainer {
     position: relative;
-    background: rgba(255,255,255,0.05);
-    border: 2px solid rgba(255,180,255,0.4);
-    border-radius: 16px;
-    padding: 4px;
-    box-shadow: 0 0 30px rgba(255,100,200,0.3), inset 0 0 20px rgba(0,0,0,0.3);
+    display: inline-block;
   }
 
-  #board {
+  #gameBoard {
     display: grid;
     grid-template-columns: repeat(16, 1fr);
     gap: 2px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 16px;
+    padding: 8px;
+    border: 3px solid #ffb6c1;
+    box-shadow: 0 0 30px #ff69b450, 0 0 60px #c44dff30;
+    user-select: none;
+    max-width: 560px;
+    width: min(560px, 98vw);
   }
 
   .cell {
-    width: 34px;
-    height: 34px;
+    width: 100%;
+    aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
-    cursor: pointer;
     border-radius: 8px;
-    transition: transform 0.15s, background 0.15s;
+    cursor: pointer;
+    font-size: clamp(14px, 2.5vw, 22px);
+    transition: transform 0.15s, box-shadow 0.15s;
     position: relative;
-    background: rgba(255,255,255,0.04);
-    user-select: none;
+    background: rgba(255,255,255,0.3);
+    border: 1.5px solid rgba(255,255,255,0.5);
   }
 
   .cell:hover {
-    background: rgba(255,200,255,0.15);
     transform: scale(1.1);
+    z-index: 2;
   }
 
   .cell.selected {
-    background: rgba(255,215,0,0.35);
-    border: 2px solid #ffd700;
+    box-shadow: 0 0 0 3px #ff00cc, 0 0 15px #ff00cc;
+    background: rgba(255,0,204,0.15);
     transform: scale(1.15);
-    box-shadow: 0 0 12px rgba(255,215,0,0.8);
-    animation: selectedPulse 0.5s ease-in-out infinite alternate;
+    z-index: 3;
+    animation: selectedPulse 0.5s ease infinite alternate;
   }
-
   @keyframes selectedPulse {
-    from { box-shadow: 0 0 8px rgba(255,215,0,0.6); }
-    to { box-shadow: 0 0 20px rgba(255,215,0,1); }
+    from { box-shadow: 0 0 0 3px #ff00cc, 0 0 10px #ff00cc; }
+    to { box-shadow: 0 0 0 4px #ff00cc, 0 0 25px #ff00cc; }
   }
 
-  .cell.match {
-    animation: matchExplode 0.5s ease forwards;
+  .cell.exploding {
+    animation: explode 0.4s ease forwards;
   }
-
-  @keyframes matchExplode {
+  @keyframes explode {
     0% { transform: scale(1); opacity: 1; }
-    30% { transform: scale(1.4); opacity: 0.9; filter: brightness(2); }
+    30% { transform: scale(1.5); opacity: 1; }
     100% { transform: scale(0); opacity: 0; }
   }
 
-  .cell.swap-anim {
-    animation: swapBounce 0.25s ease;
+  .cell.falling {
+    animation: fall 0.3s ease-out;
+  }
+  @keyframes fall {
+    from { transform: translateY(-30px); opacity: 0.5; }
+    to { transform: translateY(0); opacity: 1; }
   }
 
-  @keyframes swapBounce {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.8); }
-    100% { transform: scale(1); }
-  }
-
-  .cell.drop-anim {
-    animation: dropDown 0.3s ease;
-  }
-
-  @keyframes dropDown {
-    0% { transform: translateY(-20px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-  }
-
-  /* 폭발 파티클 */
+  /* 파티클 효과 */
   .particle {
-    position: fixed;
+    position: absolute;
     pointer-events: none;
-    font-size: 16px;
-    z-index: 999;
+    font-size: 1.2em;
     animation: particleFly 0.8s ease forwards;
+    z-index: 100;
   }
-
   @keyframes particleFly {
     0% { transform: translate(0,0) scale(1); opacity: 1; }
     100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
@@ -313,109 +316,447 @@
   /* 점수 팝업 */
   .score-popup {
     position: fixed;
-    pointer-events: none;
-    font-size: 28px;
+    font-size: 2em;
+    color: #ff00cc;
+    text-shadow: 1px 1px 0 #fff;
     font-family: 'Jua', sans-serif;
-    color: #ffd700;
-    text-shadow: 0 0 10px rgba(255,150,0,0.9);
-    z-index: 999;
+    pointer-events: none;
+    z-index: 200;
     animation: scoreFloat 1s ease forwards;
-    font-weight: bold;
   }
-
   @keyframes scoreFloat {
     0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-80px) scale(1.3); opacity: 0; }
+    100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
   }
 
-  /* 스테이지 클리어 / 게임 클리어 */
+  /* 스테이지 클리어 & 게임 클리어 오버레이 */
   #overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 200;
+    background: rgba(0,0,0,0.5);
+    z-index: 300;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
   }
-
-  #overlay.show {
-    display: flex;
-  }
+  #overlay.show { display: flex; }
 
   .overlay-box {
-    background: linear-gradient(135deg, #3d0060, #6a0080, #3d0060);
-    border: 3px solid rgba(255,180,255,0.7);
+    background: linear-gradient(135deg, #fff0f6, #f3e7ff);
     border-radius: 30px;
-    padding: 40px 60px;
+    padding: 40px;
     text-align: center;
-    box-shadow: 0 0 60px rgba(255,100,200,0.7);
-    animation: overlayPop 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    border: 3px solid #ffb6c1;
+    box-shadow: 0 0 60px #ff69b4;
+    animation: overlayPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-width: 350px;
+    width: 90%;
   }
-
   @keyframes overlayPop {
-    0% { transform: scale(0.3); opacity: 0; }
-    60% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
   }
-
-  .overlay-title {
-    font-size: 40px;
-    background: linear-gradient(90deg, #ffd700, #ff9de2, #ffd700);
-    background-size: 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 1.5s linear infinite;
-    margin-bottom: 15px;
-  }
-
-  .overlay-info {
-    font-size: 22px;
-    color: #ffd6f7;
-    margin-bottom: 25px;
-    line-height: 1.6;
-  }
-
-  .overlay-btn {
-    padding: 14px 50px;
-    font-size: 22px;
-    font-family: 'Jua', sans-serif;
-    background: linear-gradient(135deg, #ff6eb4, #d400ff);
+  .overlay-emoji { font-size: 4em; margin-bottom: 10px; display: block; }
+  .overlay-title { font-size: 2em; color: #e84393; margin-bottom: 10px; }
+  .overlay-desc { font-size: 1em; color: #a855f7; margin-bottom: 20px; line-height: 1.6; }
+  .btn-overlay {
+    background: linear-gradient(135deg, #ff6b9d, #c44dff);
     color: white;
     border: none;
+    padding: 14px 40px;
+    font-size: 1.2em;
+    font-family: 'Jua', sans-serif;
     border-radius: 50px;
     cursor: pointer;
-    box-shadow: 0 0 25px rgba(255,100,200,0.7);
-    transition: all 0.2s;
+    box-shadow: 0 5px 20px #ff6b9d60;
+    transition: transform 0.1s;
   }
+  .btn-overlay:hover { transform: scale(1.05); }
 
-  .overlay-btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 40px rgba(255,100,200,1);
-  }
-
-  /* 반짝 효과 */
-  .gem-sparkle {
-    position: absolute;
-    top: -5px; right: -5px;
-    font-size: 10px;
-    animation: sparkleSmall 1.5s ease-in-out infinite;
-    pointer-events: none;
-  }
-
-  @keyframes sparkleSmall {
-    0%, 100% { opacity: 0; transform: scale(0); }
-    50% { opacity: 1; transform: scale(1); }
+  .name-tag {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.7);
+    border: 2px solid #ffb6c1;
+    border-radius: 20px;
+    padding: 4px 18px;
+    font-size: 0.9em;
+    color: #a855f7;
+    z-index: 50;
+    white-space: nowrap;
   }
 </style>
 </head>
 <body>
 
-<!-- 배경 반짝임 생성 -->
+<div class="name-tag">👑 김원진의 보석 공주 게임 👑</div>
+
+<!-- 반짝이 별 배경 -->
+<div id="sparkles"></div>
 
 <!-- 시작 화면 -->
 <div id="startScreen">
-  <div class="title-crown">👑</div>
-  <div class
+  <div class="start-title">💎 보석 공주 💎</div>
+  <div class="student-name">✨ 김원진 ✨</div>
+  <div class="start-box">
+    <span class="crown">👑</span>
+    <div class="gem-preview">💎 🔮 💍 🌟</div>
+    <div class="start-desc">
+      같은 보석 3개를 일렬로 맞추면 터져요!<br>
+      보석을 터치하고 옆 보석을 터치하면 서로 바뀌어요!<br>
+      보석 20개를 터뜨리면 다음 스테이지!<br>
+      총 5스테이지를 클리어해봐요! 👸
+    </div>
+    <button class="btn-start" onclick="startGame()">💎 시작하기 💎</button>
+  </div>
+</div>
+
+<!-- 게임 화면 -->
+<div id="gameScreen">
+  <div class="game-header">
+    <div class="info-box">
+      <div class="info-label">👑 스테이지</div>
+      <div class="info-value" id="stageDisplay">1</div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">⭐ 점수</div>
+      <div class="info-value" id="scoreDisplay">0</div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">💥 터뜨린 보석</div>
+      <div class="info-value" id="burstDisplay">0</div>
+    </div>
+  </div>
+
+  <div class="stage-bar">
+    <div class="info-label">다음 스테이지까지</div>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progressBar" style="width:0%"></div>
+    </div>
+    <div class="progress-text" id="progressText">0 / 20개</div>
+  </div>
+
+  <div id="boardContainer">
+    <div id="gameBoard"></div>
+  </div>
+</div>
+
+<!-- 오버레이 (스테이지 클리어 / 게임 클리어) -->
+<div id="overlay">
+  <div class="overlay-box">
+    <span class="overlay-emoji" id="overlayEmoji">🎉</span>
+    <div class="overlay-title" id="overlayTitle">스테이지 클리어!</div>
+    <div class="overlay-desc" id="overlayDesc"></div>
+    <button class="btn-overlay" id="overlayBtn" onclick="overlayAction()">다음 스테이지 💎</button>
+  </div>
+</div>
+
+<script>
+  // ===== 반짝이 배경 =====
+  (function createSparkles() {
+    const cont = document.getElementById('sparkles');
+    const stars = ['✨','⭐','🌟','💫','✦','✧'];
+    for (let i = 0; i < 25; i++) {
+      const s = document.createElement('div');
+      s.className = 'sparkle-star';
+      s.textContent = stars[Math.floor(Math.random() * stars.length)];
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.top = Math.random() * 100 + 'vh';
+      s.style.animationDelay = (Math.random() * 3) + 's';
+      s.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+      s.style.fontSize = (12 + Math.random() * 16) + 'px';
+      cont.appendChild(s);
+    }
+  })();
+
+  // ===== 게임 상수 =====
+  const COLS = 16;
+  const ROWS = 16;
+  const GEMS = ['💎','🔮','💍','🌟'];
+  const GOAL = 20;
+  const MAX_STAGE = 5;
+
+  // ===== 게임 상태 =====
+  let board = [];
+  let selected = null;
+  let score = 0;
+  let stage = 1;
+  let burst = 0;
+  let isAnimating = false;
+  let isGameOver = false;
+  let overlayMode = ''; // 'stage' or 'gameclear'
+
+  function startGame() {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = 'flex';
+    score = 0;
+    stage = 1;
+    burst = 0;
+    isGameOver = false;
+    updateUI();
+    initBoard();
+  }
+
+  function initBoard() {
+    board = [];
+    selected = null;
+    isAnimating = false;
+    const boardEl = document.getElementById('gameBoard');
+    boardEl.innerHTML = '';
+
+    // 보드 생성 (초기에 매치 없도록)
+    for (let r = 0; r < ROWS; r++) {
+      board.push([]);
+      for (let c = 0; c < COLS; c++) {
+        let gem;
+        do {
+          gem = GEMS[Math.floor(Math.random() * GEMS.length)];
+        } while (
+          (c >= 2 && board[r][c-1] === gem && board[r][c-2] === gem) ||
+          (r >= 2 && board[r-1][c] === gem && board[r-2][c] === gem)
+        );
+        board[r].push(gem);
+      }
+    }
+
+    renderBoard();
+  }
+
+  function renderBoard() {
+    const boardEl = document.getElementById('gameBoard');
+    boardEl.innerHTML = '';
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.textContent = board[r][c];
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+        cell.addEventListener('click', onCellClick);
+        boardEl.appendChild(cell);
+      }
+    }
+  }
+
+  function getCellEl(r, c) {
+    return document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+  }
+
+  function onCellClick(e) {
+    if (isAnimating || isGameOver) return;
+    const r = parseInt(e.currentTarget.dataset.r);
+    const c = parseInt(e.currentTarget.dataset.c);
+
+    if (selected === null) {
+      // 첫 번째 선택
+      selected = { r, c };
+      const el = getCellEl(r, c);
+      if (el) el.classList.add('selected');
+    } else {
+      const sr = selected.r, sc = selected.c;
+      // 같은 셀 클릭 -> 선택 해제
+      if (sr === r && sc === c) {
+        const el = getCellEl(sr, sc);
+        if (el) el.classList.remove('selected');
+        selected = null;
+        return;
+      }
+      // 인접 확인
+      const dr = Math.abs(r - sr), dc = Math.abs(c - sc);
+      const el1 = getCellEl(sr, sc);
+      if (el1) el1.classList.remove('selected');
+
+      if ((dr === 1 && dc === 0) || (dr === 0 && dc === 1)) {
+        // 스왑 시도
+        selected = null;
+        trySwap(sr, sc, r, c);
+      } else {
+        // 새로운 선택
+        selected = { r, c };
+        const el2 = getCellEl(r, c);
+        if (el2) el2.classList.add('selected');
+      }
+    }
+  }
+
+  function trySwap(r1, c1, r2, c2) {
+    // 스왑
+    let tmp = board[r1][c1];
+    board[r1][c1] = board[r2][c2];
+    board[r2][c2] = tmp;
+
+    const matches = findMatches();
+
+    if (matches.length === 0) {
+      // 되돌리기 (애니메이션 없이)
+      tmp = board[r1][c1];
+      board[r1][c1] = board[r2][c2];
+      board[r2][c2] = tmp;
+      // 살짝 흔들기
+      const el1 = getCellEl(r1, c1);
+      const el2 = getCellEl(r2, c2);
+      shakeCell(el1);
+      shakeCell(el2);
+    } else {
+      // 시각적 스왑 후 매치 처리
+      updateCellDisplay(r1, c1);
+      updateCellDisplay(r2, c2);
+      isAnimating = true;
+      setTimeout(() => processMatches(), 200);
+    }
+  }
+
+  function shakeCell(el) {
+    if (!el) return;
+    el.style.animation = 'none';
+    el.style.transform = 'translateX(-5px)';
+    setTimeout(() => { el.style.transform = 'translateX(5px)'; }, 80);
+    setTimeout(() => { el.style.transform = 'translateX(-3px)'; }, 160);
+    setTimeout(() => { el.style.transform = 'translateX(0)'; }, 240);
+  }
+
+  function updateCellDisplay(r, c) {
+    const el = getCellEl(r, c);
+    if (el) el.textContent = board[r][c];
+  }
+
+  function findMatches() {
+    const matched = new Set();
+
+    // 가로 매치
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS - 2; c++) {
+        if (board[r][c] && board[r][c] === board[r][c+1] && board[r][c] === board[r][c+2]) {
+          let len = 3;
+          while (c + len < COLS && board[r][c+len] === board[r][c]) len++;
+          for (let i = 0; i < len; i++) matched.add(r * COLS + (c + i));
+          c += len - 1;
+        }
+      }
+    }
+
+    // 세로 매치
+    for (let c = 0; c < COLS; c++) {
+      for (let r = 0; r < ROWS - 2; r++) {
+        if (board[r][c] && board[r][c] === board[r+1][c] && board[r][c] === board[r+2][c]) {
+          let len = 3;
+          while (r + len < ROWS && board[r+len][c] === board[r][c]) len++;
+          for (let i = 0; i < len; i++) matched.add((r + i) * COLS + c);
+          r += len - 1;
+        }
+      }
+    }
+
+    return [...matched].map(idx => ({ r: Math.floor(idx / COLS), c: idx % COLS }));
+  }
+
+  function processMatches() {
+    const matches = findMatches();
+    if (matches.length === 0) {
+      isAnimating = false;
+      return;
+    }
+
+    // 매치 그룹 세기 (3개씩 = 1점)
+    const matchCount = Math.floor(matches.length / 3);
+    if (matchCount > 0) {
+      score += matchCount;
+      burst += matches.length;
+      showScorePopup('+' + matchCount, matches);
+      updateUI();
+    }
+
+    // 폭발 애니메이션
+    matches.forEach(({ r, c }) => {
+      const el = getCellEl(r, c);
+      if (el) {
+        el.classList.add('exploding');
+        spawnParticles(el, board[r][c]);
+        board[r][c] = null;
+      }
+    });
+
+    setTimeout(() => {
+      dropGems();
+      fillBoard();
+      renderBoard();
+
+      setTimeout(() => {
+        // 연쇄 매치 체크
+        processMatches();
+
+        // 스테이지 완료 체크
+        if (burst >= GOAL && !isAnimating) {
+          checkStageComplete();
+        }
+      }, 350);
+    }, 450);
+  }
+
+  function dropGems() {
+    for (let c = 0; c < COLS; c++) {
+      let write = ROWS - 1;
+      for (let r = ROWS - 1; r >= 0; r--) {
+        if (board[r][c] !== null) {
+          board[write][c] = board[r][c];
+          if (write !== r) board[r][c] = null;
+          write--;
+        }
+      }
+      while (write >= 0) {
+        board[write][c] = null;
+        write--;
+      }
+    }
+  }
+
+  function fillBoard() {
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        if (board[r][c] === null) {
+          board[r][c] = GEMS[Math.floor(Math.random() * GEMS.length)];
+        }
+      }
+    }
+  }
+
+  function spawnParticles(el, gem) {
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const emojis = ['✨','💫','⭐','🌟','💥'];
+    for (let i = 0; i < 6; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      const angle = (Math.PI * 2 * i) / 6;
+      const dist = 40 + Math.random() * 30;
+      p.style.left = (cx - 12) + 'px';
+      p.style.top = (cy - 12) + 'px';
+      p.style.setProperty('--dx', (Math.cos(angle) * dist) + 'px');
+      p.style.setProperty('--dy', (Math.sin(angle) * dist) + 'px');
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 900);
+    }
+  }
+
+  function showScorePopup(text, matches) {
+    if (!matches || matches.length === 0) return;
+    const mid = matches[Math.floor(matches.length / 2)];
+    const el = getCellEl(mid.r, mid.c);
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const popup = document.createElement('div');
+    popup.className = 'score-popup';
+    popup.textContent = text + '점! ✨';
+    popup.style.left = rect.left + 'px';
+    popup.style.top = rect.top + 'px';
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 1000);
+  }
+
+  function updateUI() {
+    document.getElementById('stageDisplay').textContent = stage;
+    document.getElementById('scoreDisplay').text
