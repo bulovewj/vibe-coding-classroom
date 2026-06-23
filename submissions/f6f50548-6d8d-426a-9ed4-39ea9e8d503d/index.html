@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ㅇㅇㅇ의 구구단 퀴즈 게임</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nanum Gothic', '맑은 고딕', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .student-name {
+            font-size: 1.2rem;
+            color: #fff;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 24px;
+            border-radius: 30px;
+            margin-bottom: 16px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 36px 32px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #5c3bbd;
+            margin-bottom: 6px;
+        }
+
+        h1 span {
+            display: inline-block;
+            animation: bounce 0.8s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+
+        /* 단 선택 */
+        .dan-section {
+            margin-bottom: 20px;
+        }
+
+        .dan-section label {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #5c3bbd;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .dan-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .dan-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            border: 2.5px solid #d1c4e9;
+            background: #f3e8ff;
+            color: #7c3aed;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dan-btn.selected {
+            background: #7c3aed;
+            color: white;
+            border-color: #7c3aed;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(124,58,237,0.4);
+        }
+
+        .dan-btn:hover:not(.selected) {
+            background: #ede9fe;
+            border-color: #7c3aed;
+        }
+
+        /* 퀴즈 수 선택 */
+        .count-section {
+            margin-bottom: 24px;
+        }
+
+        .count-section label {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #5c3bbd;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .count-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .count-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 2.5px solid #d1c4e9;
+            background: #f3e8ff;
+            color: #7c3aed;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .count-btn.selected {
+            background: #7c3aed;
+            color: white;
+            border-color: #7c3aed;
+            box-shadow: 0 4px 12px rgba(124,58,237,0.4);
+        }
+
+        .count-btn:hover:not(.selected) {
+            background: #ede9fe;
+            border-color: #7c3aed;
+        }
+
+        /* 시작 버튼 */
+        .start-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #7c3aed, #5c3bbd);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 18px rgba(124,58,237,0.4);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(124,58,237,0.5);
+        }
+
+        .start-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* 퀴즈 화면 */
+        .quiz-screen { display: none; }
+
+        .progress-bar-wrap {
+            background: #ede9fe;
+            border-radius: 10px;
+            height: 12px;
+            width: 100%;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed, #a78bfa);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 14px;
+            text-align: right;
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .score-badge, .timer-badge {
+            background: #f3e8ff;
+            color: #7c3aed;
+            border-radius: 12px;
+            padding: 6px 16px;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .timer-badge {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .timer-badge.urgent {
+            background: #ffebee;
+            color: #c62828;
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.08); }
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+            border-radius: 22px;
+            padding: 30px 20px;
+            margin-bottom: 24px;
+        }
+
+        .question-text {
+            font-size: 2.6rem;
+            font-weight: bold;
+            color: #4c1d95;
+            letter-spacing: 2px;
+        }
+
+        .question-hint {
+            font-size: 0.85rem;
+            color: #7c3aed;
+            margin-top: 6px;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.8rem;
+            text-align: center;
+            border: 3px solid #d1c4e9;
+            border-radius: 16px;
+            outline: none;
+            color: #4c1d95;
+            font-weight: bold;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .answer-input:focus {
+            border-color: #7c3aed;
+        }
+
+        .answer-input.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .answer-input.wrong {
+            border-color: #ef4444;
+            background: #fef2f2;
+            color: #dc2626;
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(34,197,94,0.35);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(34,197,94,0.45);
+        }
+
+        .feedback {
+            font-size: 1.1rem;
+            font-weight: bold;
+            height: 28px;
+            margin-bottom: 10px;
+        }
+
+        .feedback.correct { color: #16a34a; }
+        .feedback.wrong { color: #dc2626; }
+
+        /* 결과 화면 */
+        .result-screen { display: none; }
+
+        .result-emoji {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            animation: pop 0.5s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .result-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4c1d95;
+            margin-bottom: 6px;
+        }
+
+        .result-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #7c3aed;
+            margin: 14px 0;
+        }
+
+        .result-detail {
+            color: #888;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        .result-message {
+            background: #f3e8ff;
+            border-radius: 16px;
+            padding: 14px;
+            color: #5c3bbd;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+        }
+
+        .result-table th {
+            background: #7c3aed;
+            color: white;
+            padding: 8px;
+            border-radius: 0;
+        }
+
+        .result-table th:first-child { border-radius: 10px 0 0 0; }
+        .result-table th:last-child { border-radius: 0 10px 0 0; }
+
+        .result-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ede9fe;
+        }
+
+        .result-table tr:nth-child(even) td {
+            background: #faf5ff;
+        }
+
+        .correct-mark { color: #22c55e; font-weight: bold; }
+        .wrong-mark { color: #ef4444; font-weight: bold; }
+
+        .retry-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #7c3aed, #5c3bbd);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 18px rgba(124,58,237,0.4);
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .star-container {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .star {
+            font-size: 2rem;
+            animation: starPop 0.4s ease both;
+        }
+
+        @keyframes starPop {
+            0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+            70% { transform: scale(1.3) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        /* 반응형 */
+        @media (max-width: 400px) {
+            .container { padding: 24px 16px; }
+            .question-text { font-size: 2rem; }
+            .dan-btn { width: 42px; height: 42px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="student-name">🌟 ㅇㅇㅇ 의 구구단 퀴즈 🌟</div>
+
+    <div class="container">
+
+        <!-- 설정 화면 -->
+        <div class="setup-screen" id="setupScreen">
+            <h1><span>✖️</span> 구구단 퀴즈</h1>
+            <p class="subtitle">퀴즈를 풀면서 구구단을 마스터해보자!</p>
+
+            <div class="dan-section">
+                <label>📚 퀴즈 단 선택 (여러 개 가능)</label>
+                <div class="dan-buttons" id="danButtons">
+                    <button class="dan-btn selected" data-dan="2">2단</button>
+                    <button class="dan-btn" data-dan="3">3단</button>
+                    <button class="dan-btn" data-dan="4">4단</button>
+                    <button class="dan-btn" data-dan="5">5단</button>
+                    <button class="dan-btn" data-dan="6">6단</button>
+                    <button class="dan-btn" data-dan="7">7단</button>
+                    <button class="dan-btn" data-dan="8">8단</button>
+                    <button class="dan-btn" data-dan="9">9단</button>
+                </div>
+            </div>
+
+            <div class="count-section">
+                <label>🔢 퀴즈 문제 수</label>
+                <div class="count-btns">
+                    <button class="count-btn" data-count="5">5문제</button>
+                    <button class="count-btn selected" data-count="10">10문제</button>
+                    <button
