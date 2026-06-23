@@ -3,715 +3,563 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>블록 블라스트 - 장민서</title>
+<title>장민서의 블록 블라스트</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: linear-gradient(135deg, #1a5c1a, #2d8a2d, #1a5c1a);
-    min-height: 100vh;
+    background: #1a5c1a;
     font-family: 'Arial', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    min-height: 100vh;
     overflow-x: hidden;
   }
-  h1 {
-    color: #fff;
-    font-size: 2rem;
-    text-shadow: 2px 2px 6px #000;
-    margin-top: 14px;
-    letter-spacing: 2px;
+
+  /* ===== 공통 ===== */
+  .screen { display: none; width: 100%; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+  .student-name {
+    position: fixed; top: 8px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.45); color: #ffe066; font-size: 13px;
+    padding: 3px 14px; border-radius: 20px; z-index: 999; letter-spacing: 1px;
   }
-  .subtitle {
-    color: #aaffaa;
-    font-size: 1rem;
-    margin-bottom: 8px;
+
+  /* ===== 메인 화면 ===== */
+  #mainScreen {
+    background: linear-gradient(160deg, #145214 0%, #2d8c2d 50%, #1a5c1a 100%);
   }
-  .top-bar {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    background: rgba(0,0,0,0.35);
-    border-radius: 16px;
-    padding: 8px 30px;
-    margin-bottom: 10px;
+  .main-title {
+    font-size: 48px; font-weight: 900; color: #ffe066;
+    text-shadow: 3px 3px 0 #8B4513, 0 0 20px #ffaa00;
+    margin-bottom: 8px; letter-spacing: 2px;
+    animation: bounce 1.2s infinite alternate;
   }
-  .top-bar .info-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .top-bar .label {
-    color: #aaffaa;
-    font-size: 0.78rem;
-    font-weight: bold;
-  }
-  .top-bar .value {
-    color: #fff;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-shadow: 0 0 8px #0f0;
-  }
-  .lives {
-    display: flex;
-    gap: 6px;
-    font-size: 1.6rem;
-  }
-  .life { transition: opacity 0.3s; }
-  .life.dead { opacity: 0.2; }
-  .game-area {
-    display: flex;
-    gap: 18px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  #board-wrap {
-    position: relative;
-  }
-  #board {
-    display: grid;
-    grid-template-columns: repeat(10, 46px);
-    grid-template-rows: repeat(10, 46px);
-    gap: 3px;
-    background: rgba(0,0,0,0.4);
-    padding: 8px;
-    border-radius: 14px;
-    border: 3px solid #4cff4c;
-    box-shadow: 0 0 30px #2d8a2d, inset 0 0 20px rgba(0,255,0,0.07);
-  }
-  .cell {
-    width: 46px;
-    height: 46px;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.07);
-    border: 1.5px solid rgba(255,255,255,0.1);
-    cursor: pointer;
-    transition: background 0.12s, transform 0.08s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 1px 1px 3px #000;
-    position: relative;
-    overflow: hidden;
-  }
-  .cell.highlight {
-    border: 2.5px solid #fff;
-    box-shadow: 0 0 10px #fff, 0 0 3px #fff inset;
-    transform: scale(1.08);
-    z-index: 2;
-  }
-  .cell.blast-anim {
-    animation: blastCell 0.35s ease-out forwards;
-  }
-  @keyframes blastCell {
-    0% { transform: scale(1.2); opacity: 1; }
-    60% { transform: scale(1.5); opacity: 0.6; }
-    100% { transform: scale(0); opacity: 0; }
-  }
-  .panel {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: center;
-  }
-  .panel-title {
-    color: #aaffaa;
-    font-size: 0.95rem;
-    font-weight: bold;
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-12px)} }
+  .main-subtitle { color: #b8ffb8; font-size: 18px; margin-bottom: 40px; }
+  .main-btn {
+    width: 220px; padding: 16px 0; margin: 10px;
+    border: none; border-radius: 30px; font-size: 22px; font-weight: 700;
+    cursor: pointer; transition: transform .15s, box-shadow .15s;
     letter-spacing: 1px;
   }
-  .pieces-area {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    background: rgba(0,0,0,0.35);
-    border-radius: 14px;
-    padding: 12px 10px;
-    border: 2px solid #4cff4c;
-    min-width: 140px;
-    align-items: center;
+  .main-btn:active { transform: scale(0.95); }
+  .btn-start {
+    background: linear-gradient(135deg, #ff6b35, #ff9500);
+    color: #fff; box-shadow: 0 6px 0 #b84000, 0 8px 20px rgba(255,100,0,.4);
+  }
+  .btn-shop {
+    background: linear-gradient(135deg, #9b59b6, #6c3483);
+    color: #fff; box-shadow: 0 6px 0 #4a235a, 0 8px 20px rgba(150,50,200,.4);
+  }
+  .main-btn:hover { transform: translateY(-3px); }
+
+  /* ===== 상점 화면 ===== */
+  #shopScreen { background: linear-gradient(160deg, #0d3b0d 0%, #1e6b1e 100%); padding: 20px; }
+  .shop-title { font-size: 36px; font-weight: 900; color: #ffe066; margin-bottom: 6px; text-shadow: 2px 2px 0 #553; }
+  .shop-desc { color: #cfc; font-size: 15px; margin-bottom: 28px; }
+  .shop-cards { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .shop-card {
+    width: 180px; background: rgba(255,255,255,0.08);
+    border: 3px solid #4a4; border-radius: 20px; padding: 22px 14px;
+    text-align: center; cursor: pointer; transition: transform .2s, border-color .2s;
+  }
+  .shop-card:hover { transform: translateY(-6px); border-color: #ffe066; }
+  .shop-card.selected { border-color: #ff0; background: rgba(255,230,0,.12); }
+  .shop-card .card-emoji { font-size: 44px; margin-bottom: 8px; }
+  .shop-card .card-name { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .shop-card .card-desc { font-size: 13px; color: #afc; margin-bottom: 12px; }
+  .shop-card .card-price { font-size: 15px; color: #ffe066; font-weight: 700; }
+  .shop-card .card-owned { font-size: 13px; color: #6f6; font-weight: 700; margin-top: 4px; }
+  .shop-coins { color: #ffe066; font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+  .back-btn {
+    margin-top: 24px; padding: 12px 36px; border: none; border-radius: 25px;
+    background: linear-gradient(135deg,#e74c3c,#c0392b); color: #fff;
+    font-size: 18px; font-weight: 700; cursor: pointer;
+  }
+
+  /* ===== 게임 화면 ===== */
+  #gameScreen {
+    background: linear-gradient(160deg, #145214 0%, #1f7a1f 100%);
+    flex-direction: column; padding: 6px 4px;
+  }
+  .game-header {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; max-width: 420px; margin-bottom: 6px; padding: 0 4px;
+  }
+  .score-box {
+    background: rgba(0,0,0,0.35); border-radius: 14px;
+    padding: 6px 14px; color: #fff; text-align: center;
+  }
+  .score-box .label { font-size: 11px; color: #aec; }
+  .score-box .value { font-size: 22px; font-weight: 900; color: #ffe066; }
+  .lives-box { display: flex; gap: 5px; }
+  .heart { font-size: 26px; transition: transform .3s; }
+  .heart.lost { filter: grayscale(1); transform: scale(0.7); }
+  .difficulty-badge {
+    background: rgba(0,0,0,0.3); border-radius: 12px;
+    padding: 4px 12px; color: #ffe066; font-size: 13px; font-weight: 700;
+  }
+
+  /* 보드 */
+  #boardCanvas {
+    border-radius: 16px; border: 4px solid #2fa02f;
+    box-shadow: 0 0 30px rgba(0,200,0,.35);
+    touch-action: none; cursor: grab;
+    max-width: 100%; max-height: 60vw;
+  }
+  #boardCanvas:active { cursor: grabbing; }
+
+  /* 피스 트레이 */
+  .piece-tray {
+    display: flex; gap: 10px; justify-content: center; align-items: flex-end;
+    width: 100%; max-width: 420px; margin-top: 10px;
+    background: rgba(0,0,0,0.25); border-radius: 20px; padding: 12px 8px;
   }
   .piece-slot {
-    background: rgba(255,255,255,0.07);
-    border-radius: 10px;
-    padding: 6px;
-    cursor: grab;
-    border: 2px solid transparent;
-    transition: border 0.15s, box-shadow 0.15s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    min-width: 110px;
-    min-height: 50px;
-    justify-content: center;
+    flex: 1; min-height: 90px; display: flex; align-items: center; justify-content: center;
+    border-radius: 14px; background: rgba(255,255,255,0.05);
+    border: 2px dashed rgba(255,255,255,0.2);
+    position: relative; cursor: grab; user-select: none;
   }
-  .piece-slot.selected {
-    border: 2.5px solid #fff200;
-    box-shadow: 0 0 14px #fff200;
-  }
-  .piece-slot.used { opacity: 0.2; pointer-events: none; }
-  .piece-grid {
-    display: grid;
-    gap: 3px;
-  }
-  .piece-cell {
-    width: 26px;
-    height: 26px;
-    border-radius: 5px;
-    border: 1.5px solid rgba(255,255,255,0.25);
-  }
-  .piece-cell.empty { background: transparent; border-color: transparent; }
-  .piece-score {
-    color: #fff200;
-    font-size: 0.75rem;
-    font-weight: bold;
-    margin-top: 3px;
-  }
-  #msg-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
+  .piece-slot canvas { display: block; }
+
+  /* 오버레이 */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75); z-index: 200;
+    align-items: center; justify-content: center;
     flex-direction: column;
   }
-  #msg-overlay.show { display: flex; }
-  .msg-box {
-    background: linear-gradient(135deg, #1a7a1a, #2ecc2e);
-    border: 4px solid #aaff00;
-    border-radius: 24px;
-    padding: 40px 60px;
-    text-align: center;
-    box-shadow: 0 0 40px #0f0;
-    animation: popIn 0.4s cubic-bezier(.17,.67,.44,1.3);
+  .overlay.show { display: flex; }
+  .overlay-box {
+    background: linear-gradient(135deg,#1a5c1a,#2d8c2d);
+    border: 4px solid #ffe066; border-radius: 28px;
+    padding: 36px 44px; text-align: center;
+    box-shadow: 0 0 40px rgba(255,230,0,.3);
   }
-  @keyframes popIn {
-    0% { transform: scale(0.3); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+  .overlay-title { font-size: 38px; font-weight: 900; color: #ffe066; margin-bottom: 8px; }
+  .overlay-score { font-size: 22px; color: #fff; margin-bottom: 24px; }
+  .overlay-btn {
+    padding: 14px 36px; border: none; border-radius: 25px;
+    font-size: 20px; font-weight: 700; cursor: pointer; margin: 6px;
   }
-  .msg-box h2 { color: #fff200; font-size: 2.5rem; margin-bottom: 10px; text-shadow: 2px 2px 8px #000; }
-  .msg-box p { color: #fff; font-size: 1.2rem; margin-bottom: 20px; }
-  .msg-box button {
-    background: #fff200;
-    color: #1a5c1a;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 36px;
-    cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  }
-  .msg-box button:hover { transform: scale(1.08); box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
-  .score-popup {
-    position: fixed;
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: #fff200;
-    text-shadow: 1px 1px 4px #000;
-    pointer-events: none;
-    z-index: 200;
-    animation: floatUp 0.9s ease-out forwards;
+  .btn-replay { background: linear-gradient(135deg,#27ae60,#2ecc71); color: #fff; }
+  .btn-home   { background: linear-gradient(135deg,#e67e22,#f39c12); color: #fff; }
+
+  /* 콤보/점수 팝업 */
+  .float-score {
+    position: fixed; pointer-events: none; font-size: 28px; font-weight: 900;
+    color: #ffe066; text-shadow: 2px 2px 0 #333;
+    animation: floatUp 1s forwards;
+    z-index: 300;
   }
   @keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0) scale(1.2); }
-    100% { opacity: 0; transform: translateY(-80px) scale(0.8); }
+    0%   { opacity:1; transform: translateY(0) scale(1.2); }
+    100% { opacity:0; transform: translateY(-80px) scale(0.8); }
   }
-  .row-col-flash {
-    animation: flashLine 0.5s ease-out forwards;
-  }
-  @keyframes flashLine {
-    0% { background: #fff200 !important; transform: scale(1.08); }
-    50% { background: #aaff00 !important; }
-    100% { opacity: 0; transform: scale(0); }
-  }
-  #how-to {
-    color: #aaffaa;
-    font-size: 0.78rem;
-    background: rgba(0,0,0,0.25);
-    border-radius: 10px;
-    padding: 7px 14px;
-    margin-top: 4px;
-    max-width: 500px;
-    text-align: center;
-    line-height: 1.6;
-  }
-  .combo-text {
-    position: fixed;
-    top: 40%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2.8rem;
-    font-weight: bold;
-    color: #ff4;
-    text-shadow: 0 0 20px #f80, 2px 2px 8px #000;
+  .msg-toast {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    background: rgba(255,230,0,.95); color: #333; font-size: 26px; font-weight: 900;
+    padding: 14px 36px; border-radius: 20px; z-index: 400;
+    animation: toastAnim .9s forwards;
     pointer-events: none;
-    z-index: 300;
-    animation: comboAnim 1s ease-out forwards;
   }
-  @keyframes comboAnim {
-    0% { opacity: 1; transform: translateX(-50%) scale(1.5); }
-    70% { opacity: 1; }
-    100% { opacity: 0; transform: translateX(-50%) scale(0.8) translateY(-40px); }
+  @keyframes toastAnim {
+    0%   { opacity:0; transform: translate(-50%,-50%) scale(0.5); }
+    30%  { opacity:1; transform: translate(-50%,-50%) scale(1.1); }
+    70%  { opacity:1; transform: translate(-50%,-50%) scale(1); }
+    100% { opacity:0; transform: translate(-50%,-50%) scale(0.8); }
   }
 </style>
 </head>
 <body>
 
-<h1>🟩 블록 블라스트</h1>
-<div class="subtitle">👤 장민서</div>
+<div class="student-name">🌟 장민서 🌟</div>
 
-<div class="top-bar">
-  <div class="info-box">
-    <span class="label">점수</span>
-    <span class="value" id="scoreVal">0</span>
-  </div>
-  <div class="info-box">
-    <span class="label">최고점수</span>
-    <span class="value" id="bestVal">0</span>
-  </div>
-  <div class="info-box">
-    <span class="label">목숨</span>
-    <div class="lives" id="livesDisplay">
-      <span class="life" id="l1">❤️</span>
-      <span class="life" id="l2">❤️</span>
-      <span class="life" id="l3">❤️</span>
+<!-- ===== 메인 화면 ===== -->
+<div id="mainScreen" class="screen active">
+  <div class="main-title">🟩 블록 블라스트</div>
+  <div class="main-subtitle">장민서의 블록 퍼즐 게임!</div>
+  <button class="main-btn btn-start" onclick="goGame()">🎮 시작하기</button>
+  <button class="main-btn btn-shop" onclick="goShop()">🛒 상점</button>
+</div>
+
+<!-- ===== 상점 화면 ===== -->
+<div id="shopScreen" class="screen">
+  <div class="shop-title">🛒 상점</div>
+  <div class="shop-desc">난이도 버전을 구매하고 선택하세요!</div>
+  <div class="shop-coins" id="shopCoinsDisplay">💰 보유 코인: 0</div>
+  <div class="shop-cards">
+    <div class="shop-card" id="card_easy" onclick="buyDifficulty('easy')">
+      <div class="card-emoji">😊</div>
+      <div class="card-name">쉬움</div>
+      <div class="card-desc">5×5 보드<br>블록 크기 작음<br>여유롭게!</div>
+      <div class="card-price">✅ 무료</div>
+      <div class="card-owned" id="owned_easy">✔ 보유 중</div>
+    </div>
+    <div class="shop-card" id="card_normal" onclick="buyDifficulty('normal')">
+      <div class="card-emoji">😎</div>
+      <div class="card-name">보통</div>
+      <div class="card-desc">7×7 보드<br>다양한 블록<br>도전!</div>
+      <div class="card-price" id="price_normal">💰 300코인</div>
+      <div class="card-owned" id="owned_normal" style="display:none">✔ 보유 중</div>
+    </div>
+    <div class="shop-card" id="card_hard" onclick="buyDifficulty('hard')">
+      <div class="card-emoji">🔥</div>
+      <div class="card-name">어려움</div>
+      <div class="card-desc">9×9 보드<br>큰 블록<br>극한 도전!</div>
+      <div class="card-price" id="price_hard">💰 600코인</div>
+      <div class="card-owned" id="owned_hard" style="display:none">✔ 보유 중</div>
     </div>
   </div>
-  <div class="info-box">
-    <span class="label">레벨</span>
-    <span class="value" id="levelVal">1</span>
-  </div>
+  <button class="back-btn" onclick="goMain()">← 돌아가기</button>
 </div>
 
-<div id="how-to">
-  💡 오른쪽에서 블록 조각을 선택 → 보드에서 놓을 위치를 클릭!<br>
-  줄이나 열이 꽉 차면 폭발! 1~7점 랜덤 점수 획득 🎉
-</div>
-
-<div class="game-area" style="margin-top:12px;">
-  <div id="board-wrap">
-    <div id="board"></div>
-  </div>
-  <div class="panel">
-    <div class="panel-title">📦 블록 조각 (3개)</div>
-    <div class="pieces-area" id="piecesArea"></div>
-    <button onclick="requestNewPieces()" id="refreshBtn" style="
-      background:#4cff4c; color:#1a3d00; font-size:1rem; font-weight:bold;
-      border:none; border-radius:10px; padding:10px 22px; cursor:pointer;
-      box-shadow:0 3px 10px rgba(0,0,0,0.3); margin-top:4px;
-      transition: transform 0.1s;">
-      🔄 새 조각 받기
-    </button>
-    <div style="color:#ffcc44; font-size:0.78rem; text-align:center;">
-      ※ 새 조각 받기: 목숨 1개 소모
+<!-- ===== 게임 화면 ===== -->
+<div id="gameScreen" class="screen">
+  <div class="game-header">
+    <div class="score-box">
+      <div class="label">점수</div>
+      <div class="value" id="scoreDisplay">0</div>
     </div>
+    <div class="lives-box" id="livesDisplay">
+      <span class="heart" id="h1">❤️</span>
+      <span class="heart" id="h2">❤️</span>
+      <span class="heart" id="h3">❤️</span>
+    </div>
+    <div class="difficulty-badge" id="diffBadge">쉬움</div>
+  </div>
+  <canvas id="boardCanvas"></canvas>
+  <div class="piece-tray" id="pieceTray">
+    <div class="piece-slot" id="slot0"><canvas id="pieceCanvas0"></canvas></div>
+    <div class="piece-slot" id="slot1"><canvas id="pieceCanvas1"></canvas></div>
+    <div class="piece-slot" id="slot2"><canvas id="pieceCanvas2"></canvas></div>
   </div>
 </div>
 
-<div id="msg-overlay">
-  <div class="msg-box">
-    <h2 id="msgTitle">게임 오버!</h2>
-    <p id="msgBody">최종 점수: 0</p>
-    <button onclick="restartGame()">🔄 다시 시작!</button>
+<!-- ===== 게임오버 오버레이 ===== -->
+<div class="overlay" id="gameOverOverlay">
+  <div class="overlay-box">
+    <div class="overlay-title">💀 게임 오버</div>
+    <div class="overlay-score" id="finalScore">최종 점수: 0</div>
+    <button class="overlay-btn btn-replay" onclick="replayGame()">🔄 다시 하기</button>
+    <button class="overlay-btn btn-home"  onclick="goMain()">🏠 메인으로</button>
   </div>
 </div>
 
 <script>
-const ROWS = 10, COLS = 10;
-let board = [];
-let score = 0, best = 0, lives = 3, level = 1;
-let pieces = [null, null, null];
-let selectedPiece = -1;
-let gameOver = false;
+// ============================================================
+//  전역 상태
+// ============================================================
+let coins = 0;
+let ownedDifficulties = { easy: true, normal: false, hard: false };
+let selectedDifficulty = 'easy';
+let currentDifficulty  = 'easy';
 
-// 블록 조각 정의 (shape: 2D array, color)
-const PIECE_TEMPLATES = [
-  // 1x1
-  { shape: [[1]], color: '#e74c3c' },
-  // 1x2
-  { shape: [[1,1]], color: '#e67e22' },
-  // 2x1
-  { shape: [[1],[1]], color: '#f1c40f' },
-  // 1x3
-  { shape: [[1,1,1]], color: '#2ecc71' },
-  // 3x1
-  { shape: [[1],[1],[1]], color: '#1abc9c' },
-  // 2x2
-  { shape: [[1,1],[1,1]], color: '#3498db' },
-  // L자
-  { shape: [[1,0],[1,0],[1,1]], color: '#9b59b6' },
-  // J자
-  { shape: [[0,1],[0,1],[1,1]], color: '#e91e63' },
-  // S자
-  { shape: [[0,1,1],[1,1,0]], color: '#00bcd4' },
-  // Z자
-  { shape: [[1,1,0],[0,1,1]], color: '#ff5722' },
-  // T자
-  { shape: [[1,1,1],[0,1,0]], color: '#8bc34a' },
-  // 1x4
-  { shape: [[1,1,1,1]], color: '#ff9800' },
-  // 4x1
-  { shape: [[1],[1],[1],[1]], color: '#03a9f4' },
-  // L 반전
-  { shape: [[1,1],[1,0],[1,0]], color: '#cddc39' },
-  // 2x3
-  { shape: [[1,1],[1,1],[1,1]], color: '#ff4081' },
+// 게임 상태
+let board = [];
+let pieces = [];
+let score = 0;
+let lives = 3;
+let dragging = null; // { pieceIdx, offsetX, offsetY, x, y }
+let COLS, ROWS, CELL;
+
+// 난이도 설정
+const DIFF_CONFIG = {
+  easy:   { cols: 5, rows: 5, cell: 58 },
+  normal: { cols: 7, rows: 7, cell: 46 },
+  hard:   { cols: 9, rows: 9, cell: 38 }
+};
+
+// 블록 색상
+const COLORS = [
+  '#FF5252','#FF9800','#FFEB3B','#4CAF50','#2196F3','#9C27B0','#00BCD4',
+  '#E91E63','#8BC34A','#FF6F00'
 ];
 
-function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+// 피스 모양 정의 (행,열 배열)
+const PIECE_SHAPES = [
+  [[0,0],[0,1],[1,0],[1,1]],            // 2x2 정사각형
+  [[0,0],[0,1],[0,2]],                  // 1x3 가로
+  [[0,0],[1,0],[2,0]],                  // 3x1 세로
+  [[0,0],[0,1],[0,2],[0,3]],            // 1x4
+  [[0,0],[1,0],[2,0],[3,0]],            // 4x1
+  [[0,0],[0,1],[1,1],[2,1]],            // L모양
+  [[0,0],[1,0],[1,1],[2,1]],            // S모양
+  [[0,1],[1,0],[1,1],[2,0]],            // Z모양
+  [[0,0],[0,1],[1,0],[1,1],[2,0],[2,1]],// 2x3
+  [[0,0]],                              // 1x1
+  [[0,0],[0,1]],                        // 1x2
+  [[0,0],[1,0]],                        // 2x1
+  [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]],// 2x3 블록
+  [[0,0],[0,1],[1,0]],                  // 작은 L
+  [[0,0],[1,0],[1,1]],                  // 작은 L2
+];
 
-function randPieceScore() { return randInt(1, 7); }
+// 점수 테이블 (1~7 랜덤)
+function getRandPts() { return Math.floor(Math.random()*7)+1; }
 
-function randPiece() {
-  const t = PIECE_TEMPLATES[randInt(0, PIECE_TEMPLATES.length - 1)];
-  return {
-    shape: t.shape,
-    color: t.color,
-    pts: randPieceScore()
-  };
+// ============================================================
+//  화면 전환
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
+function goMain()  { showScreen('mainScreen'); }
+function goShop()  { updateShopUI(); showScreen('shopScreen'); }
+function goGame()  { startGame(); showScreen('gameScreen'); }
 
-function initBoard() {
-  board = [];
-  for (let r = 0; r < ROWS; r++) {
-    board.push([]);
-    for (let c = 0; c < COLS; c++) {
-      board[r].push(null);
+// ============================================================
+//  상점 로직
+// ============================================================
+function updateShopUI() {
+  document.getElementById('shopCoinsDisplay').textContent = '💰 보유 코인: ' + coins;
+  ['easy','normal','hard'].forEach(d => {
+    const card  = document.getElementById('card_'+d);
+    const owned = document.getElementById('owned_'+d);
+    if (ownedDifficulties[d]) {
+      owned.style.display = 'block';
+      card.classList.add('selected');
+    } else {
+      owned.style.display = 'none';
+      card.classList.remove('selected');
     }
-  }
-}
-
-function renderBoard() {
-  const el = document.getElementById('board');
-  el.innerHTML = '';
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      const cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.id = `cell-${r}-${c}`;
-      if (board[r][c]) {
-        cell.style.background = board[r][c];
-        cell.style.boxShadow = `0 0 8px ${board[r][c]}88`;
-      }
-      cell.addEventListener('click', () => onCellClick(r, c));
-      cell.addEventListener('mouseover', () => onCellHover(r, c));
-      cell.addEventListener('mouseout', clearHighlight);
-      el.appendChild(cell);
-    }
-  }
-}
-
-function renderPieces() {
-  const area = document.getElementById('piecesArea');
-  area.innerHTML = '';
-  for (let i = 0; i < 3; i++) {
-    const slot = document.createElement('div');
-    slot.className = 'piece-slot' + (i === selectedPiece ? ' selected' : '') + (!pieces[i] ? ' used' : '');
-    slot.id = `piece-slot-${i}`;
-    if (pieces[i]) {
-      const pg = document.createElement('div');
-      pg.className = 'piece-grid';
-      const sh = pieces[i].shape;
-      const cols = sh[0].length;
-      pg.style.gridTemplateColumns = `repeat(${cols}, 26px)`;
-      for (let r = 0; r < sh.length; r++) {
-        for (let c = 0; c < cols; c++) {
-          const pc = document.createElement('div');
-          pc.className = 'piece-cell' + (sh[r][c] ? '' : ' empty');
-          if (sh[r][c]) {
-            pc.style.background = pieces[i].color;
-            pc.style.boxShadow = `0 0 6px ${pieces[i].color}88`;
-          }
-          pg.appendChild(pc);
-        }
-      }
-      slot.appendChild(pg);
-      const sc = document.createElement('div');
-      sc.className = 'piece-score';
-      sc.textContent = `⭐ ${pieces[i].pts}점`;
-      slot.appendChild(sc);
-      slot.addEventListener('click', () => selectPiece(i));
-    }
-    area.appendChild(slot);
-  }
-}
-
-function selectPiece(i) {
-  if (!pieces[i]) return;
-  selectedPiece = (selectedPiece === i) ? -1 : i;
-  clearHighlight();
-  renderPieces();
-}
-
-function canPlace(piece, startR, startC) {
-  const sh = piece.shape;
-  for (let r = 0; r < sh.length; r++) {
-    for (let c = 0; c < sh[0].length; c++) {
-      if (sh[r][c]) {
-        const nr = startR + r, nc = startC + c;
-        if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) return false;
-        if (board[nr][nc]) return false;
-      }
-    }
-  }
-  return true;
-}
-
-function onCellHover(r, c) {
-  clearHighlight();
-  if (selectedPiece < 0 || !pieces[selectedPiece]) return;
-  const piece = pieces[selectedPiece];
-  const sh = piece.shape;
-  for (let pr = 0; pr < sh.length; pr++) {
-    for (let pc2 = 0; pc2 < sh[0].length; pc2++) {
-      if (sh[pr][pc2]) {
-        const nr = r + pr, nc = c + pc2;
-        if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
-          const el = document.getElementById(`cell-${nr}-${nc}`);
-          if (el) {
-            el.classList.add('highlight');
-            if (!board[nr][nc]) {
-              el.style.background = piece.color + '88';
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-function clearHighlight() {
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      const el = document.getElementById(`cell-${r}-${c}`);
-      if (el) {
-        el.classList.remove('highlight');
-        el.style.background = board[r][c] ? board[r][c] : '';
-      }
-    }
-  }
-}
-
-function onCellClick(r, c) {
-  if (gameOver) return;
-  if (selectedPiece < 0 || !pieces[selectedPiece]) return;
-  const piece = pieces[selectedPiece];
-  if (!canPlace(piece, r, c)) return;
-  placePiece(piece, r, c);
-}
-
-function placePiece(piece, startR, startC) {
-  const sh = piece.shape;
-  for (let r = 0; r < sh.length; r++) {
-    for (let c = 0; c < sh[0].length; c++) {
-      if (sh[r][c]) {
-        board[startR + r][startC + c] = piece.color;
-      }
-    }
-  }
-  const earned = piece.pts;
-  pieces[selectedPiece] = null;
-  selectedPiece = -1;
-  renderBoard();
-  renderPieces();
-
-  // Check lines
-  setTimeout(() => {
-    const linesCleared = clearLines(earned);
-    setTimeout(() => {
-      addScore(earned, linesCleared, startR, startC);
-      checkAllUsed();
-      checkGameOver();
-    }, linesCleared > 0 ? 420 : 10);
-  }, 60);
-}
-
-function clearLines(basePts) {
-  let fullRows = [], fullCols = [];
-  for (let r = 0; r < ROWS; r++) {
-    if (board[r].every(v => v !== null)) fullRows.push(r);
-  }
-  for (let c = 0; c < COLS; c++) {
-    let full = true;
-    for (let r = 0; r < ROWS; r++) {
-      if (!board[r][c]) { full = false; break; }
-    }
-    if (full) fullCols.push(c);
-  }
-  const totalLines = fullRows.length + fullCols.length;
-  if (totalLines === 0) return 0;
-
-  // Animate blast
-  let blastCells = new Set();
-  fullRows.forEach(r => {
-    for (let c = 0; c < COLS; c++) blastCells.add(`${r}-${c}`);
-  });
-  fullCols.forEach(c => {
-    for (let r = 0; r < ROWS; r++) blastCells.add(`${r}-${c}`);
-  });
-  blastCells.forEach(key => {
-    const el = document.getElementById(`cell-${key}`);
-    if (el) el.classList.add('row-col-flash');
-  });
-
-  setTimeout(() => {
-    fullRows.forEach(r => {
-      for (let c = 0; c < COLS; c++) board[r][c] = null;
-    });
-    fullCols.forEach(c => {
-      for (let r = 0; r < ROWS; r++) board[r][c] = null;
-    });
-    renderBoard();
-  }, 350);
-
-  return totalLines;
-}
-
-function addScore(basePts, lines, r, c) {
-  let gained = basePts;
-  if (lines > 0) {
-    gained += lines * randInt(3, 7);
-    if (lines >= 2) showCombo(lines);
-  }
-  score += gained;
-  if (score > best) best = score;
-  level = Math.floor(score / 50) + 1;
-  updateUI();
-  showScorePopup(gained, r, c);
-}
-
-function showScorePopup(pts, r, c) {
-  const el = document.createElement('div');
-  el.className = 'score-popup';
-  el.textContent = `+${pts}`;
-  const boardEl = document.getElementById('board');
-  const rect = boardEl.getBoundingClientRect();
-  el.style.left = (rect.left + c * 49 + 20) + 'px';
-  el.style.top = (rect.top + r * 49 - 10 + window.scrollY) + 'px';
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 900);
-}
-
-function showCombo(n) {
-  const el = document.createElement('div');
-  el.className = 'combo-text';
-  el.textContent = n >= 3 ? `🔥 MEGA BLAST x${n}!` : `💥 COMBO x${n}!`;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 1000);
-}
-
-function updateUI() {
-  document.getElementById('scoreVal').textContent = score;
-  document.getElementById('bestVal').textContent = best;
-  document.getElementById('levelVal').textContent = level;
-  const lifeEls = [document.getElementById('l1'), document.getElementById('l2'), document.getElementById('l3')];
-  lifeEls.forEach((el, i) => {
-    el.classList.toggle('dead', i >= lives);
+    if (d === selectedDifficulty) card.style.outline = '3px solid #ffe066';
+    else card.style.outline = 'none';
   });
 }
 
-function checkAllUsed() {
-  if (pieces.every(p => p === null)) {
-    pieces = [randPiece(), randPiece(), randPiece()];
-    renderPieces();
-  }
-}
-
-function checkGameOver() {
-  // Check if any piece can be placed anywhere
-  const available = pieces.filter(p => p !== null);
-  for (const piece of available) {
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        if (canPlace(piece, r, c)) return;
-      }
-    }
-  }
-  // No move possible - lose a life
-  lives--;
-  updateUI();
-  if (lives <= 0) {
-    gameOver = true;
-    setTimeout(showGameOver, 400);
-  } else {
-    showNoMoveWarning();
-    // Reset board partially (clear some random cells to give chance)
-    clearSomeBoard();
-    renderBoard();
-  }
-}
-
-function clearSomeBoard() {
-  // Clear 20% of filled cells randomly to give player another chance
-  let filled = [];
-  for (let r = 0; r < ROWS; r++)
-    for (let c = 0; c < COLS; c++)
-      if (board[r][c]) filled.push([r, c]);
-  const toClear = Math.ceil(filled.length * 0.3);
-  for (let i = 0; i < toClear; i++) {
-    const idx = randInt(0, filled.length - 1);
-    const [r, c] = filled.splice(idx, 1)[0];
-    board[r][c] = null;
-  }
-  pieces = [randPiece(), randPiece(), randPiece()];
-  renderPieces();
-}
-
-function showNoMoveWarning() {
-  const el = document.createElement('div');
-  el.style.cssText = `position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
-    background:rgba(255,0,0,0.85);color:#fff;font-size:1.5rem;font-weight:bold;
-    border-radius:16px;padding:20px 40px;z-index:500;text-align:center;
-    box-shadow:0 0 30px red;animation:popIn 0.4s ease;`;
-  el.innerHTML = `💔 막혔어요!<br>목숨 1개 감소!<br>보드 일부를 초기화합니다.`;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 1800);
-}
-
-function showGameOver() {
-  document.getElementById('msgTitle').textContent = '💀 게임 오버!';
-  document.getElementById('msgBody').innerHTML = `최종 점수: <b>${score}</b><br>최고 기록: <b>${best}</b><br>레벨: <b>${level}</b>`;
-  document.getElementById('msg-overlay').classList.add('show');
-}
-
-function requestNewPieces() {
-  if (gameOver) return;
-  if (lives <= 1) {
-    alert('목숨이 1개 남아서 새 조각을 받을 수 없어요!');
+function buyDifficulty(d) {
+  const prices = { easy: 0, normal: 300, hard: 600 };
+  if (ownedDifficulties[d]) {
+    selectedDifficulty = d;
+    showToast('✅ ' + getDiffName(d) + ' 선택!');
+    updateShopUI();
     return;
   }
-  lives--;
-  pieces = [randPiece(), randPiece(), randPiece()];
-  selectedPiece = -1;
-  updateUI();
-  renderPieces();
+  if (coins >= prices[d]) {
+    coins -= prices[d];
+    ownedDifficulties[d] = true;
+    selectedDifficulty = d;
+    showToast('🎉 ' + getDiffName(d) + ' 구매 완료!');
+    updateShopUI();
+  } else {
+    showToast('💰 코인이 부족해요!');
+  }
 }
 
-function restartGame() {
-  score = 0; lives = 3; level = 1; gameOver = false; selectedPiece = -1;
-  initBoard();
-  pieces = [randPiece(), randPiece(), randPiece()];
-  renderBoard();
-  renderPieces();
-  updateUI();
-  document.getElementById('msg-overlay').classList.remove('show');
+function getDiffName(d) {
+  return { easy:'쉬움', normal:'보통', hard:'어려움' }[d];
 }
 
-// Init
-initBoard();
-pieces = [randPiece(), randPiece(), randPiece()];
-renderBoard();
-renderPieces();
-updateUI();
-</script>
-</body>
-</html>
+// ============================================================
+//  게임 초기화
+// ============================================================
+function startGame() {
+  currentDifficulty = selectedDifficulty;
+  const cfg = DIFF_CONFIG[currentDifficulty];
+  COLS = cfg.cols; ROWS = cfg.rows; CELL = cfg.cell;
+
+  score = 0; lives = 3;
+  updateScoreUI();
+  updateLivesUI();
+  document.getElementById('diffBadge').textContent = getDiffName(currentDifficulty);
+  document.getElementById('gameOverOverlay').classList.remove('show');
+
+  // 보드 초기화
+  board = [];
+  for (let r=0;r<ROWS;r++) { board.push([]); for(let c=0;c<COLS;c++) board[r].push(0); }
+
+  // 캔버스 설정
+  const bc = document.getElementById('boardCanvas');
+  bc.width  = COLS * CELL;
+  bc.height = ROWS * CELL;
+
+  // 피스 생성
+  pieces = [null,null,null];
+  generatePieces();
+  drawBoard();
+  drawPieces();
+  setupTouch();
+}
+
+function replayGame() {
+  document.getElementById('gameOverOverlay').classList.remove('show');
+  startGame();
+}
+
+// ============================================================
+//  피스 생성
+// ============================================================
+function generatePieces() {
+  for(let i=0;i<3;i++) {
+    if(pieces[i] === null) pieces[i] = randomPiece();
+  }
+}
+
+function randomPiece() {
+  const shapes = getPieceShapesForDiff();
+  const shape  = shapes[Math.floor(Math.random()*shapes.length)];
+  const color  = COLORS[Math.floor(Math.random()*COLORS.length)];
+  return { shape, color, pts: getRandPts() };
+}
+
+function getPieceShapesForDiff() {
+  if (currentDifficulty === 'easy')   return PIECE_SHAPES.slice(0,8);
+  if (currentDifficulty === 'normal') return PIECE_SHAPES.slice(0,12);
+  return PIECE_SHAPES;
+}
+
+// ============================================================
+//  그리기
+// ============================================================
+function drawBoard() {
+  const bc  = document.getElementById('boardCanvas');
+  const ctx = bc.getContext('2d');
+
+  // 배경
+  ctx.fillStyle = '#0d4f0d';
+  ctx.fillRect(0,0,bc.width,bc.height);
+
+  // 격자
+  for(let r=0;r<ROWS;r++) {
+    for(let c=0;c<COLS;c++) {
+      const x = c*CELL, y = r*CELL;
+      if(board[r][c]) {
+        // 채워진 셀
+        ctx.fillStyle = board[r][c];
+        ctx.beginPath();
+        ctx.roundRect(x+2,y+2,CELL-4,CELL-4,6);
+        ctx.fill();
+        // 하이라이트
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.beginPath();
+        ctx.roundRect(x+4,y+4,CELL-10,8,4);
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(x+2,y+2,CELL-4,CELL-4,6);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // 드래그 중인 피스 보드 위에 표시
+  if(dragging) {
+    const p = pieces[dragging.pieceIdx];
+    if(!p) return;
+    const col = Math.round((dragging.x - bc.getBoundingClientRect().left) / CELL);
+    const row = Math.round((dragging.y - bc.getBoundingClientRect().top)  / CELL);
+    const canPlace = canPlacePiece(p, row, col);
+    p.shape.forEach(([dr,dc]) => {
+      const rr = row+dr, cc = col+dc;
+      if(rr>=0&&rr<ROWS&&cc>=0&&cc<COLS) {
+        ctx.fillStyle = canPlace ? p.color+'cc' : 'rgba(255,0,0,0.35)';
+        ctx.beginPath();
+        ctx.roundRect(cc*CELL+2, rr*CELL+2, CELL-4, CELL-4, 6);
+        ctx.fill();
+      }
+    });
+  }
+}
+
+function drawPieces() {
+  for(let i=0;i<3;i++) {
+    const pc = document.getElementById('pieceCanvas'+i);
+    const ctx = pc.getContext('2d');
+    const slot = document.getElementById('slot'+i);
+    const slotW = slot.offsetWidth || 90;
+    const slotH = slot.offsetHeight || 90;
+    pc.width  = slotW;
+    pc.height = slotH;
+    ctx.clearRect(0,0,pc.width,pc.height);
+
+    if(!pieces[i]) continue;
+    const p = pieces[i];
+    // 피스 범위 계산
+    let minR=99,maxR=-1,minC=99,maxC=-1;
+    p.shape.forEach(([r,c]) => { minR=Math.min(minR,r);maxR=Math.max(maxR,r);minC=Math.min(minC,c);maxC=Math.max(maxC,c); });
+    const w = (maxC-minC+1), h = (maxR-minR+1);
+    const cell = Math.min(Math.floor((slotW-10)/w), Math.floor((slotH-10)/h), 24);
+    const offX = Math.floor((slotW - w*cell)/2);
+    const offY = Math.floor((slotH - h*cell)/2);
+
+    p.shape.forEach(([r,c]) => {
+      const x = offX+(c-minC)*cell, y = offY+(r-minR)*cell;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.roundRect(x+1,y+1,cell-2,cell-2,4);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.beginPath();
+      ctx.roundRect(x+2,y+2,cell-6,5,3);
+      ctx.fill();
+    });
+
+    // 점수 표시
+    ctx.fillStyle = '#ffe066';
+    ctx.font = 'bold 11px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('+'+p.pts+'pt', slotW/2, slotH-4);
+  }
+}
+
+// ============================================================
+//  터치/마우스 이벤트
+// ============================================================
+function setupTouch() {
+  const bc = document.getElementById('boardCanvas');
+  // 피스 슬롯에서 드래그 시작
+  for(let i=0;i<3;i++) {
+    const slot = document.getElementById('slot'+i);
+    slot.addEventListener('touchstart',  onPieceTouchStart, {passive:false});
+    slot.addEventListener('mousedown',   onPieceMouseStart);
+  }
+  document.addEventListener('touchmove',  onDragMove, {passive:false});
+  document.addEventListener('touchend',   onDragEnd);
+  document.addEventListener('mousemove',  onDragMoveM);
+  document.addEventListener('mouseup',    onDragEndM);
+}
+
+function getPieceIdx(el) {
+  for(let i=0;i<3;i++) if(document.getElementById('slot'+i).contains(el)||el.id==='slot'+i) return i;
+  return -1;
+}
+
+function onPieceTouchStart(e) {
+  e.preventDefault();
+  const idx = getPieceIdx(e.currentTarget);
+  if(idx<0||!pieces[idx]) return;
+  const t = e.touches[0];
+  dragging = { pieceIdx: idx, x: t.clientX, y: t.clientY };
+  drawBoard(); drawPieces();
+}
+function onPieceMouseStart(e) {
+  const idx = getPieceIdx(e.currentTarget);
+  if(idx<0||!pieces[idx]) return;
+  dragging = { pieceIdx: idx, x: e.clientX, y: e.clientY };
+  drawBoard(); drawPieces();
+}
+function onDragMove(e) {
+  if(!dragging) return;
+  e.preventDefault();
+  const t = e.touches[0];
+  dragging.x = t.clientX; dragging.y = t.clientY;
+  drawBoard();
+}
+function onDragMoveM(e) {
+  if(!dragging) return;
+  dragging.x = e.clientX; dragging.y = e.clientY;
+  drawBoard();
+}
+function onDragEnd(e) { if(!dragging) return; tryPlace(); dragging=null; drawBoard(); drawPieces(); }
+function onDragEndM(e){ if(!dragging) return; tryPlace(); dragging=null; drawBoard(); drawPieces(); }
+
+function tryPlace() {
+  if(!dragging) return;
+  const bc   = document.getElementById('boardCanvas');
+  const rect = bc.getBoundingClientRect();
+  const col  = Math.round((dragging.x - rect.left)  / CELL);
+  const row  = Math.
