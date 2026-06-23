@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>김이의 피아노 건반</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: bounceIn 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: #f0e6ff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .star {
+            display: inline-block;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .piano-container {
+            background: linear-gradient(145deg, #2c1810, #5c3317, #2c1810);
+            border-radius: 20px;
+            padding: 30px 30px 40px 30px;
+            box-shadow: 
+                0 20px 60px rgba(0,0,0,0.5),
+                inset 0 2px 4px rgba(255,255,255,0.1),
+                0 0 0 3px #8B6914,
+                0 0 0 6px #5c3317;
+            position: relative;
+        }
+
+        .piano-title-bar {
+            text-align: center;
+            color: #d4af37;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(212,175,55,0.5);
+        }
+
+        .keyboard {
+            display: flex;
+            position: relative;
+            justify-content: center;
+        }
+
+        .white-keys {
+            display: flex;
+            position: relative;
+        }
+
+        .white-key {
+            width: 52px;
+            height: 200px;
+            background: linear-gradient(180deg, #fff9f0 0%, #ffffff 30%, #f8f8f8 100%);
+            border: 1px solid #ccc;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.1s ease;
+            box-shadow: 
+                2px 5px 10px rgba(0,0,0,0.3),
+                inset 0 -3px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 12px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .white-key:hover {
+            background: linear-gradient(180deg, #fffde7 0%, #fff9c4 100%);
+            box-shadow: 
+                2px 5px 10px rgba(0,0,0,0.3),
+                inset 0 -3px 5px rgba(0,0,0,0.1),
+                0 0 15px rgba(255,230,0,0.4);
+        }
+
+        .white-key.active {
+            background: linear-gradient(180deg, #ffe082 0%, #ffcc02 100%);
+            transform: translateY(3px);
+            box-shadow: 
+                1px 2px 5px rgba(0,0,0,0.3),
+                inset 0 -1px 3px rgba(0,0,0,0.1);
+        }
+
+        .key-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #888;
+        }
+
+        .key-shortcut {
+            font-size: 0.65rem;
+            color: #bbb;
+            margin-top: 2px;
+        }
+
+        .black-keys {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            pointer-events: none;
+        }
+
+        .black-key {
+            width: 34px;
+            height: 130px;
+            background: linear-gradient(180deg, #333 0%, #111 60%, #222 100%);
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            cursor: pointer;
+            position: absolute;
+            z-index: 2;
+            transition: all 0.1s ease;
+            box-shadow: 
+                2px 6px 10px rgba(0,0,0,0.6),
+                inset 1px 0 2px rgba(255,255,255,0.1);
+            pointer-events: all;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 8px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .black-key:hover {
+            background: linear-gradient(180deg, #555 0%, #333 60%, #444 100%);
+            box-shadow: 
+                2px 6px 10px rgba(0,0,0,0.6),
+                inset 1px 0 2px rgba(255,255,255,0.1),
+                0 0 12px rgba(200,100,255,0.5);
+        }
+
+        .black-key.active {
+            background: linear-gradient(180deg, #9c27b0 0%, #6a1b9a 100%);
+            transform: translateY(3px);
+            box-shadow: 
+                1px 3px 5px rgba(0,0,0,0.6);
+        }
+
+        .black-key .key-label {
+            color: #aaa;
+            font-size: 0.6rem;
+        }
+
+        .black-key .key-shortcut {
+            color: #777;
+            font-size: 0.55rem;
+        }
+
+        /* 검은 건반 위치 계산: 흰 건반 너비 = 52px */
+        /* C# = 52*1 - 17 = 35 */
+        /* D# = 52*2 - 17 = 87 */
+        /* F# = 52*4 - 17 = 191 */
+        /* G# = 52*5 - 17 = 243 */
+        /* A# = 52*6 - 17 = 295 */
+        .bk-0  { left: 36px; }
+        .bk-1  { left: 88px; }
+        .bk-2  { left: 192px; }
+        .bk-3  { left: 244px; }
+        .bk-4  { left: 296px; }
+        .bk-5  { left: 400px; }
+        .bk-6  { left: 452px; }
+        .bk-7  { left: 556px; }
+        .bk-8  { left: 608px; }
+        .bk-9  { left: 660px; }
+
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-record {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .btn-play {
+            background: linear-gradient(135deg, #55efc4, #00b894);
+            color: white;
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+            color: white;
+        }
+
+        .btn-demo {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            color: white;
+        }
+
+        .recording-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .recording-indicator.active {
+            display: flex;
+        }
+
+        .rec-dot {
+            width: 12px;
+            height: 12px;
+            background: #ff4444;
+            border-radius: 50%;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .info-panel {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 15px 25px;
+            color: white;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .info-panel h3 {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .info-panel p {
+            font-size: 0.85rem;
+            color: #e0d4ff;
+            line-height: 1.5;
+        }
+
+        .note-display {
+            margin-top: 15px;
+            min-height: 50px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: #ffe082;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 3px;
+            word-break: break-all;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .emoji-burst {
+            position: fixed;
+            pointer-events: none;
+            font-size: 2rem;
+            animation: burst 1s ease-out forwards;
+            z-index: 1000;
+        }
+
+        @keyframes burst {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
+        }
+
+        @media (max-width: 800px) {
+            .white-key {
+                width: 36px;
+                height: 150px;
+            }
+
+            .black-key {
+                width: 24px;
+                height: 95px;
+            }
+
+            .bk-0  { left: 25px; }
+            .bk-1  { left: 61px; }
+            .bk-2  { left: 133px; }
+            .bk-3  { left: 169px; }
+            .bk-4  { left: 205px; }
+            .bk-5  { left: 277px; }
+            .bk-6  { left: 313px; }
+            .bk-7  { left: 385px; }
+            .bk-8  { left: 421px; }
+            .bk-9  { left: 457px; }
+
+            .header h1 { font-size: 1.8rem; }
+            .key-label, .key-shortcut { display: none; }
+            .piano-container { padding: 20px 15px 30px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1><span class="star">🎹</span> 김이의 피아노 <span class="star">🎵</span></h1>
+        <p class="subtitle">건반을 눌러서 연주해 보세요! 🎶</p>
+    </div>
+
+    <div class="piano-container">
+        <div class="piano-title-bar">✦ PIANO ✦</div>
+        <div class="keyboard">
+            <div class="white-keys" id="whiteKeys">
+                <!-- C4 -->
+                <div class="white-key" data-note="C4" data-freq="261.63">
+                    <span class="key-label">도</span>
+                    <span class="key-shortcut">A</span>
+                </div>
+                <!-- D4 -->
+                <div class="white-key" data-note="D4" data-freq="293.66">
+                    <span class="key-label">레</span>
+                    <span class="key-shortcut">S</span>
+                </div>
+                <!-- E4 -->
+                <div class="white-key" data-note="E4" data-freq="329.63">
+                    <span class="key-label">미</span>
+                    <span class="key-shortcut">D</span>
+                </div>
+                <!-- F4 -->
+                <div class="white-key" data-note="F4" data-freq="349.23">
+                    <span class="key-label">파</span>
+                    <span class="key-shortcut">F</span>
+                </div>
+                <!-- G4 -->
+                <div class="white-key" data-note="G4" data-freq="392.00">
+                    <span class="key-label">솔</span>
+                    <span class="key-shortcut">G</span>
+                </div>
+                <!-- A4 -->
+                <div class="white-key" data-note="A4" data-freq="440.00">
+                    <span class="key-label">라</span>
+                    <span class="key-shortcut">H</span>
+                </div>
+                <!-- B4 -->
+                <div class="white-key" data-note="B4" data-freq="493.88">
+                    <span class="key-label">시</span>
+                    <span class="key-shortcut">J</span>
+                </div>
+                <!-- C5 -->
+                <div class="white-key" data-note="C5" data-freq="523.25">
+                    <span class="key
