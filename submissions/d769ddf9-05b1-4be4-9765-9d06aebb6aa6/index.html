@@ -3,727 +3,757 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>정유하의 우주 수학 모험</title>
+<title>정유하의 수학 우주 탐험</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Jua', sans-serif;
-    min-height: 100vh;
+    font-family: 'Noto Sans KR', sans-serif;
     overflow: hidden;
-    background: #000010;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
   }
 
   /* ===== 별 배경 ===== */
-  #stars-canvas {
+  #starfield {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     z-index: 0;
+    background: radial-gradient(ellipse at center, #0a0020 0%, #000 100%);
   }
 
-  /* ===== 공통 화면 ===== */
-  .screen {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    transition: opacity 0.5s;
-  }
-  .screen.hidden { opacity: 0; pointer-events: none; }
-
-  /* ===== 시작 화면 ===== */
-  #start-screen {
-    background: transparent;
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle 2s infinite alternate;
   }
 
-  .student-name {
-    font-size: 1.4rem;
-    color: #aef;
-    letter-spacing: 3px;
-    margin-bottom: 10px;
-    text-shadow: 0 0 10px #7bf;
-  }
-
-  .title-text {
-    font-size: 3rem;
-    color: #fff;
-    text-shadow: 0 0 20px #9bf, 0 0 40px #6af;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-
-  .subtitle {
-    font-size: 1.1rem;
-    color: #88ccff;
-    margin-bottom: 50px;
-    text-shadow: 0 0 8px #4af;
+  @keyframes twinkle {
+    0% { opacity: 0.2; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.3); }
   }
 
   /* 행성들 */
   .planet {
-    position: fixed;
+    position: absolute;
     border-radius: 50%;
     z-index: 1;
-    animation: floatPlanet 6s ease-in-out infinite;
-  }
-  .planet1 {
-    width: 120px; height: 120px;
-    background: radial-gradient(circle at 35% 35%, #ff9966, #cc3300);
-    bottom: 80px; right: 80px;
-    box-shadow: 0 0 30px #ff6600, inset -20px -10px 40px #660000;
-    animation-delay: 0s;
-  }
-  .planet2 {
-    width: 80px; height: 80px;
-    background: radial-gradient(circle at 35% 35%, #99ccff, #3366cc);
-    top: 100px; left: 60px;
-    box-shadow: 0 0 20px #3366ff, inset -15px -8px 30px #003399;
-    animation-delay: 2s;
-  }
-  .planet3 {
-    width: 55px; height: 55px;
-    background: radial-gradient(circle at 35% 35%, #ffcc44, #cc6600);
-    top: 200px; right: 150px;
-    box-shadow: 0 0 15px #ffaa00, inset -10px -5px 20px #884400;
-    animation-delay: 4s;
-  }
-  /* 토성 고리 */
-  .planet1::after {
-    content: '';
-    position: absolute;
-    width: 170px; height: 30px;
-    border: 8px solid rgba(255,150,80,0.5);
-    border-radius: 50%;
-    top: 45px; left: -25px;
-    transform: rotateX(70deg);
   }
 
-  @keyframes floatPlanet {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+  #planet1 {
+    width: 180px; height: 180px;
+    background: radial-gradient(circle at 35% 35%, #ff9a3c, #c0392b, #7b0000);
+    bottom: -40px; left: -30px;
+    box-shadow: 0 0 40px #ff6b0080;
+    animation: float1 6s ease-in-out infinite;
   }
+
+  #planet2 {
+    width: 120px; height: 120px;
+    background: radial-gradient(circle at 35% 35%, #a8edea, #43b89c, #1a5276);
+    top: 40px; right: 60px;
+    box-shadow: 0 0 30px #43b89c80;
+    animation: float2 8s ease-in-out infinite;
+  }
+
+  #planet3 {
+    width: 80px; height: 80px;
+    background: radial-gradient(circle at 35% 35%, #f9ca24, #f0932b, #6a3093);
+    bottom: 100px; right: 150px;
+    box-shadow: 0 0 20px #f9ca2480;
+    animation: float3 5s ease-in-out infinite;
+  }
+
+  @keyframes float1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
+  @keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(15px)} }
+  @keyframes float3 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
 
   /* UFO */
-  .ufo {
-    position: fixed;
+  #ufo {
+    position: absolute;
+    font-size: 60px;
+    top: 20%;
+    left: 10%;
+    animation: ufoFloat 4s ease-in-out infinite;
     z-index: 2;
-    animation: ufoFly 12s linear infinite;
-    top: 30%;
-  }
-  .ufo-body {
-    width: 60px; height: 25px;
-    background: radial-gradient(ellipse, #aaf, #66f);
-    border-radius: 50%;
-    position: relative;
-    box-shadow: 0 0 15px #88f;
-  }
-  .ufo-dome {
-    width: 30px; height: 20px;
-    background: radial-gradient(ellipse, #ccffff, #66ccff);
-    border-radius: 50% 50% 0 0;
-    position: absolute;
-    top: -15px; left: 15px;
-    box-shadow: 0 0 10px #0ff;
-  }
-  .ufo-light {
-    width: 8px; height: 8px;
-    background: #ff0;
-    border-radius: 50%;
-    position: absolute;
-    bottom: -4px;
-    animation: blink 0.5s alternate infinite;
-  }
-  .ufo-light:nth-child(1) { left: 10px; }
-  .ufo-light:nth-child(2) { left: 25px; animation-delay: 0.17s; }
-  .ufo-light:nth-child(3) { left: 40px; animation-delay: 0.34s; }
-
-  @keyframes ufoFly {
-    0% { left: -100px; }
-    100% { left: 110%; }
-  }
-  @keyframes blink {
-    from { opacity: 1; }
-    to { opacity: 0.2; }
+    filter: drop-shadow(0 0 15px #00ffcc);
   }
 
-  /* 트로피 카운터 (시작화면) */
-  .trophy-counter-start {
+  @keyframes ufoFloat {
+    0%,100%{transform:translateY(0) rotate(-5deg)}
+    50%{transform:translateY(-25px) rotate(5deg)}
+  }
+
+  /* ===== 시작 화면 ===== */
+  #startScreen {
     position: fixed;
-    top: 18px; right: 22px;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .student-name {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #00ffcc;
+    z-index: 11;
+  }
+
+  .game-title {
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 20px #a29bfe, 0 0 40px #6c5ce7;
+    margin-bottom: 12px;
+    text-align: center;
+    z-index: 11;
+    animation: titlePulse 2s ease-in-out infinite;
+  }
+
+  @keyframes titlePulse {
+    0%,100%{text-shadow:0 0 20px #a29bfe,0 0 40px #6c5ce7}
+    50%{text-shadow:0 0 30px #fd79a8,0 0 60px #e84393}
+  }
+
+  .subtitle {
+    color: #dfe6e9;
+    font-size: 18px;
+    margin-bottom: 50px;
+    text-shadow: 0 0 10px #74b9ff;
+    z-index: 11;
+  }
+
+  .start-btn {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe, #fd79a8);
+    color: white;
+    border: none;
+    padding: 20px 60px;
+    font-size: 26px;
+    font-weight: 900;
+    border-radius: 60px;
+    cursor: pointer;
+    z-index: 11;
+    box-shadow: 0 0 30px #a29bfe80, 0 8px 30px rgba(0,0,0,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 3px;
+    animation: btnGlow 2s ease-in-out infinite;
+  }
+
+  .start-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 50px #fd79a8, 0 8px 40px rgba(0,0,0,0.6);
+  }
+
+  @keyframes btnGlow {
+    0%,100%{box-shadow:0 0 30px #a29bfe80,0 8px 30px rgba(0,0,0,0.5)}
+    50%{box-shadow:0 0 50px #fd79a880,0 8px 30px rgba(0,0,0,0.5)}
+  }
+
+  /* 트로피 표시 (시작 화면) */
+  #trophyDisplay {
+    position: fixed;
+    top: 18px;
+    right: 20px;
+    z-index: 100;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid #f9ca24;
+    border-radius: 20px;
+    padding: 8px 18px;
     display: flex;
     align-items: center;
-    gap: 6px;
-    background: rgba(0,0,40,0.7);
-    border: 2px solid #ffcc00;
-    border-radius: 30px;
-    padding: 6px 14px;
-    z-index: 20;
-    color: #ffdd00;
-    font-size: 1.1rem;
-    box-shadow: 0 0 12px #ffaa00;
-  }
-
-  /* 시작 버튼 */
-  #start-btn {
-    font-family: 'Jua', sans-serif;
-    font-size: 1.8rem;
-    padding: 18px 60px;
-    background: linear-gradient(135deg, #6600ff, #0066ff);
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: 0 0 30px #6600ff, 0 0 60px #0066ff50;
-    transition: transform 0.2s, box-shadow 0.2s;
-    animation: pulseStar 2s ease-in-out infinite;
-  }
-  #start-btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 40px #8800ff, 0 0 80px #0088ff80;
-  }
-  @keyframes pulseStar {
-    0%,100% { box-shadow: 0 0 30px #6600ff, 0 0 60px #0066ff50; }
-    50% { box-shadow: 0 0 50px #9900ff, 0 0 100px #0099ff70; }
+    gap: 8px;
+    color: #f9ca24;
+    font-size: 20px;
+    font-weight: 900;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 15px #f9ca2460;
   }
 
   /* ===== 게임 화면 ===== */
-  #game-screen {
-    background: linear-gradient(180deg, #000020 0%, #001030 60%, #000820 100%);
+  #gameScreen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 10;
+    display: none;
     flex-direction: column;
-    justify-content: flex-start;
-    padding: 10px;
+    align-items: center;
+    padding: 12px 16px;
   }
 
   /* 상단 HUD */
-  .hud {
+  #hud {
     width: 100%;
     max-width: 700px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 12px;
+    z-index: 11;
   }
 
-  .hud-top {
+  #hudTop {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     width: 100%;
   }
 
   /* 목숨 */
-  .lives-box {
+  #livesDisplay {
     display: flex;
+    gap: 6px;
     align-items: center;
-    gap: 5px;
-    background: rgba(0,0,60,0.6);
-    border: 2px solid #ff4466;
-    border-radius: 20px;
-    padding: 5px 12px;
-  }
-  .heart { font-size: 1.3rem; filter: drop-shadow(0 0 5px #f46); }
-  .lives-text { color: #ff7799; font-size: 1.1rem; }
-
-  /* 트로피 HUD */
-  .trophy-box {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(40,30,0,0.7);
-    border: 2px solid #ffcc00;
-    border-radius: 20px;
-    padding: 5px 12px;
-    color: #ffdd00;
-    font-size: 1.1rem;
-    box-shadow: 0 0 10px #ffaa00;
   }
 
-  /* 문제 카운터 바 (동그라미 10개) */
-  .progress-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    background: rgba(0,0,60,0.5);
-    border: 2px solid #446;
-    border-radius: 30px;
-    padding: 6px 14px;
-  }
-  .prog-dot {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    border: 2px solid #558;
-    background: #112;
+  .heart {
+    font-size: 28px;
     transition: all 0.3s;
+    filter: drop-shadow(0 0 6px #e84393);
+  }
+
+  .heart.empty {
+    filter: grayscale(1) opacity(0.3);
+  }
+
+  /* 점수 */
+  #scoreDisplay {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    text-shadow: 0 0 10px #74b9ff;
+  }
+
+  /* 트로피 (게임 중) */
+  #trophyGameDisplay {
+    color: #f9ca24;
+    font-size: 18px;
+    font-weight: 900;
+    text-shadow: 0 0 10px #f9ca24;
+  }
+
+  /* 진행 바 (동그라미 10개) */
+  #progressBar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border-radius: 30px;
+    padding: 8px 14px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .progress-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.4s;
     position: relative;
   }
-  .prog-dot.done {
-    background: #44ff88;
-    border-color: #00ff66;
-    box-shadow: 0 0 10px #00ff66, 0 0 20px #00ff6680;
-  }
-  .prog-dot.boss {
-    background: #ff4400;
-    border-color: #ff8800;
-    box-shadow: 0 0 15px #ff6600, 0 0 30px #ff440080;
-    animation: bossPulse 0.7s ease-in-out infinite alternate;
-  }
-  @keyframes bossPulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.2); }
+
+  .progress-dot.done {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+    border-color: #00cec9;
+    box-shadow: 0 0 10px #00cec9;
   }
 
-  /* 타이머 */
-  .timer-wrap {
+  .progress-dot.boss {
+    border-color: #fd79a8;
+    background: rgba(253,121,168,0.15);
+  }
+
+  .progress-dot.boss.done {
+    background: linear-gradient(135deg, #fd79a8, #e84393);
+    border-color: #fd79a8;
+    box-shadow: 0 0 15px #fd79a8, 0 0 30px #e84393;
+    animation: bossGlow 1s infinite alternate;
+  }
+
+  @keyframes bossGlow {
+    0%{box-shadow:0 0 10px #fd79a8}
+    100%{box-shadow:0 0 25px #fd79a8,0 0 40px #e84393}
+  }
+
+  /* 문제 카드 */
+  #questionCard {
+    z-index: 11;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 30px;
+    padding: 30px 40px;
+    margin-top: 18px;
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(108,92,231,0.3);
+  }
+
+  #questionLabel {
+    color: #a29bfe;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  #questionText {
+    color: #fff;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 900;
+    margin-bottom: 18px;
+    text-shadow: 0 0 20px #a29bfe;
+    min-height: 60px;
     display: flex;
     align-items: center;
-    gap: 10px;
     justify-content: center;
   }
-  .timer-bar-bg {
-    width: 250px; height: 18px;
-    background: #111;
-    border-radius: 10px;
-    border: 2px solid #336;
-    overflow: hidden;
-  }
-  .timer-bar-fill {
-    height: 100%;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #00ff88, #00ccff);
-    transition: width 0.1s linear, background 0.5s;
-  }
-  .timer-bar-fill.warn { background: linear-gradient(90deg, #ff8800, #ff4400); }
-  .timer-num {
-    color: #aef;
-    font-size: 1.1rem;
-    min-width: 35px;
-  }
 
-  /* 문제 영역 */
-  .question-area {
-    background: rgba(0,20,60,0.85);
-    border: 3px solid #4488ff;
-    border-radius: 24px;
-    padding: 28px 40px;
-    text-align: center;
-    box-shadow: 0 0 30px #2255ff50;
-    max-width: 650px;
+  /* 타이머 바 */
+  #timerBarWrap {
     width: 100%;
-    margin-bottom: 16px;
-  }
-
-  .question-label {
-    font-size: 1rem;
-    color: #88aaff;
-    margin-bottom: 8px;
-  }
-
-  .question-text {
-    font-size: 2.4rem;
-    color: #fff;
-    text-shadow: 0 0 15px #8af;
+    height: 14px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
     margin-bottom: 6px;
   }
 
-  .boss-label {
-    font-size: 1rem;
-    color: #ff8800;
-    text-shadow: 0 0 10px #ff4400;
-    animation: bossPulse 0.7s alternate infinite;
+  #timerBar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #00b894, #fdcb6e, #e17055);
+    border-radius: 10px;
+    transition: width 0.1s linear;
   }
 
-  /* 보기 버튼 */
-  .choices-wrap {
+  #timerText {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    text-align: right;
+  }
+
+  /* 보기 버튼들 */
+  #choicesGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    max-width: 650px;
+    gap: 12px;
     width: 100%;
+    max-width: 700px;
+    z-index: 11;
+    margin-top: 14px;
   }
 
   .choice-btn {
-    font-family: 'Jua', sans-serif;
-    font-size: 1.5rem;
-    padding: 16px;
-    border: 3px solid #446;
-    border-radius: 18px;
-    background: rgba(0,20,60,0.7);
-    color: #cce;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    color: #fff;
+    font-size: clamp(18px, 3vw, 26px);
+    font-weight: 900;
+    padding: 18px 10px;
     cursor: pointer;
-    transition: transform 0.15s, background 0.15s, border-color 0.15s;
-    box-shadow: 0 4px 15px #0005;
+    transition: all 0.2s;
+    backdrop-filter: blur(5px);
+    text-shadow: 0 0 8px rgba(255,255,255,0.5);
   }
+
   .choice-btn:hover {
+    background: rgba(162,155,254,0.3);
+    border-color: #a29bfe;
     transform: scale(1.04);
-    background: rgba(30,60,150,0.85);
-    border-color: #88aaff;
-    color: #fff;
+    box-shadow: 0 0 20px rgba(162,155,254,0.5);
   }
+
   .choice-btn.correct {
-    background: rgba(0,180,80,0.7);
-    border-color: #00ff88;
-    color: #fff;
-    box-shadow: 0 0 20px #00ff88;
+    background: rgba(0,184,148,0.4) !important;
+    border-color: #00b894 !important;
+    box-shadow: 0 0 25px #00b894 !important;
+    transform: scale(1.06) !important;
   }
+
   .choice-btn.wrong {
-    background: rgba(200,30,30,0.7);
-    border-color: #ff4444;
-    color: #fff;
-    box-shadow: 0 0 20px #ff4444;
+    background: rgba(225,112,85,0.4) !important;
+    border-color: #e17055 !important;
+    box-shadow: 0 0 25px #e17055 !important;
+    animation: shake 0.4s;
   }
 
-  /* 문제 번호 */
-  .question-num {
-    color: #aae;
-    font-size: 0.95rem;
-    margin-top: 8px;
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%,60%{transform:translateX(-8px)}
+    40%,80%{transform:translateX(8px)}
   }
 
-  /* ===== 트로피 획득 화면 ===== */
-  #trophy-screen {
-    background: radial-gradient(ellipse, #1a0040, #000015);
-  }
-  .trophy-big {
-    font-size: 7rem;
-    animation: trophySpin 1.5s ease-in-out;
-    display: inline-block;
-    filter: drop-shadow(0 0 30px #ffcc00);
-  }
-  @keyframes trophySpin {
-    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
-    60% { transform: scale(1.2) rotate(10deg); opacity: 1; }
-    100% { transform: scale(1) rotate(0deg); opacity: 1; }
-  }
-  .trophy-msg {
-    font-size: 2rem;
-    color: #ffee44;
-    text-shadow: 0 0 20px #ffaa00;
-    margin-top: 16px;
-  }
-
-  /* ===== 게임 오버 화면 ===== */
-  #gameover-screen {
-    background: radial-gradient(ellipse, #200010, #000010);
-  }
-  .gameover-title {
-    font-size: 3rem;
-    color: #ff4466;
-    text-shadow: 0 0 20px #ff0044;
-    margin-bottom: 20px;
-  }
-  .gameover-sub {
-    font-size: 1.3rem;
-    color: #ff8899;
-    margin-bottom: 30px;
-  }
-  #restart-btn {
-    font-family: 'Jua', sans-serif;
-    font-size: 1.5rem;
-    padding: 14px 50px;
-    background: linear-gradient(135deg, #cc0033, #ff4466);
-    color: #fff;
-    border: none;
-    border-radius: 40px;
-    cursor: pointer;
-    box-shadow: 0 0 20px #ff0044;
-    transition: transform 0.2s;
-  }
-  #restart-btn:hover { transform: scale(1.07); }
-
-  /* 파티클 */
-  .particle {
+  /* 보스 문제 표시 */
+  #bossAlert {
+    display: none;
     position: fixed;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 100;
-    animation: particleFly 0.8s ease-out forwards;
-  }
-  @keyframes particleFly {
-    0% { opacity: 1; transform: translate(0,0) scale(1); }
-    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 200;
+    background: linear-gradient(135deg, #6c5ce7, #e84393);
+    color: white;
+    font-size: 32px;
+    font-weight: 900;
+    padding: 30px 50px;
+    border-radius: 30px;
+    text-align: center;
+    box-shadow: 0 0 60px #e84393;
+    animation: popIn 0.4s ease;
   }
 
-  /* 정답/오답 오버레이 */
-  .feedback-overlay {
+  @keyframes popIn {
+    0%{transform:translate(-50%,-50%) scale(0.3);opacity:0}
+    100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  }
+
+  /* 트로피 획득 */
+  #trophyAlert {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 300;
+    background: linear-gradient(135deg, #f9ca24, #f0932b);
+    color: #2d3436;
+    font-size: 30px;
+    font-weight: 900;
+    padding: 40px 60px;
+    border-radius: 30px;
+    text-align: center;
+    box-shadow: 0 0 80px #f9ca24, 0 0 120px #f0932b;
+    animation: popIn 0.4s ease;
+  }
+
+  /* 게임오버 */
+  #gameOverScreen {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 200;
+    background: rgba(0,0,0,0.85);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #gameOverScreen h2 {
+    color: #e17055;
+    font-size: 52px;
+    font-weight: 900;
+    text-shadow: 0 0 30px #e17055;
+    margin-bottom: 16px;
+    animation: titlePulse 1s infinite;
+  }
+
+  #gameOverScreen p {
+    color: #fff;
+    font-size: 22px;
+    margin-bottom: 40px;
+  }
+
+  .retry-btn {
+    background: linear-gradient(135deg, #6c5ce7, #fd79a8);
+    color: white;
+    border: none;
+    padding: 16px 50px;
+    font-size: 22px;
+    font-weight: 900;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 30px #6c5ce7;
+    transition: transform 0.2s;
+    letter-spacing: 2px;
+    margin: 8px;
+  }
+
+  .retry-btn:hover { transform: scale(1.07); }
+
+  /* 정답/오답 플래시 */
+  #flashOverlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     z-index: 50;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .feedback-overlay.show-correct {
-    background: radial-gradient(ellipse, rgba(0,255,100,0.15), transparent 70%);
-    opacity: 1;
-  }
-  .feedback-overlay.show-wrong {
-    background: radial-gradient(ellipse, rgba(255,50,50,0.2), transparent 70%);
-    opacity: 1;
+    transition: opacity 0.15s;
   }
 
-  /* 흔들기 애니메이션 */
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20% { transform: translateX(-10px); }
-    40% { transform: translateX(10px); }
-    60% { transform: translateX(-8px); }
-    80% { transform: translateX(8px); }
+  /* 피드백 텍스트 */
+  #feedbackText {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 150;
+    font-size: 52px;
+    font-weight: 900;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
   }
-  .shake { animation: shake 0.4s ease; }
+
+  /* 별 파티클 */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 24px;
+    z-index: 500;
+    animation: particleFly 1s ease-out forwards;
+  }
+
+  @keyframes particleFly {
+    0%{opacity:1;transform:translate(0,0) scale(1)}
+    100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}
+  }
 </style>
 </head>
 <body>
 
-<canvas id="stars-canvas"></canvas>
-<div class="feedback-overlay" id="feedback-overlay"></div>
+<!-- 별 배경 -->
+<div id="starfield"></div>
 
 <!-- 행성들 -->
-<div class="planet planet1"></div>
-<div class="planet planet2"></div>
-<div class="planet planet3"></div>
+<div class="planet" id="planet1"></div>
+<div class="planet" id="planet2"></div>
+<div class="planet" id="planet3"></div>
 
 <!-- UFO -->
-<div class="ufo">
-  <div class="ufo-body">
-    <div class="ufo-dome"></div>
-    <div class="ufo-light"></div>
-    <div class="ufo-light"></div>
-    <div class="ufo-light"></div>
-  </div>
-</div>
+<div id="ufo">🛸</div>
 
-<!-- 트로피 (항상 표시) -->
-<div class="trophy-counter-start" id="trophy-counter">
-  🏆 <span id="trophy-count">0</span>개
-</div>
+<!-- 트로피 (항상 오른쪽 위) -->
+<div id="trophyDisplay">🏆 <span id="trophyCount">0</span>개</div>
 
 <!-- ===== 시작 화면 ===== -->
-<div class="screen" id="start-screen">
-  <div class="student-name">✨ 정유하의 우주 수학 모험 ✨</div>
-  <div class="title-text">🚀 우주 수학 퀴즈 🚀</div>
-  <div class="subtitle">5학년 수학 | 분수 덧셈·뺄셈 & 소수 곱셈</div>
-  <button id="start-btn" onclick="startGame()">🌟 시작하기 🌟</button>
+<div id="startScreen">
+  <div class="student-name">✨ 정유하의 수학 우주 탐험 ✨</div>
+  <div class="game-title">🚀 수학 우주 탐험 🪐</div>
+  <div class="subtitle">소수의 곱셈 & 분수의 덧셈·뺄셈</div>
+  <button class="start-btn" onclick="startGame()">🌟 시작하기 🌟</button>
 </div>
 
 <!-- ===== 게임 화면 ===== -->
-<div class="screen hidden" id="game-screen">
-  <div class="hud">
-    <div class="hud-top">
-      <!-- 목숨 -->
-      <div class="lives-box">
-        <span class="heart">❤️</span>
-        <span class="lives-text" id="lives-display">3.0</span>
+<div id="gameScreen">
+  <div id="hud">
+    <div id="hudTop">
+      <div id="livesDisplay">
+        <span class="heart" id="h1">❤️</span>
+        <span class="heart" id="h2">❤️</span>
+        <span class="heart" id="h3">❤️</span>
       </div>
-      <!-- 문제 번호 -->
-      <div class="question-num" id="q-num-display">문제 1 / 30</div>
-      <!-- 트로피 -->
-      <div class="trophy-box">🏆 <span id="trophy-count-game">0</span></div>
+      <div id="scoreDisplay">문제: <span id="qNum">1</span>/30</div>
+      <div id="trophyGameDisplay">🏆 <span id="trophyGameCount">0</span></div>
     </div>
+    <div id="progressBar"></div>
+  </div>
 
-    <!-- 진행 바 (10개 점) -->
-    <div class="progress-bar" id="progress-bar"></div>
-
-    <!-- 타이머 -->
-    <div class="timer-wrap">
-      <div class="timer-bar-bg">
-        <div class="timer-bar-fill" id="timer-fill"></div>
-      </div>
-      <div class="timer-num" id="timer-num">30</div>
+  <div id="questionCard">
+    <div id="questionLabel">📡 문제를 풀어라!</div>
+    <div id="questionText">준비 중...</div>
+    <div id="timerBarWrap">
+      <div id="timerBar"></div>
     </div>
+    <div id="timerText">⏱️ 30초</div>
   </div>
 
-  <!-- 문제 -->
-  <div class="question-area" id="question-area">
-    <div class="question-label" id="q-label">분수의 덧셈</div>
-    <div class="boss-label" id="boss-label" style="display:none">🔥 보스 문제! 🔥</div>
-    <div class="question-text" id="q-text">문제 로딩중...</div>
-  </div>
-
-  <!-- 보기 -->
-  <div class="choices-wrap" id="choices-wrap">
-    <button class="choice-btn" onclick="checkAnswer(0)"></button>
-    <button class="choice-btn" onclick="checkAnswer(1)"></button>
-    <button class="choice-btn" onclick="checkAnswer(2)"></button>
-    <button class="choice-btn" onclick="checkAnswer(3)"></button>
+  <div id="choicesGrid">
+    <button class="choice-btn" id="btn0" onclick="checkAnswer(0)"></button>
+    <button class="choice-btn" id="btn1" onclick="checkAnswer(1)"></button>
+    <button class="choice-btn" id="btn2" onclick="checkAnswer(2)"></button>
+    <button class="choice-btn" id="btn3" onclick="checkAnswer(3)"></button>
   </div>
 </div>
 
-<!-- ===== 트로피 획득 화면 ===== -->
-<div class="screen hidden" id="trophy-screen">
-  <div class="trophy-big">🏆</div>
-  <div class="trophy-msg">트로피를 획득했습니다!</div>
+<!-- 보스 경고 -->
+<div id="bossAlert">🔥 도전 문제! 🔥<br><span style="font-size:18px">틀리면 목숨 2.9개 감소!</span></div>
+
+<!-- 트로피 획득 -->
+<div id="trophyAlert">🏆 트로피를 획득했습니다! 🏆<br>🌟 대단해요, 정유하! 🌟</div>
+
+<!-- 게임오버 -->
+<div id="gameOverScreen">
+  <h2>💥 게임 오버 💥</h2>
+  <p id="gameOverMsg">목숨이 모두 사라졌어요!</p>
+  <button class="retry-btn" onclick="restartGame()">🔄 다시 도전!</button>
+  <button class="retry-btn" onclick="goHome()" style="background:linear-gradient(135deg,#00b894,#00cec9);box-shadow:0 0 30px #00b894">🏠 처음으로</button>
 </div>
 
-<!-- ===== 게임 오버 화면 ===== -->
-<div class="screen hidden" id="gameover-screen">
-  <div class="gameover-title">💫 우주 표류 중... 💫</div>
-  <div class="gameover-sub" id="gameover-sub">목숨이 다 떨어졌어요!</div>
-  <button id="restart-btn" onclick="goToStart()">🚀 다시 시작하기</button>
-</div>
+<!-- 플래시 오버레이 -->
+<div id="flashOverlay"></div>
+<div id="feedbackText"></div>
 
 <script>
-// ===== 별 배경 =====
-const canvas = document.getElementById('stars-canvas');
-const ctx = canvas.getContext('2d');
-let stars = [];
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-
-function initStars() {
-  stars = [];
-  for (let i = 0; i < 200; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.8 + 0.2,
-      alpha: Math.random(),
-      speed: Math.random() * 0.5 + 0.1,
-      twinkleSpeed: Math.random() * 0.02 + 0.005
-    });
+  // ===== 별 생성 =====
+  const starfield = document.getElementById('starfield');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 3 + 1;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random()*100}%;
+      left:${Math.random()*100}%;
+      animation-delay:${Math.random()*3}s;
+      animation-duration:${1.5+Math.random()*2}s;
+    `;
+    starfield.appendChild(s);
   }
-}
 
-function animateStars() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#000010';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  stars.forEach(s => {
-    s.alpha += s.twinkleSpeed;
-    if (s.alpha > 1 || s.alpha < 0) s.twinkleSpeed *= -1;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(200,220,255,${Math.abs(Math.sin(s.alpha))})`;
-    ctx.fill();
-  });
-  requestAnimationFrame(animateStars);
-}
+  // ===== 게임 상태 =====
+  let lives = 3;           // 실제 목숨 (0~3, 소수 가능)
+  let score = 0;
+  let questionNum = 0;     // 현재 문제 번호 (0-indexed)
+  let trophies = 0;
+  let timerInterval = null;
+  let timeLeft = 30;
+  let currentAnswer = null;
+  let isBossQuestion = false;
+  let canAnswer = false;
+  let answered = false;
 
-resizeCanvas();
-initStars();
-animateStars();
-window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
-
-// ===== 게임 상태 =====
-let lives = 3.0;
-let trophies = 0;
-let currentQ = 0; // 0~29
-let timerInterval = null;
-let timeLeft = 30;
-let correctAnswer = null;
-let answered = false;
-
-// 정답 처리 잠금
-let locked = false;
-
-// ===== 화면 전환 =====
-function showScreen(id) {
-  ['start-screen','game-screen','trophy-screen','gameover-screen'].forEach(s => {
-    const el = document.getElementById(s);
-    if (s === id) {
-      el.classList.remove('hidden');
-    } else {
-      el.classList.add('hidden');
-    }
-  });
-}
-
-// ===== 게임 시작 =====
-function startGame() {
-  lives = 3.0;
-  currentQ = 0;
-  updateTrophyDisplay();
-  showScreen('game-screen');
-  buildProgressBar();
-  loadQuestion();
-}
-
-function updateTrophyDisplay() {
-  document.getElementById('trophy-count').textContent = trophies;
-  document.getElementById('trophy-count-game').textContent = trophies;
-}
-
-// ===== 진행 바 =====
-function buildProgressBar() {
-  const bar = document.getElementById('progress-bar');
-  bar.innerHTML = '';
-  for (let i = 0; i < 10; i++) {
-    const dot = document.createElement('div');
-    dot.classList.add('prog-dot');
-    dot.id = `dot-${i}`;
-    bar.appendChild(dot);
-  }
-}
-
-function updateProgressBar() {
-  for (let i = 0; i < 10; i++) {
-    const dot = document.getElementById(`dot-${i}`);
-    dot.classList.remove('done', 'boss');
-    const globalIdx = Math.floor(currentQ / 10) * 10 + i;
-    if (i === 9) {
-      // 10번째는 보스
-      if (currentQ > globalIdx) dot.classList.add('done');
-      else if (currentQ === globalIdx) dot.classList.add('boss');
-    } else {
-      if (currentQ > globalIdx) dot.classList.add('done');
+  // ===== 진행 바 생성 (30개) =====
+  function buildProgressBar() {
+    const bar = document.getElementById('progressBar');
+    bar.innerHTML = '';
+    for (let i = 0; i < 30; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'progress-dot';
+      dot.id = 'dot' + i;
+      // 10번째, 20번째, 30번째(idx 9,19,29)는 보스
+      if (i === 9 || i === 19 || i === 29) {
+        dot.className += ' boss';
+        dot.innerHTML = '⚡';
+        dot.title = '도전 문제!';
+      } else {
+        dot.innerHTML = (i+1);
+        dot.style.fontSize = '9px';
+      }
+      bar.appendChild(dot);
     }
   }
-}
 
-// ===== 문제 생성 =====
-function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+  function updateProgressBar() {
+    for (let i = 0; i < 30; i++) {
+      const dot = document.getElementById('dot' + i);
+      if (i < questionNum) {
+        dot.classList.add('done');
+      } else {
+        dot.classList.remove('done');
+      }
+    }
+  }
 
-function genFractionAdd() {
-  // 5-1 분수 덧셈 (진분수+진분수, 같은분모 또는 쉬운 다른분모)
-  const denoms = [2,3,4,5,6,8,10];
-  let d = denoms[Math.floor(Math.random() * denoms.length)];
-  // 같은 분모
-  let n1 = Math.floor(Math.random() * (d - 2)) + 1;
-  let n2 = Math.floor(Math.random() * (d - 1 - n1)) + 1;
-  // 합이 d 미만이 되도록 (진분수 결과)
-  if (n1 + n2 >= d) { n2 = Math.max(1, d - n1 - 1); }
-  if (n2 < 1) { n1 = 1; n2 = 1; if (d <= 2) d = 4; }
-  const ansN = n1 + n2;
-  const g = gcd(ansN, d);
-  const simplN = ansN / g, simplD = d / g;
-  const ansStr = simplD === 1 ? `${simplN}` : `${simplN}/${simplD}`;
-  const question = `${n1}/${d} + ${n2}/${d} = ?`;
-  return { label: '분수의 덧셈', question, answer: ansStr, ansNum: ansN/d };
-}
+  // ===== 목숨 업데이트 =====
+  function updateLives() {
+    const heartIds = ['h1','h2','h3'];
+    for (let i = 0; i < 3; i++) {
+      const h = document.getElementById(heartIds[i]);
+      if (lives >= (i + 1)) {
+        h.classList.remove('empty');
+        h.textContent = '❤️';
+      } else if (lives > i && lives < (i+1)) {
+        // 반 깍인 상태 (소수 목숨)
+        h.classList.remove('empty');
+        h.textContent = '🫀';
+      } else {
+        h.classList.add('empty');
+        h.textContent = '🖤';
+      }
+    }
+  }
 
-function genFractionSub() {
-  const denoms = [2,3,4,5,6,8,10];
-  let d = denoms[Math.floor(Math.random() * denoms.length)];
-  let n1 = Math.floor(Math.random() * (d - 1)) + 2;
-  let n2 = Math.floor(Math.random() * (n1 - 1)) + 1;
-  const ansN = n1 - n2;
-  if (ansN <= 0) { return genFractionSub(); }
-  const g = gcd(ansN, d);
-  const simplN = ansN / g, simplD = d / g;
-  const ansStr = simplD === 1 ? `${simplN}` : `${simplN}/${simplD}`;
-  const question = `${n1}/${d} - ${n2}/${d} = ?`;
-  return { label: '분수의 뺄셈', question, answer: ansStr, ansNum: ansN/d };
-}
+  // ===== 문제 생성 =====
+  // 소수의 곱셈 (5-2학기)
+  function makeDecimalMultiply(boss) {
+    if (boss) {
+      // 조금 더 어렵게
+      const a = (Math.floor(Math.random()*9)+2) / 10 * (Math.floor(Math.random()*4)+2);
+      const numA = parseFloat(((Math.floor(Math.random()*18)+2)/10).toFixed(1));
+      const numB = Math.floor(Math.random()*8)+2;
+      const ans = parseFloat((numA * numB).toFixed(2));
+      return {
+        question: `${numA} × ${numB} = ?`,
+        answer: ans,
+        type: 'decimal'
+      };
+    } else {
+      // 쉽게: 0.몇 × 1자리수
+      const numA = parseFloat(((Math.floor(Math.random()*9)+1)/10).toFixed(1));
+      const numB = Math.floor(Math.random()*9)+1;
+      const ans = parseFloat((numA * numB).toFixed(2));
+      return {
+        question: `${numA} × ${numB} = ?`,
+        answer: ans,
+        type: 'decimal'
+      };
+    }
+  }
 
-function genDecimalMul() {
-  // 5-2 소수 곱셈 (소수 × 자연수, 또는 소수 × 소수 쉬운것)
-  const type = Math.random() < 0.6 ? 1 : 2;
-  if (type === 1) {
-    // 소수 × 자연수
-    const decimals = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.2, 1.5, 2.5, 0.25];
-    const d = decimals[Math.floor(Math.random() * decimals.length)];
-    const n = Math.floor(Math.random() * 8) + 2;
-    const ans = Math.round(d * n * 100) / 100;
-    const question = `${d} × ${n} = ?`;
-    return { label: '소수의 곱셈
+  // 분수의 덧셈/뺄셈 (5-1학기) - 동분모 위주
+  function makeFractionAddSub(boss) {
+    const ops = ['+', '-'];
+    const op = ops[Math.floor(Math.random()*2)];
+
+    let denom, numA, numB, ans, question;
+
+    if (boss) {
+      // 이분모 (간단한)
+      const denoms = [[2,4],[3,6],[4,8],[2,6],[3,9]];
+      const pair = denoms[Math.floor(Math.random()*denoms.length)];
+      const d1 = pair[0], d2 = pair[1];
+      const lcd = lcm(d1, d2);
+      const n1 = Math.floor(Math.random()*3)+1;
+      let n2 = Math.floor(Math.random()*3)+1;
+      if (op === '-' && (n1/d1) <= (n2/d2)) n2 = 1;
+
+      const an1 = n1 * (lcd/d1);
+      const an2 = n2 * (lcd/d2);
+      let ansNum = op === '+' ? an1+an2 : an1-an2;
+      // 약분
+      const g = gcd(Math.abs(ansNum), lcd);
+      const ansNumR = ansNum/g;
+      const ansDenR = lcd/g;
+
+      const qText = `${n1}/${d1} ${op} ${n2}/${d2}`;
+      let ansStr;
+      if (ansDenR === 1) ansStr = `${ansNumR}`;
+      else if (ansNumR >= ansDenR) {
+        const whole = Math.floor(ansNumR/ansDenR);
+        const rem = ansNumR % ansDenR;
+        ansStr = rem === 0 ? `${whole}` : `${whole} ${rem}/${ansDenR}`;
+      } else {
+        ansStr = `${ansNumR}/${ansDenR}`;
+      }
+
+      return {
+        question: `${qText} = ?`,
+        answer: ansStr,
+        answerNum: ansNum/lcd,
+        type: 'fraction',
+        ansNum
