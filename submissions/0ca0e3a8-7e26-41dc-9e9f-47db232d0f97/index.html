@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ㅇㅇㅇ의 구구단 퀴즈 게임</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .student-name {
+      font-size: 1.2rem;
+      color: #ffe0f7;
+      font-weight: 700;
+      background: rgba(255,255,255,0.2);
+      padding: 8px 24px;
+      border-radius: 50px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .title span {
+      color: #ffe94d;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 30px;
+      padding: 36px 40px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    /* ── 설정 화면 ── */
+    #setup-screen .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    .dan-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .dan-btn {
+      padding: 14px 0;
+      border: 3px solid #e0e0ff;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: #f4f4ff;
+      color: #555;
+      transition: all 0.2s;
+    }
+
+    .dan-btn.selected {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-color: #667eea;
+      color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 4px 14px rgba(102,126,234,0.4);
+    }
+
+    .dan-btn:hover:not(.selected) {
+      background: #e8e8ff;
+      border-color: #aab0ff;
+    }
+
+    .select-all-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .select-all-row button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #btn-all {
+      background: #ffe94d;
+      color: #333;
+    }
+
+    #btn-all:hover { background: #ffd900; }
+
+    #btn-clear {
+      background: #ffe0e0;
+      color: #c0392b;
+    }
+
+    #btn-clear:hover { background: #ffc0c0; }
+
+    .count-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .count-row label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #555;
+    }
+
+    .count-row select {
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 8px 16px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      background: #f9f9ff;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      color: #fff;
+      border: none;
+      border-radius: 18px;
+      font-size: 1.4rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(17,153,142,0.4);
+    }
+
+    .start-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(17,153,142,0.5);
+    }
+
+    .start-btn:disabled {
+      background: #ccc;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── 퀴즈 화면 ── */
+    #quiz-screen { display: none; }
+
+    .progress-bar-wrap {
+      background: #eee;
+      border-radius: 50px;
+      height: 14px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      border-radius: 50px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-text {
+      font-size: 0.88rem;
+      color: #999;
+      margin-bottom: 20px;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .score-badge {
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 50px;
+    }
+
+    .badge-correct {
+      background: #e8fff0;
+      color: #27ae60;
+    }
+
+    .badge-wrong {
+      background: #fff0f0;
+      color: #e74c3c;
+    }
+
+    .question-box {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 22px;
+      padding: 30px 20px;
+      margin-bottom: 28px;
+    }
+
+    .question-text {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 1px 2px 6px rgba(0,0,0,0.2);
+      letter-spacing: 2px;
+    }
+
+    .question-text .eq {
+      color: #ffe94d;
+    }
+
+    .choices-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .choice-btn {
+      padding: 20px 10px;
+      border: 3px solid #e0e0ff;
+      border-radius: 16px;
+      font-size: 1.6rem;
+      font-weight: 900;
+      cursor: pointer;
+      background: #f4f4ff;
+      color: #444;
+      transition: all 0.18s;
+    }
+
+    .choice-btn:hover:not(:disabled) {
+      background: #e0e0ff;
+      border-color: #667eea;
+      transform: scale(1.04);
+    }
+
+    .choice-btn.correct {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      border-color: #11998e;
+      color: #fff;
+      animation: pop 0.3s ease;
+    }
+
+    .choice-btn.wrong {
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      border-color: #ff416c;
+      color: #fff;
+      animation: shake 0.3s ease;
+    }
+
+    .choice-btn.reveal {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+      border-color: #11998e;
+      color: #fff;
+    }
+
+    .choice-btn:disabled { cursor: not-allowed; }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .feedback {
+      font-size: 1.1rem;
+      font-weight: 700;
+      min-height: 28px;
+      color: #555;
+    }
+
+    .feedback.ok { color: #27ae60; }
+    .feedback.fail { color: #e74c3c; }
+
+    /* ── 결과 화면 ── */
+    #result-screen { display: none; }
+
+    .result-emoji {
+      font-size: 5rem;
+      margin-bottom: 10px;
+    }
+
+    .result-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .result-score {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .result-msg {
+      font-size: 1rem;
+      color: #777;
+      margin-bottom: 28px;
+    }
+
+    .result-detail {
+      background: #f8f8ff;
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .result-detail p {
+      font-size: 0.95rem;
+      color: #555;
+      padding: 6px 0;
+      border-bottom: 1px dashed #e0e0ff;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .result-detail p:last-child { border-bottom: none; }
+
+    .result-detail span.v { font-weight: 700; color: #333; }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .retry-btn {
+      flex: 1;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(102,126,234,0.4);
+    }
+
+    .retry-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(102,126,234,0.5);
+    }
+
+    .home-btn {
+      flex: 1;
+      padding: 16px;
+      background: #f0f0ff;
+      color: #667eea;
+      border: 2px solid #c0c8ff;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .home-btn:hover {
+      background: #e0e4ff;
+      transform: translateY(-2px);
+    }
+
+    /* 별 애니메이션 */
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 50%;
+      animation: twinkle 3s infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.2; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.6); }
+    }
+
+    .card { position: relative; z-index: 1; }
+    .header { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- 배경 별 -->
+  <div class="stars" id="stars"></div>
+
+  <div class="header">
+    <div class="student-name">🌟 ㅇㅇㅇ 학생</div>
+    <div class="title">구구단 <span>퀴즈</span> 게임 🎯</div>
+  </div>
+
+  <div class="card">
+
+    <!-- ① 설정 화면 -->
+    <div id="setup-screen">
+      <p class="section-title">📚 풀고 싶은 단을 골라봐요!</p>
+      <div class="dan-grid" id="dan-grid"></div>
+
+      <div class="select-all-row">
+        <button id="btn-all">✅ 전체 선택</button>
+        <button id="btn-clear">❌ 전체 해제</button>
+      </div>
+
+      <div class="count-row">
+        <label>📝 문제 수</label>
+        <select id="q-count">
+          <option value="5">5문제</option>
+          <option value="10" selected>10문제</option>
+          <option value="15">15문제</option>
+          <option value="20">20문제</option>
+        </select>
+      </div>
+
+      <button class="start-btn" id="start-btn" onclick="startQuiz()">🚀 퀴즈 시작!</button>
+    </div>
+
+    <!-- ② 퀴즈 화면 -->
+    <div id="quiz-screen">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <div class="progress-text" id="progress-text"></div>
+
+      <div class="score-row">
+        <span class="score-badge badge-correct" id="correct-cnt">⭕ 0</span>
+        <span class="score-badge badge-wrong" id="wrong-cnt">❌
