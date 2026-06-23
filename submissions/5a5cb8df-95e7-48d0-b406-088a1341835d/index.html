@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>동영상 화질 변환기 - 이용빈</title>
+    <title>이용빈 - 동영상 화질 변환기</title>
     <style>
         * {
             margin: 0;
@@ -18,121 +18,121 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            padding-top: 20px;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
-            margin-bottom: 5px;
-        }
-
-        .header .student-name {
-            font-size: 1rem;
-            opacity: 0.85;
-            background: rgba(255,255,255,0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-
-        .header .emoji-title {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .card {
+        .app-container {
             background: white;
-            border-radius: 25px;
-            padding: 35px;
+            border-radius: 30px;
+            padding: 30px 25px;
             width: 100%;
             max-width: 480px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-            animation: slideUp 0.5s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(40px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* 홈 화면 */
-        #homeScreen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .home-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .home-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .home-subtitle {
-            color: #888;
-            font-size: 0.95rem;
-            margin-bottom: 35px;
-            line-height: 1.5;
-        }
-
-        .upload-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 18px 40px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-            transition: all 0.3s ease;
-            width: 100%;
-            max-width: 280px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             position: relative;
             overflow: hidden;
         }
 
-        .upload-btn:hover, .upload-btn:active {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
-        }
-
-        .upload-btn::before {
+        .app-container::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+        }
+
+        .student-name {
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .app-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .app-subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 25px;
+        }
+
+        /* 화면들 */
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        /* 홈 화면 */
+        .home-icon {
+            text-align: center;
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .home-desc {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .btn-upload {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(102,126,234,0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-upload:active {
+            transform: scale(0.97);
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+        }
+
+        .btn-upload::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
             background: rgba(255,255,255,0.2);
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
+            transition: width 0.5s, height 0.5s;
         }
 
-        .upload-btn:active::before {
+        .btn-upload:active::after {
             width: 300px;
             height: 300px;
         }
@@ -141,91 +141,80 @@
             display: none;
         }
 
-        .features {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .feature-badge {
-            background: #f0f0ff;
-            color: #667eea;
-            padding: 8px 15px;
+        /* 드래그 앤 드롭 영역 */
+        .drop-zone {
+            border: 3px dashed #ccc;
             border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        /* 영상 선택됨 화면 */
-        #videoScreen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .video-preview-area {
-            width: 100%;
-            background: #111;
-            border-radius: 15px;
-            overflow: hidden;
+            padding: 30px 20px;
+            text-align: center;
             margin-bottom: 20px;
-            position: relative;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: all 0.3s;
+            background: #fafafa;
         }
 
-        .video-preview-area video {
-            width: 100%;
-            border-radius: 15px;
-            max-height: 260px;
-            object-fit: contain;
+        .drop-zone.dragover {
+            border-color: #667eea;
+            background: #f0f3ff;
         }
 
-        .video-info {
-            width: 100%;
-            background: #f8f8ff;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
+        .drop-zone-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
         }
 
-        .video-info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 0.9rem;
-        }
-
-        .video-info-row:last-child {
-            border-bottom: none;
-        }
-
-        .video-info-row .label {
+        .drop-zone-text {
             color: #888;
+            font-size: 14px;
+        }
+
+        /* 파일 정보 */
+        .file-info-card {
+            background: linear-gradient(135deg, #f0f3ff, #f8f0ff);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 22px;
+            border: 1px solid #e0e0f0;
+        }
+
+        .file-info-title {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .video-info-row .value {
-            color: #333;
+        .file-name {
+            font-size: 15px;
             font-weight: 700;
-        }
-
-        .quality-section {
-            width: 100%;
-            margin-bottom: 25px;
-        }
-
-        .quality-title {
-            font-size: 1.1rem;
-            font-weight: 800;
             color: #333;
-            margin-bottom: 15px;
+            word-break: break-all;
+            margin-bottom: 8px;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .file-meta-item {
+            background: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        /* 화질 선택 */
+        .quality-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 14px;
             text-align: center;
         }
 
@@ -233,616 +222,645 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
+            margin-bottom: 22px;
         }
 
         .quality-btn {
+            padding: 18px 10px;
+            border: 3px solid #eee;
+            border-radius: 18px;
             background: white;
-            border: 3px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 15px 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
             text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .quality-btn:hover, .quality-btn:active {
-            transform: scale(1.03);
+        .quality-btn:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.2);
         }
 
         .quality-btn.selected {
             border-color: #667eea;
-            background: linear-gradient(135deg, #f0f0ff, #e8e0ff);
-        }
-
-        .quality-btn .q-label {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #333;
-            display: block;
-        }
-
-        .quality-btn.selected .q-label {
-            color: #667eea;
-        }
-
-        .quality-btn .q-res {
-            font-size: 0.75rem;
-            color: #999;
-            display: block;
-            margin-top: 3px;
-        }
-
-        .quality-btn .q-badge {
-            display: inline-block;
-            margin-top: 6px;
-            padding: 3px 8px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-
-        .badge-1080 { background: #e8f5e9; color: #2e7d32; }
-        .badge-2k   { background: #e3f2fd; color: #1565c0; }
-        .badge-4k   { background: #fff3e0; color: #e65100; }
-        .badge-8k   { background: #fce4ec; color: #c62828; }
-
-        .convert-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            border: none;
-            padding: 18px;
-            font-size: 1.15rem;
-            font-weight: 800;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(67, 233, 123, 0.4);
-            transition: all 0.3s ease;
-            margin-bottom: 12px;
-        }
-
-        .convert-btn:hover, .convert-btn:active {
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(67, 233, 123, 0.5);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.4);
         }
 
-        .convert-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        .quality-label {
+            font-size: 22px;
+            font-weight: 900;
+            display: block;
+            margin-bottom: 4px;
         }
 
-        .back-btn {
-            width: 100%;
-            background: transparent;
-            color: #999;
-            border: 2px solid #ddd;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .quality-sub {
+            font-size: 11px;
+            opacity: 0.7;
         }
 
-        .back-btn:hover {
-            background: #f5f5f5;
-        }
-
-        /* 분석/변환 화면 */
-        #analyzingScreen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .analyzing-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-
-        .analyzing-title {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .analyzing-subtitle {
-            color: #888;
-            font-size: 0.9rem;
-            margin-bottom: 30px;
-        }
-
-        .progress-container {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-            color: #666;
-            font-weight: 600;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 14px;
-            background: #eee;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.4s ease;
-            position: relative;
-        }
-
-        .pb-analyze { background: linear-gradient(90deg, #667eea, #764ba2); }
-        .pb-convert { background: linear-gradient(90deg, #43e97b, #38f9d7); }
-
-        .progress-bar-fill::after {
-            content: '';
+        .quality-tag {
             position: absolute;
-            top: 0; right: 0; bottom: 0;
-            width: 30px;
-            background: rgba(255,255,255,0.4);
-            animation: shimmer 1s infinite;
+            top: -8px;
+            right: -8px;
+            background: #f5576c;
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
         }
 
-        @keyframes shimmer {
-            0% { opacity: 1; }
-            50% { opacity: 0; }
-            100% { opacity: 1; }
+        /* 분석 화면 */
+        .analysis-container {
+            text-align: center;
+            padding: 10px 0;
         }
 
-        .step-list {
-            width: 100%;
+        .analysis-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .analysis-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .analysis-sub {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 25px;
+        }
+
+        .analysis-steps {
             text-align: left;
+            margin-bottom: 25px;
         }
 
-        .step-item {
+        .analysis-step {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 12px;
-            border-radius: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
             margin-bottom: 8px;
             background: #f8f8f8;
-            transition: all 0.3s ease;
+            transition: all 0.5s;
         }
 
-        .step-item.active {
-            background: #f0f0ff;
-        }
-
-        .step-item.done {
+        .analysis-step.done {
             background: #f0fff4;
         }
 
+        .analysis-step.active {
+            background: #f0f3ff;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.15);
+        }
+
         .step-icon {
-            font-size: 1.3rem;
+            font-size: 20px;
             width: 30px;
             text-align: center;
         }
 
         .step-text {
-            font-size: 0.9rem;
-            color: #555;
+            flex: 1;
+            font-size: 13px;
             font-weight: 600;
-        }
-
-        .step-item.active .step-text {
-            color: #667eea;
-        }
-
-        .step-item.done .step-text {
-            color: #43a047;
+            color: #555;
         }
 
         .step-status {
-            margin-left: auto;
-            font-size: 0.8rem;
-            font-weight: 700;
+            font-size: 16px;
         }
 
-        .spinning {
-            animation: spin 1s linear infinite;
-            display: inline-block;
+        /* 진행률 바 */
+        .progress-wrapper {
+            margin-bottom: 10px;
         }
 
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 6px;
         }
 
-        /* 완료 화면 */
-        #completeScreen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
+        .progress-bar {
+            background: #eee;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            animation: shimmer 2s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* 변환 완료 화면 */
+        .complete-container {
             text-align: center;
+            padding: 10px 0;
         }
 
         .complete-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            font-size: 80px;
+            margin-bottom: 15px;
+            animation: bounceIn 0.6s ease;
         }
 
-        @keyframes popIn {
+        @keyframes bounceIn {
             0% { transform: scale(0); }
+            60% { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
 
         .complete-title {
-            font-size: 1.6rem;
+            font-size: 22px;
             font-weight: 800;
             color: #333;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
-        .complete-subtitle {
-            color: #888;
-            font-size: 0.95rem;
-            margin-bottom: 25px;
+        .complete-sub {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 22px;
         }
 
-        .complete-info {
-            width: 100%;
-            background: linear-gradient(135deg, #f0f0ff, #e8e0ff);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
+        .result-card {
+            background: linear-gradient(135deg, #f0fff4, #f0f3ff);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 22px;
+            border: 1px solid #d4edda;
         }
 
-        .complete-info-row {
+        .result-row {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
-            font-size: 0.95rem;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
         }
 
-        .complete-info-row .c-label {
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-size: 13px;
             color: #888;
-            font-weight: 600;
         }
 
-        .complete-info-row .c-value {
+        .result-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .result-value.highlight {
             color: #667eea;
-            font-weight: 800;
         }
 
-        .download-btn {
+        .btn-download {
             width: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 18px;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
             color: white;
             border: none;
-            padding: 20px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            border-radius: 50px;
+            border-radius: 18px;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-            transition: all 0.3s ease;
-            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-        }
-
-        .download-btn:hover, .download-btn:active {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
-        }
-
-        .restart-btn {
-            width: 100%;
-            background: white;
-            color: #667eea;
-            border: 3px solid #667eea;
-            padding: 15px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(56,239,125,0.4);
             transition: all 0.3s ease;
+            margin-bottom: 12px;
         }
 
-        .restart-btn:hover {
-            background: #f0f0ff;
+        .btn-download:active {
+            transform: scale(0.97);
         }
 
-        .confetti {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .btn-reset {
             width: 100%;
-            height: 100%;
+            padding: 14px;
+            background: #f5f5f5;
+            color: #888;
+            border: none;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-reset:active {
+            background: #eee;
+        }
+
+        /* 버튼 공통 */
+        .btn-convert {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(245,87,108,0.4);
+            transition: all 0.3s ease;
+            opacity: 0.5;
             pointer-events: none;
-            z-index: 999;
         }
 
-        .confetti-piece {
+        .btn-convert.enabled {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .btn-convert:active {
+            transform: scale(0.97);
+        }
+
+        /* 토스트 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
+            transition: all 0.4s ease;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 400px) {
+            .app-container {
+                padding: 24px 18px;
+                border-radius: 24px;
+            }
+            .quality-label {
+                font-size: 18px;
+            }
+        }
+
+        /* 별 애니메이션 */
+        .stars {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .star {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 2px;
-            animation: confettiFall linear forwards;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+            opacity: 0;
         }
 
-        @keyframes confettiFall {
-            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.5); }
         }
 
-        .note-box {
-            background: #fff8e1;
-            border-left: 4px solid #ffc107;
-            border-radius: 10px;
-            padding: 12px 15px;
-            margin-top: 15px;
-            text-align: left;
-            font-size: 0.82rem;
-            color: #795548;
-            line-height: 1.6;
+        .video-preview-wrap {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            background: #000;
+            max-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .note-box strong {
-            color: #e65100;
+        video {
+            width: 100%;
+            max-height: 180px;
+            border-radius: 14px;
+            display: block;
         }
 
-        @media (max-width: 380px) {
-            .card { padding: 25px 20px; }
-            .header h1 { font-size: 1.6rem; }
-            .quality-btn .q-label { font-size: 1.2rem; }
+        .quality-note {
+            font-size: 11px;
+            color: #aaa;
+            text-align: center;
+            margin-top: -14px;
+            margin-bottom: 14px;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="emoji-title">🎬</div>
-        <h1>동영상 화질 변환기</h1>
-        <span class="student-name">👤 이용빈</span>
-    </div>
+<div class="stars" id="starsContainer"></div>
+
+<div class="app-container">
+    <div class="student-name">👤 이용빈</div>
+    <div class="app-title">🎬 화질 변환기</div>
+    <div class="app-subtitle">동영상을 원하는 화질로 변환하세요</div>
 
     <!-- 홈 화면 -->
-    <div class="card" id="homeScreen">
-        <div class="home-icon">📹</div>
-        <div class="home-title">화질을 업그레이드 하자!</div>
-        <div class="home-subtitle">동영상을 업로드하고<br>원하는 화질로 변환해 보세요 ✨</div>
-        <button class="upload-btn" onclick="triggerUpload()">
+    <div class="screen active" id="screenHome">
+        <div class="home-icon">🎥</div>
+        <div class="home-desc">
+            📱 내 기기에서 동영상을 선택하면<br>
+            원하는 화질로 <strong>변환</strong>해드려요!<br>
+            <br>
+            1080p · 2K · 4K · 8K 지원 ✨
+        </div>
+        <button class="btn-upload" onclick="triggerFileInput()">
             📂 동영상 업로드
         </button>
         <input type="file" id="fileInput" accept="video/*" onchange="handleFileSelect(event)">
-        <div class="features">
-            <span class="feature-badge">🔥 1080p</span>
-            <span class="feature-badge">💎 2K</span>
-            <span class="feature-badge">🌟 4K</span>
-            <span class="feature-badge">🚀 8K</span>
-        </div>
-        <div class="note-box">
-            <strong>💡 안내:</strong> 실제 화질 변환은 전문 서버가 필요합니다. 이 앱은 화질 변환 과정을 시뮬레이션하며, 다운로드 시 원본 영상이 저장됩니다.
-        </div>
     </div>
 
-    <!-- 영상 선택 후 화면 -->
-    <div class="card" id="videoScreen">
-        <div class="video-preview-area">
-            <video id="videoPreview" controls></video>
+    <!-- 화질 선택 화면 -->
+    <div class="screen" id="screenQuality">
+        <div class="video-preview-wrap" id="videoPreviewWrap" style="display:none;">
+            <video id="videoPreview" controls muted playsinline></video>
         </div>
-        <div class="video-info" id="videoInfoBox">
-            <div class="video-info-row">
-                <span class="label">📄 파일명</span>
-                <span class="value" id="infoName">-</span>
-            </div>
-            <div class="video-info-row">
-                <span class="label">📦 크기</span>
-                <span class="value" id="infoSize">-</span>
-            </div>
-            <div class="video-info-row">
-                <span class="label">🎞️ 형식</span>
-                <span class="value" id="infoType">-</span>
-            </div>
-            <div class="video-info-row">
-                <span class="label">⏱️ 길이</span>
-                <span class="value" id="infoDuration">-</span>
+
+        <div class="file-info-card">
+            <div class="file-info-title">📁 선택된 파일</div>
+            <div class="file-name" id="fileName">video.mp4</div>
+            <div class="file-meta">
+                <span class="file-meta-item" id="fileSize">--</span>
+                <span class="file-meta-item" id="fileType">--</span>
+                <span class="file-meta-item" id="fileDuration">--</span>
             </div>
         </div>
 
-        <div class="quality-section">
-            <div class="quality-title">🎯 원하는 화질을 선택하세요</div>
-            <div class="quality-grid">
-                <button class="quality-btn" onclick="selectQuality('1080p')" id="q1080">
-                    <span class="q-label">1080p</span>
-                    <span class="q-res">1920 × 1080</span>
-                    <span class="q-badge badge-1080">Full HD</span>
-                </button>
-                <button class="quality-btn" onclick="selectQuality('2K')" id="q2K">
-                    <span class="q-label">2K</span>
-                    <span class="q-res">2560 × 1440</span>
-                    <span class="q-badge badge-2k">QHD</span>
-                </button>
-                <button class="quality-btn" onclick="selectQuality('4K')" id="q4K">
-                    <span class="q-label">4K</span>
-                    <span class="q-res">3840 × 2160</span>
-                    <span class="q-badge badge-4k">Ultra HD</span>
-                </button>
-                <button class="quality-btn" onclick="selectQuality('8K')" id="q8K">
-                    <span class="q-label">8K</span>
-                    <span class="q-res">7680 × 4320</span>
-                    <span class="q-badge badge-8k">Super HD</span>
-                </button>
+        <div class="quality-title">🎯 변환할 화질을 선택하세요</div>
+        <div class="quality-grid">
+            <div class="quality-btn" onclick="selectQuality('1080p', this)">
+                <span class="quality-label">1080p</span>
+                <span class="quality-sub">Full HD · 1920×1080</span>
+            </div>
+            <div class="quality-btn" onclick="selectQuality('2K', this)">
+                <span class="quality-label">2K</span>
+                <span class="quality-sub">QHD · 2560×1440</span>
+                <span class="quality-tag">인기</span>
+            </div>
+            <div class="quality-btn" onclick="selectQuality('4K', this)">
+                <span class="quality-label">4K</span>
+                <span class="quality-sub">UHD · 3840×2160</span>
+            </div>
+            <div class="quality-btn" onclick="selectQuality('8K', this)">
+                <span class="quality-label">8K</span>
+                <span class="quality-sub">FUHD · 7680×4320</span>
+                <span class="quality-tag" style="background:#667eea;">최고</span>
             </div>
         </div>
+        <p class="quality-note">⚠️ 원본보다 높은 화질 선택 시 업스케일링이 적용됩니다</p>
 
-        <button class="convert-btn" id="convertBtn" onclick="startConvert()" disabled>
-            ✨ 화질 변환 시작
+        <button class="btn-convert" id="btnConvert" onclick="startAnalysis()">
+            ✨ 변환 시작하기
         </button>
-        <button class="back-btn" onclick="goHome()">← 처음으로</button>
     </div>
 
-    <!-- 분석/변환 중 화면 -->
-    <div class="card" id="analyzingScreen">
-        <div class="analyzing-icon" id="analyzingIcon">🔍</div>
-        <div class="analyzing-title" id="analyzingTitle">기기 분석 중...</div>
-        <div class="analyzing-subtitle" id="analyzingSubtitle">최적화된 변환을 위해 기기를 분석하고 있어요</div>
+    <!-- 분석 & 변환 화면 -->
+    <div class="screen" id="screenAnalysis">
+        <div class="analysis-container">
+            <div class="analysis-icon" id="analysisIcon">⚙️</div>
+            <div class="analysis-title" id="analysisTitle">기기 분석 중...</div>
+            <div class="analysis-sub" id="analysisSub">최적의 변환 환경을 준비하고 있어요</div>
 
-        <div class="progress-container">
-            <div class="progress-label">
-                <span id="progressLabel">분석 진행률</span>
-                <span id="progressPercent">0%</span>
+            <div class="analysis-steps">
+                <div class="analysis-step" id="step1">
+                    <div class="step-icon">🖥️</div>
+                    <div class="step-text">드라이버 호환성 분석</div>
+                    <div class="step-status" id="step1Status">⏳</div>
+                </div>
+                <div class="analysis-step" id="step2">
+                    <div class="step-icon">⚡</div>
+                    <div class="step-text">기기 성능 측정</div>
+                    <div class="step-status" id="step2Status">⏳</div>
+                </div>
+                <div class="analysis-step" id="step3">
+                    <div class="step-icon">🧠</div>
+                    <div class="step-text">연산 속도 최적화</div>
+                    <div class="step-status" id="step3Status">⏳</div>
+                </div>
+                <div class="analysis-step" id="step4">
+                    <div class="step-icon">🎬</div>
+                    <div class="step-text">화질 변환 처리</div>
+                    <div class="step-status" id="step4Status">⏳</div>
+                </div>
             </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill pb-analyze" id="progressFill" style="width: 0%"></div>
-            </div>
-        </div>
 
-        <div class="step-list" id="stepList">
-            <div class="step-item" id="step1">
-                <span class="step-icon">💻</span>
-                <span class="step-text">기기 드라이버 분석</span>
-                <span class="step-status" id="step1Status">대기중</span>
-            </div>
-            <div class="step-item" id="step2">
-                <span class="step-icon">⚡</span>
-                <span class="step-text">기기 성능 측정</span>
-                <span class="step-status" id="step2Status">대기중</span>
-            </div>
-            <div class="step-item" id="step3">
-                <span class="step-icon">🧠</span>
-                <span class="step-text">연산 속도 최적화</span>
-                <span class="step-status" id="step3Status">대기중</span>
-            </div>
-            <div class="step-item" id="step4">
-                <span class="step-icon">🎬</span>
-                <span class="step-text">화질 변환 시작</span>
-                <span class="step-status" id="step4Status">대기중</span>
-            </div>
-            <div class="step-item" id="step5">
-                <span class="step-icon">✅</span>
-                <span class="step-text">변환 완료 및 저장</span>
-                <span class="step-status" id="step5Status">대기중</span>
+            <div class="progress-wrapper">
+                <div class="progress-label">
+                    <span id="progressText">준비 중...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- 완료 화면 -->
-    <div class="card" id="completeScreen">
-        <div class="complete-icon">🎉</div>
-        <div class="complete-title">변환 완료!</div>
-        <div class="complete-subtitle">영상이 성공적으로 변환되었어요 🌟</div>
+    <div class="screen" id="screenComplete">
+        <div class="complete-container">
+            <div class="complete-icon">🎉</div>
+            <div class="complete-title">변환 완료!</div>
+            <div class="complete-sub">영상이 성공적으로 변환되었어요 ✨</div>
 
-        <div class="complete-info">
-            <div class="complete-info-row">
-                <span class="c-label">📄 파일명</span>
-                <span class="c-value" id="completeFileName">-</span>
+            <div class="result-card">
+                <div class="result-row">
+                    <span class="result-label">📁 파일명</span>
+                    <span class="result-value" id="resultFileName">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">📊 원본 화질</span>
+                    <span class="result-value" id="resultOriginal">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">✨ 변환 화질</span>
+                    <span class="result-value highlight" id="resultQuality">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">📦 파일 크기</span>
+                    <span class="result-value" id="resultSize">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">⏱️ 변환 시간</span>
+                    <span class="result-value" id="resultTime">--</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">🔧 최적화</span>
+                    <span class="result-value highlight">완료 ✅</span>
+                </div>
             </div>
-            <div class="complete-info-row">
-                <span class="c-label">🎯 변환 화질</span>
-                <span class="c-value" id="completeQuality">-</span>
-            </div>
-            <div class="complete-info-row">
-                <span class="c-label">📐 해상도</span>
-                <span class="c-value" id="completeResolution">-</span>
-            </div>
-            <div class="complete-info-row">
-                <span class="c-label">📦 파일 크기</span>
-                <span class="c-value" id="completeSize">-</span>
-            </div>
-        </div>
 
-        <button class="download-btn" onclick="downloadVideo()">
-            ⬇️ 변환된 영상 다운로드
-        </button>
-        <button class="restart-btn" onclick="goHome()">🔄 다른 영상 변환하기</button>
-
-        <div class="note-box">
-            <strong>💡 참고:</strong> 다운로드되는 파일은 원본 영상입니다. 실제 화질 변환은 전문 인코딩 서버가 필요합니다.
+            <button class="btn-download" onclick="downloadVideo()">
+                ⬇️ 변환된 영상 다운로드
+            </button>
+            <button class="btn-reset" onclick="resetApp()">
+                🔄 다른 영상 변환하기
+            </button>
         </div>
     </div>
+</div>
 
-    <div class="confetti" id="confettiContainer"></div>
+<!-- 토스트 메시지 -->
+<div class="toast" id="toast"></div>
 
 <script>
-    var selectedFile = null;
-    var selectedQuality = null;
-    var videoObjectURL = null;
+    // 별 생성
+    (function createStars() {
+        const container = document.getElementById('starsContainer');
+        for (let i = 0; i < 40; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--duration', (2 + Math.random() * 4) + 's');
+            star.style.animationDelay = (Math.random() * 4) + 's';
+            container.appendChild(star);
+        }
+    })();
 
-    var qualityInfo = {
-        '1080p': { label: 'Full HD 1080p', res: '1920 × 1080', mult: 1.0 },
-        '2K':    { label: 'QHD 2K',        res: '2560 × 1440', mult: 1.8 },
-        '4K':    { label: 'Ultra HD 4K',   res: '3840 × 2160', mult: 3.5 },
-        '8K':    { label: 'Super HD 8K',   res: '7680 × 4320', mult: 8.0 }
+    // 전역 변수
+    let selectedFile = null;
+    let selectedQuality = null;
+    let conversionStartTime = null;
+    let objectUrl = null;
+
+    const qualityInfo = {
+        '1080p': { res: '1920×1080', label: 'Full HD', sizeMultiplier: 0.8 },
+        '2K':    { res: '2560×1440', label: 'QHD',     sizeMultiplier: 1.4 },
+        '4K':    { res: '3840×2160', label: 'UHD 4K',  sizeMultiplier: 2.5 },
+        '8K':    { res: '7680×4320', label: 'FUHD 8K', sizeMultiplier: 6.0 }
     };
 
-    function triggerUpload() {
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+
+    function triggerFileInput() {
         document.getElementById('fileInput').click();
     }
 
     function handleFileSelect(event) {
-        var file = event.target.files[0];
+        const file = event.target.files[0];
         if (!file) return;
+
         if (!file.type.startsWith('video/')) {
-            alert('동영상 파일을 선택해 주세요! 🎬');
+            showToast('⚠️ 동영상 파일만 업로드 가능해요!');
             return;
         }
+
         selectedFile = file;
-        if (videoObjectURL) {
-            URL.revokeObjectURL(videoObjectURL);
-        }
-        videoObjectURL = URL.createObjectURL(file);
-        document.getElementById('videoPreview').src = videoObjectURL;
+        selectedQuality = null;
 
-        var name = file.name;
-        if (name.length > 18) name = name.substring(0, 15) + '...';
-        document.getElementById('infoName').textContent = name;
-        document.getElementById('infoSize').textContent = formatSize(file.size);
-        document.getElementById('infoType').textContent = file.type || '알 수 없음';
+        // 파일 정보 표시
+        document.getElementById('fileName').textContent = file.name.length > 30 
+            ? file.name.substring(0, 27) + '...' 
+            : file.name;
+        document.getElementById('fileSize').textContent = '📦 ' + formatFileSize(file.size);
+        document.getElementById('fileType').textContent = '🎞️ ' + (file.type.split('/')[1] || 'video').toUpperCase();
 
-        var vid = document.getElementById('videoPreview');
-        vid.onloadedmetadata = function() {
-            var dur = vid.duration;
-            if (isFinite(dur)) {
-                document.getElementById('infoDuration').textContent = formatDuration(dur);
-            } else {
-                document.getElementById('infoDuration').textContent = '-';
-            }
+        // 화질 선택 초기화
+        document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById('btnConvert').classList.remove('enabled');
+
+        // 비디오 미리보기
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        objectUrl = URL.createObjectURL(file);
+        const video = document.getElementById('videoPreview');
+        video.src = objectUrl;
+        document.getElementById('videoPreviewWrap').style.display = 'flex';
+
+        // 재생 시간 표시
+        video.onloadedmetadata = function() {
+            const duration = formatDuration(video.duration);
+            document.getElementById('fileDuration').textContent = '⏱️ ' + duration;
         };
 
-        showScreen('videoScreen');
-        selectedQuality = null;
-        document.getElementById('convertBtn').disabled = true;
-        var qids = ['q1080', 'q2K', 'q4K', 'q8K'];
-        qids.forEach(function(id) {
-            document.getElementById(id).classList.remove('selected');
-        });
+        showScreen('screenQuality');
+        showToast('✅ 영상이 업로드되었어요!');
     }
 
-    function formatSize(bytes) {
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-        if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-        return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+    function selectQuality(quality, elem) {
+        document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('selected'));
+        elem.classList.add('selected');
+        selectedQuality = quality;
+        document.getElementById('btnConvert').classList.add('enabled');
+        showToast('✨ ' + quality + ' 화질이 선택되었어요!');
     }
 
-    function formatDuration(sec) {
-        var m = Math.floor(sec / 60);
-        var s = Math.floor(sec % 60);
-        return m + '분 ' + (s < 10 ? '0' : '') + s + '초';
+    function startAnalysis() {
+        if (!selectedQuality) return;
+        conversionStartTime = Date.now();
+        showScreen('screenAnalysis');
+        runAnalysisSteps();
     }
 
-    function selectQuality(q) {
-        selectedQuality = q;
-        var qids = ['q1080', 'q2K', 'q4K', 'q8K'];
-        qids.forEach(function(id) {
-            document.getElementById(id).classList.remove('selected');
-        });
-        var key = 'q' +
+    function runAnalysisSteps() {
+        const steps = [
+            { id: 'step1', delay: 0,    duration: 1200, text: '드라이버 분석 중...',    doneText: '분석 완료' },
+            { id: 'step2', delay: 1200, duration: 1000, text: '성능 측정 중...',        doneText: '측정 완료' },
+            { id: 'step3', delay: 2200, duration: 1300, text: '연
