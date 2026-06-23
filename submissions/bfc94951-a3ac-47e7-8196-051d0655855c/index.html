@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💎 김원진의 보석 매칭 게임 💎</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Jua', sans-serif;
+    background: linear-gradient(135deg, #1a0033, #3d0066, #6600aa, #9900cc);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* 배경 별 */
+  .stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.2; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.5); }
+  }
+
+  /* 메인 컨테이너 */
+  .container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    min-height: 100vh;
+  }
+
+  /* 타이틀 */
+  .title-section {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .main-title {
+    font-size: 2em;
+    color: #fff;
+    text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff69b4, 0 0 60px #ff00ff;
+    animation: glow 2s ease-in-out infinite alternate;
+    letter-spacing: 2px;
+  }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4; }
+    to { text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 60px #ffaaff; }
+  }
+
+  .student-name {
+    font-size: 1em;
+    color: #ffccff;
+    text-shadow: 0 0 10px #ff69b4;
+    margin-top: 2px;
+  }
+
+  /* 정보 패널 */
+  .info-panel {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .info-box {
+    background: linear-gradient(135deg, rgba(255,105,180,0.3), rgba(255,0,255,0.2));
+    border: 2px solid #ff69b4;
+    border-radius: 15px;
+    padding: 6px 16px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(255,105,180,0.5);
+    backdrop-filter: blur(5px);
+  }
+
+  .info-label {
+    font-size: 0.65em;
+    color: #ffccff;
+  }
+
+  .info-value {
+    font-size: 1.3em;
+    color: #fff;
+    text-shadow: 0 0 10px #ff69b4;
+  }
+
+  /* 게임 보드 */
+  .board-wrapper {
+    background: linear-gradient(135deg, rgba(100,0,150,0.5), rgba(200,0,255,0.2));
+    border: 3px solid #cc66ff;
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: 0 0 30px rgba(200,0,255,0.6), inset 0 0 20px rgba(255,105,180,0.1);
+    position: relative;
+  }
+
+  .board-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 22px;
+    background: linear-gradient(45deg, #ff69b4, #cc00ff, #ff69b4, #cc00ff);
+    background-size: 300% 300%;
+    animation: borderGlow 3s ease infinite;
+    z-index: -1;
+  }
+
+  @keyframes borderGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  #gameBoard {
+    display: grid;
+    grid-template-columns: repeat(8, 52px);
+    grid-template-rows: repeat(8, 52px);
+    gap: 3px;
+  }
+
+  /* 보석 셀 */
+  .cell {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 28px;
+    position: relative;
+    transition: transform 0.15s ease;
+    user-select: none;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .cell:hover {
+    transform: scale(1.1);
+  }
+
+  .cell.selected {
+    background: rgba(255,255,255,0.35);
+    border: 2.5px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 18px #fff, 0 0 30px #ff69b4;
+    transform: scale(1.15);
+    z-index: 10;
+  }
+
+  .cell.exploding {
+    animation: explode 0.5s ease forwards;
+  }
+
+  @keyframes explode {
+    0% { transform: scale(1); opacity: 1; }
+    30% { transform: scale(1.5); opacity: 1; filter: brightness(3); }
+    100% { transform: scale(0); opacity: 0; }
+  }
+
+  .cell.falling {
+    animation: fall 0.3s ease forwards;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(-30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .cell.swapping {
+    animation: swap 0.2s ease;
+  }
+
+  @keyframes swap {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.7); }
+    100% { transform: scale(1); }
+  }
+
+  /* 스테이지 클리어 오버레이 */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .overlay.active {
+    display: flex;
+  }
+
+  .overlay-box {
+    background: linear-gradient(135deg, #330066, #660099, #9900cc);
+    border: 3px solid #ff69b4;
+    border-radius: 30px;
+    padding: 40px 50px;
+    text-align: center;
+    box-shadow: 0 0 50px #ff69b4, 0 0 80px #cc00ff;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .overlay-title {
+    font-size: 2.5em;
+    color: #ffccff;
+    text-shadow: 0 0 20px #ff69b4;
+    margin-bottom: 15px;
+  }
+
+  .overlay-msg {
+    font-size: 1.2em;
+    color: #fff;
+    margin-bottom: 25px;
+    line-height: 1.6;
+  }
+
+  .btn {
+    background: linear-gradient(135deg, #ff69b4, #cc00ff);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 35px;
+    font-size: 1.2em;
+    font-family: 'Jua', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(255,105,180,0.6);
+    transition: all 0.2s ease;
+    margin: 5px;
+  }
+
+  .btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(255,105,180,0.8);
+  }
+
+  .btn:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* 파티클 */
+  .particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 20px;
+    z-index: 200;
+    animation: particleFly 1s ease-out forwards;
+  }
+
+  @keyframes particleFly {
+    0% { transform: translate(0,0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+  }
+
+  /* 진행 바 */
+  .progress-section {
+    width: 100%;
+    max-width: 440px;
+    margin-bottom: 8px;
+  }
+
+  .progress-label {
+    color: #ffccff;
+    font-size: 0.8em;
+    margin-bottom: 3px;
+    text-align: center;
+  }
+
+  .progress-bar-bg {
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    height: 16px;
+    border: 1.5px solid #cc66ff;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #ff69b4, #cc00ff, #ff69b4);
+    background-size: 200% 100%;
+    animation: progressShine 2s linear infinite;
+    transition: width 0.4s ease;
+  }
+
+  @keyframes progressShine {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  /* 스테이지 표시 */
+  .stage-stars {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    margin-bottom: 6px;
+  }
+
+  .stage-star {
+    font-size: 1.5em;
+    opacity: 0.3;
+    transition: all 0.3s ease;
+  }
+
+  .stage-star.active {
+    opacity: 1;
+    animation: starPulse 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes starPulse {
+    from { text-shadow: 0 0 5px #ffdd00; }
+    to { text-shadow: 0 0 20px #ffdd00, 0 0 30px #ffaa00; }
+  }
+
+  /* 스코어 팝업 */
+  .score-popup {
+    position: fixed;
+    pointer-events: none;
+    z-index: 150;
+    font-size: 1.8em;
+    font-family: 'Jua', sans-serif;
+    color: #ffff00;
+    text-shadow: 0 0 10px #ff8800, 2px 2px 4px rgba(0,0,0,0.8);
+    animation: scoreFloat 1s ease-out forwards;
+  }
+
+  @keyframes scoreFloat {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
+  }
+
+  /* 반짝임 효과 */
+  .sparkle {
+    position: absolute;
+    pointer-events: none;
+    font-size: 12px;
+    animation: sparkleAnim 1.5s ease-in-out infinite;
+    z-index: 5;
+  }
+
+  @keyframes sparkleAnim {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  .hint-btn {
+    background: linear-gradient(135deg, #ffaa00, #ff6600);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 0.85em;
+    font-family: 'Jua', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(255,170,0,0.5);
+    transition: all 0.2s;
+    margin-top: 5px;
+  }
+
+  .hint-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .cell.hint {
+    animation: hintBlink 0.5s ease-in-out 4;
+    border: 2px solid #ffff00 !important;
+    box-shadow: 0 0 15px #ffff00 !important;
+  }
+
+  @keyframes hintBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .crown {
+    font-size: 1.5em;
+    animation: crownBounce 1s ease-in-out infinite alternate;
+    display: inline-block;
+  }
+
+  @keyframes crownBounce {
+    from { transform: translateY(0) rotate(-5deg); }
+    to { transform: translateY(-5px) rotate(5deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="starsContainer"></div>
+
+<!-- 스테이지 클리어 오버레이 -->
+<div class="overlay" id="stageOverlay">
+  <div class="overlay-box">
+    <div class="overlay-title" id="overlayTitle">✨ 스테이지 클리어! ✨</div>
+    <div class="overlay-msg" id="overlayMsg"></div>
+    <button class="btn" id="overlayBtn" onclick="nextStageOrRestart()">다음 스테이지 💎</button>
+    <br>
+    <button class="btn" style="background:linear-gradient(135deg,#aa00ff,#6600aa); margin-top:8px;" onclick="restartGame()">처음부터 🌟</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="title-section">
+    <div class="main-title">💎 보석 매칭 💎</div>
+    <div class="student-name"><span class="
