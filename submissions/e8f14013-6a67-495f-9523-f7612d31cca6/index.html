@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ㅇㅇㅇ의 구구단 퀴즈 게임</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nanum Gothic', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 30px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    /* 설정 화면 */
+    #setup-screen .label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .dan-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .dan-btn {
+      padding: 12px 0;
+      border: 3px solid #ddd;
+      border-radius: 12px;
+      background: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #555;
+    }
+
+    .dan-btn.selected {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-color: #667eea;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .dan-btn:hover:not(.selected) {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    .select-all-btn {
+      width: 100%;
+      padding: 10px;
+      border: 2px dashed #aaa;
+      border-radius: 12px;
+      background: #f9f9ff;
+      color: #777;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: all 0.2s;
+    }
+
+    .select-all-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    .count-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .count-row .label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #555;
+      white-space: nowrap;
+    }
+
+    .count-select {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Nanum Gothic', sans-serif;
+      color: #444;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .count-select:focus {
+      border-color: #667eea;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      font-size: 1.3rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(245,87,108,0.4);
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245,87,108,0.5);
+    }
+
+    .start-btn:active {
+      transform: translateY(0);
+    }
+
+    /* 퀴즈 화면 */
+    #quiz-screen { display: none; }
+
+    .progress-bar-wrap {
+      background: #eee;
+      border-radius: 999px;
+      height: 12px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #f5576c);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-text {
+      text-align: right;
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .score-box {
+      text-align: center;
+      flex: 1;
+      padding: 10px;
+      border-radius: 12px;
+      background: #f9f9ff;
+    }
+
+    .score-box .score-label {
+      font-size: 0.8rem;
+      color: #888;
+      font-weight: 700;
+    }
+
+    .score-box .score-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .score-box.correct .score-value { color: #4CAF50; }
+    .score-box.wrong .score-value { color: #f5576c; }
+    .score-box.total .score-value { color: #667eea; }
+
+    .question-box {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .question-box::before {
+      content: '🌟';
+      position: absolute;
+      font-size: 3rem;
+      top: -10px;
+      left: -10px;
+      opacity: 0.2;
+    }
+
+    .question-box::after {
+      content: '✨';
+      position: absolute;
+      font-size: 3rem;
+      bottom: -10px;
+      right: -10px;
+      opacity: 0.2;
+    }
+
+    .question-text {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      letter-spacing: 2px;
+    }
+
+    .question-sub {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.8);
+      margin-top: 6px;
+    }
+
+    .choices-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .choice-btn {
+      padding: 18px;
+      border: 3px solid #e0e0e0;
+      border-radius: 16px;
+      background: white;
+      font-size: 1.5rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #444;
+    }
+
+    .choice-btn:hover:not(:disabled) {
+      border-color: #667eea;
+      color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+    }
+
+    .choice-btn.correct-ans {
+      background: linear-gradient(135deg, #56ab2f, #a8e063);
+      border-color: #56ab2f;
+      color: white;
+      animation: correctPop 0.4s ease;
+    }
+
+    .choice-btn.wrong-ans {
+      background: linear-gradient(135deg, #f5576c, #f093fb);
+      border-color: #f5576c;
+      color: white;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes correctPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .feedback-msg {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 800;
+      min-height: 36px;
+      margin-bottom: 10px;
+      transition: all 0.3s;
+    }
+
+    .feedback-msg.correct { color: #4CAF50; }
+    .feedback-msg.wrong { color: #f5576c; }
+
+    .next-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: none;
+      transition: all 0.2s;
+    }
+
+    .next-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    }
+
+    /* 결과 화면 */
+    #result-screen { display: none; }
+
+    .result-emoji {
+      font-size: 5rem;
+      text-align: center;
+      margin-bottom: 10px;
+      animation: bounce 0.6s ease infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    .result-title {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #444;
+      margin-bottom: 6px;
+    }
+
+    .result-subtitle {
+      text-align: center;
+      font-size: 1rem;
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    .result-stats {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .stat-box {
+      flex: 1;
+      text-align: center;
+      padding: 16px 8px;
+      border-radius: 16px;
+    }
+
+    .stat-box.s-correct { background: #e8f5e9; }
+    .stat-box.s-wrong { background: #fce4ec; }
+    .stat-box.s-score { background: #ede7f6; }
+
+    .stat-box .st-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .stat-box .st-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+
+    .s-correct .st-value { color: #4CAF50; }
+    .s-wrong .st-value { color: #f5576c; }
+    .s-score .st-value { color: #764ba2; }
+
+    .star-rating {
+      display: flex;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 24px;
+      gap: 6px;
+    }
+
+    .result-btns {
+      display: flex;
+      gap: 10px;
+    }
+
+    .retry-btn {
+      flex: 1;
+      padding: 14px;
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .retry-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(245,87,108,0.4);
+    }
+
+    .home-btn {
+      flex: 1;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .home-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+    }
+
+    .confetti-wrap {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: confettiFall linear forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>🔢 ㅇㅇㅇ의 구구단 퀴즈!</h1>
+    <p>문제를 풀고 구구단 왕이 되어보자! 👑</p>
+  </div>
+
+  <div class="card">
+
+    <!-- 설정 화면 -->
+    <div id="setup-screen">
+      <div class="label">📚 연습할 단을 골라봐요! (여러 개 선택 가능)</div>
+      <div class="dan-grid" id="dan-grid">
+        <button class="dan-btn" data-dan="2">2단</button>
+        <button class="dan-btn" data-dan="3">3단</button>
+        <button class="dan-btn" data-dan="4">4단</button>
+        <button class="dan-btn" data-dan="5">5단</button>
