@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>장지우의 테트리스 게임</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-align: center;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+        }
+
+        .student-name {
+            font-size: 1rem;
+            color: #ffd93d;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        #start-screen {
+            text-align: center;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        #start-screen h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #ffd93d;
+        }
+
+        .rules {
+            text-align: left;
+            margin-bottom: 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .rules p {
+            margin: 8px 0;
+            font-size: 0.95rem;
+            color: #ccc;
+        }
+
+        .rules span {
+            color: #6bcb77;
+            font-weight: bold;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            border: none;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding: 15px 50px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 20px rgba(255,107,107,0.4);
+        }
+
+        .start-btn:hover {
+            transform: scale(1.07);
+            box-shadow: 0 8px 30px rgba(255,107,107,0.6);
+        }
+
+        #game-screen {
+            display: none;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #tetris-canvas {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(77, 150, 255, 0.4), inset 0 0 20px rgba(0,0,0,0.5);
+            display: block;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-width: 140px;
+        }
+
+        .panel-box {
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 14px;
+            padding: 15px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .panel-box h3 {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .panel-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd93d;
+        }
+
+        .level-value {
+            color: #6bcb77;
+        }
+
+        .lines-value {
+            color: #4d96ff;
+        }
+
+        #next-canvas {
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .controls-box {
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 14px;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .controls-box h3 {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .ctrl-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+            font-size: 0.82rem;
+            color: #ccc;
+        }
+
+        .key {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            padding: 2px 7px;
+            font-size: 0.78rem;
+            color: #ffd93d;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        #mobile-controls {
+            display: none;
+            gap: 8px;
+            margin-top: 15px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mobile-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .mob-btn {
+            width: 58px;
+            height: 58px;
+            font-size: 1.6rem;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.1s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mob-btn:active {
+            background: rgba(255,255,255,0.3);
+            transform: scale(0.9);
+        }
+
+        #game-over-screen {
+            display: none;
+            text-align: center;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        #game-over-screen h2 {
+            font-size: 2.5rem;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .final-score {
+            font-size: 1.2rem;
+            color: #ffd93d;
+            margin: 10px 0;
+        }
+
+        .final-score span {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .line-clear-msg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd93d;
+            text-shadow: 0 0 20px rgba(255,217,61,0.8);
+            pointer-events: none;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards;
+            z-index: 100;
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 1; transform: translate(-50%, -50%); }
+            100% { opacity: 0; transform: translate(-50%, -120%); }
+        }
+
+        @media (max-width: 600px) {
+            #mobile-controls {
+                display: flex;
+            }
+            .controls-box {
+                display: none;
+            }
+            #game-screen {
+                flex-direction: column;
+                align-items: center;
+            }
+            .side-panel {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                min-width: unset;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎮 장지우의 테트리스</h1>
+    <p class="student-name">✨ 장지우 ✨</p>
+
+    <!-- 시작 화면 -->
+    <div id="start-screen">
+        <h2>🧩 테트리스 게임 시작!</h2>
+        <div class="rules">
+            <p>🎯 <span>목표:</span> 블록을 쌓아 한 줄을 완성하세요!</p>
+            <p>⬅️➡️ <span>방향키:</span> 블록 좌우 이동</p>
+            <p>⬆️ <span>위 방향키:</span> 블록 회전</p>
+            <p>⬇️ <span>아래 방향키:</span> 블록 빠르게 내리기</p>
+            <p>🚀 <span>스페이스바:</span> 즉시 낙하</p>
+            <p>⭐ <span>한 줄 완성</span> = 100점 (콤보 보너스 있음!)</p>
+        </div>
+        <button class="start-btn" onclick="startGame()">🚀 게임 시작!</button>
+    </div>
+
+    <!-- 게임 화면 -->
+    <div id="game-screen">
+        <div class="game-area">
+            <canvas id="tetris-canvas" width="300" height="600"></canvas>
+            <div id="mobile-controls">
+                <div class="mobile-row">
+                    <button class="mob-btn" onclick="rotatePiece()">🔄</button>
+                </div>
+                <div class="mobile-row">
+                    <button class="mob-btn" onclick="movePieceLeft()">⬅️</button>
+                    <button class="mob-btn" onclick="dropPiece()">⬇️</button>
+                    <button class="mob-btn" onclick="movePieceRight()">➡️</button>
+                </div>
+                <div class="mobile-row">
+                    <button class="mob-btn" onclick="hardDrop()">🚀</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="panel-box">
+                <h3>점수</h3>
+                <div class="panel-value" id="score-display">0</div>
+            </div>
+            <div class="panel-box">
+                <h3>레벨</h3>
+                <div class="panel-value level-value" id="level-display">1</div>
+            </div>
+            <div class="panel-box">
+                <h3>줄 수</h3>
+                <div class="panel-value lines-value" id="lines-display">0</div>
+            </div>
+            <div class="panel-box">
+                <h3>다음 블록</h3>
+                <canvas id="next-canvas" width="120" height="120"></canvas>
+            </div>
+            <div class="controls-box">
+                <h3>조작법</h3>
+                <div class="ctrl-item"><span class="key">←→</span> 이동</div>
+                <div class="ctrl-item"><span class="key">↑</span> 회전</div>
+                <div class="ctrl-item"><span class="key">↓</span> 내리기</div>
+                <div class="ctrl-item"><span class="key">Space</span> 즉시낙하</div>
+                <div class="ctrl-item"><span class="key">P</span> 일시정지</div>
+            </div>
+            <button class="start-btn" style="font-size:0.9rem; padding:10px 20px;" onclick="restartGame()">🔄 재시작</button>
+        </div>
+    </div>
+
+    <!-- 게임 오버 화면 -->
+    <div id="game-over-screen">
+        <h2>💥 게임 오버!</h2>
+        <div class="final-score">최종 점수: <span id="final-score">0</span></div>
+        <div class="final-score">완성한 줄: <span id="final-lines">0</span>줄</div>
+        <div class="final-score">도달 레벨: <span id="final-level">1</span></div>
+        <br>
+        <button class="start-btn" onclick="restartGame()" style="margin-top:10px;">🎮 다시 도전!</button>
+    </div>
+
+<script>
+    // ─── 상수 ───────────────────────────────────────────────
+    const COLS = 10;
+    const ROWS = 20;
+    const BLOCK = 30;
+
+    // 테트로미노 모양 정의
+    const PIECES = [
+        // I
+        { shape: [[1,1,1,1]], color: '#4dd0e1' },
+        // O
+        { shape: [[1,1],[1,1]], color: '#ffd93d' },
+        // T
+        { shape: [[0,1,0],[1,1,1]], color: '#ba68c8' },
+        // S
+        { shape: [[0,1,1],[1,1,0]], color: '#6bcb77' },
+        // Z
+        { shape: [[1,1,0],[0,1,1]], color: '#ff6b6b' },
+        // J
+        { shape: [[1,0,0],[1,1,1]], color: '#4d96ff' },
+        // L
+        { shape: [[0,0,1],[1,1,1]], color: '#ff9f43' }
+    ];
+
+    // ─── 변수 ───────────────────────────────────────────────
+    let canvas, ctx, nextCanvas, nextCtx;
+    let board = [];
+    let currentPiece = null;
+    let nextPiece = null;
+    let score = 0;
+    let level = 1;
+    let lines = 0;
+    let gameRunning = false;
+    let gamePaused = false;
+    let animFrameId = null;
+    let lastTime = 0;
+    let dropInterval = 1000;
+    let dropCounter = 0;
+
+    // ─── 초기화 ─────────────────────────────────────────────
+    function initBoard() {
+        board = [];
+        for (let r = 0; r < ROWS; r++) {
+            board.push(new Array(COLS).fill(0));
+        }
+    }
+
+    function randomPiece() {
+        const idx = Math.floor(Math.random() * PIECES.length);
+        const p = PIECES[idx];
+        return {
+            shape: p.shape.map(row => [...row]),
+            color: p.color,
+            x: Math.floor(COLS / 2) - Math.floor(p.shape[0].length / 2),
+            y: 0
+        };
+    }
+
+    // ─── 그리기 ─────────────────────────────────────────────
+    function drawBlock(context, x, y, color, size) {
+        size = size || BLOCK;
+        context.fillStyle = color;
+        context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+
+        // 하이라이트
+        context.fillStyle = 'rgba(255,255,255,0.3)';
+        context.fillRect(x * size + 1, y * size + 1, size - 2, 5);
+        context.fillRect(x * size + 1, y * size + 1, 5, size - 2);
+
+        // 그림자
+        context.fillStyle = 'rgba(0,0,0,0.2)';
+        context.fillRect(x * size + 1, y * size + size - 6, size - 2, 5);
+        context.fillRect(x * size + size - 6, y * size + 1, 5, size - 2);
+    }
+
+    function drawBoard() {
+        // 배경
+        ctx.fillStyle = '#0a0a1a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 그리드
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                ctx.strokeRect(c * BLOCK, r * BLOCK, BLOCK, BLOCK);
+            }
+        }
+
+        // 보드 블록
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                if (board[r][c]) {
+                    drawBlock(ctx, c, r, board[r][c]);
+                }
+            }
+        }
+    }
+
+    function drawGhost() {
+        if (!currentPiece) return;
+        let ghostY = currentPiece.y;
+        while (!collide(currentPiece.shape, currentPiece.x, ghostY + 1)) {
+            ghostY++;
+        }
+        ctx.globalAlpha = 0.2;
+        currentPiece.shape.forEach((row, ry) => {
+            row.forEach((val, cx) => {
+                if (val) {
+                    drawBlock(ctx, currentPiece.x + cx, ghostY + ry, currentPiece.color);
+                }
+            });
+        });
+        ctx.globalAlpha = 1;
+    }
+
+    function drawCurrentPiece() {
+        if (!currentPiece) return;
+        currentPiece.shape.forEach((row, ry) => {
+            row.forEach((val, cx) => {
+                if (val) {
+                    drawBlock(ctx, currentPiece.x + cx, currentPiece.y + ry, currentPiece.color);
+                }
+            });
+        });
+    }
+
+    function drawNext() {
+        nextCtx.fillStyle = '#0a0a1a';
+        nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+        if (!nextPiece) return;
+        const size = 24;
+        const offsetX = Math.floor((5 - nextPiece.shape[0].length) / 2);
+        const offsetY = Math.floor((5 - nextPiece.shape.length) / 2);
+        nextPiece.shape.forEach((row, ry) => {
+            row.forEach((val, cx) => {
+                if (val) {
+                    nextCtx.fillStyle = nextPiece.color;
+                    nextCtx.fillRect((offsetX + cx) * size + 1, (offsetY + ry) * size + 1, size - 2, size - 2);
+                    nextCtx.fillStyle = 'rgba(255,255,255,0.3)';
+                    nextCtx.fillRect((offsetX + cx) * size + 1, (offsetY + ry) * size + 1, size - 2, 4);
+                }
+            });
+        });
+    }
+
+    // ─── 충돌 ───────────────────────────────────────────────
+    function collide(shape, px, py) {
+        for (let r = 0; r < shape.length; r++) {
+            for (let c = 0; c < shape[r].length; c++) {
+                if (shape[r][c]) {
+                    const nx = px + c;
+                    const ny = py + r;
+                    if (nx < 0 || nx >= COLS || ny >= ROWS) return true;
+                    if (ny >= 0 && board[ny][nx]) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // ─── 회전 ───────────────────────────────────────────────
+    function rotate(shape) {
+        const rows = shape.length;
+        const cols = shape[0].length;
+        const newShape = [];
+        for (let c = 0; c < cols; c++) {
+            newShape.push([]);
+            for (let r = rows - 1; r >= 0; r--) {
+                newShape[c].push(shape[r][c]);
+            }
+        }
+        return newShape;
+    }
+
+    // ─── 조각 고정 & 줄 제거 ───────────────────────────────
+    function lockPiece() {
+        currentPiece.shape.forEach((row, ry) => {
+            row.forEach((val, cx) => {
+                if (val) {
+                    const ny = currentPiece.y + ry;
+                    const nx = currentPiece.x + cx;
+                    if (ny >= 0) {
+                        board[ny][nx] = currentPiece.color;
+                    }
+                }
+            });
+        });
+        clearLines();
+        spawnPiece();
+    }
+
+    function clearLines() {
+        let cleared = 0;
+        for (let r = ROWS - 1; r >= 0; r--) {
+            if (board[r].every(cell => cell !== 0)) {
+                board.splice(r, 1);
+                board.unshift(new Array(COLS).fill(0));
+                cleared++;
+                r++;
+            }
+        }
+        if (cleared > 0) {
+            lines += cleared;
+            const pts = [0, 100, 300, 500, 800];
+            score += (pts[cleared] || 800) * level;
+            level = Math.floor(lines / 10) + 1;
+            dropInterval = Math.max(100, 1000 - (level - 1) * 80);
+            updateUI();
+            showLineClearMsg(cleared);
+        }
+    }
+
+    function showLineClearMsg(n) {
+        const msgs = ['', '✨ 1줄!', '⭐ 2줄!', '🌟 3줄!', '💥 테트리스!'];
+        const msg = document.createElement('div');
+        msg.className = 'line-clear-msg';
+        msg.textContent = msgs[n] || '💥 테트리스!';
+        document.body.appendChild(msg);
+        setTimeout(() => msg.remove(), 900);
+    }
+
+    // ─── 새 조각 생성 ───────────────────────────────────────
+    function spawnPiece() {
+        currentPiece = nextPiece || randomPiece();
+        nextPiece = randomPiece();
+        drawNext();
+        if (collide(currentPiece.shape, currentPiece.x, currentPiece.y)) {
+            gameOver();
+        }
+    }
+
+    // ─── UI 업데이트 ────────────────────────────────────────
+    function updateUI() {
+        document.getElementById('score-display').textContent = score.toLocaleString();
+        document.getElementById('level-display').textContent = level;
+        document.getElementById('lines-display').textContent = lines;
+    }
+
+    // ─── 게임 루프 ──────────────────────────────────────────
+    function gameLoop(time) {
+        if (!gameRunning || gamePaused) return;
+        const delta = time - lastTime;
+        lastTime = time;
+        dropCounter += delta;
+        if (dropCounter >= dropInterval) {
+            dropCounter = 0;
+            if (!collide(currentPiece.shape, currentPiece.x, currentPiece.y + 1)) {
+                currentPiece.y++;
+            } else {
+                lockPiece();
+            }
+        }
+        drawBoard();
+        drawGhost();
+        drawCurrentPiece();
+        animFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    // ─── 조작 함수 ──────────────────────────────────────────
+    function movePieceLeft() {
+        if (!gameRunning || gamePaused) return;
+        if (!collide(currentPiece.shape, currentPiece.x - 1, currentPiece.y)) {
+            currentPiece.x--;
+        }
+    }
+
+    function movePieceRight() {
+        if (!gameRunning || gamePaused) return;
+        if (!collide(currentPiece.shape, currentPiece.x + 1, currentPiece.y)) {
+            currentPiece.x++;
+        }
+    }
+
+    function dropPiece() {
+        if (!gameRunning || gamePaused) return;
+        if (!collide(currentPiece.shape, currentPiece.x, currentPiece.y + 1)) {
+            currentPiece.y++;
+            dropCounter = 0;
+        } else {
+            lockPiece();
+        }
+    }
+
+    function rotatePiece() {
+        if (!gameRunning || gamePaused) return;
+        const rotated = rotate(currentPiece.shape);
+        let offset = 0;
+        if (collide(rotated, currentPiece.x, currentPiece.y)) {
+            offset = currentPiece.x > COLS / 2 ? -1 : 1;
+            if (collide(rotated, currentPiece.x + offset, currentPiece.y)) {
+                offset = currentPiece.x > COLS / 2 ? -2 : 2;
+                if (collide(rotated, currentPiece.x + offset, currentPiece.y)) return;
+            }
+        }
+        currentPiece.shape = rotated;
+        currentPiece.x += offset;
+    }
+
+    function hardDrop() {
+        if (!gameRunning || gamePaused) return;
+        while (!collide(currentPiece.shape, currentPiece.x, currentPiece.y + 1)) {
+            currentPiece.y++;
+            score += 2;
+        }
+        lockPiece();
+        updateUI();
+    }
+
+    // ─── 키보드 ─────────────────────────────────────────────
+    document.addEventListener('keydown', function(e) {
+        if (!gameRunning) return;
+        switch(e.key) {
+            case 'ArrowLeft':
+                e.preventDefault();
+                movePieceLeft();
+                break;
+            case 'ArrowRight':
+                e.preventDefault();
+                movePieceRight();
+                break;
+            case 'ArrowDown':
+                e.preventDefault();
+                dropPiece();
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                rotatePiece();
+                break;
+            case ' ':
+                e.preventDefault();
+                hardDrop();
+                break;
+            case 'p':
+            case 'P':
+                togglePause();
+                break;
+        }
+    });
+
+    function togglePause() {
+        if (!gameRunning) return;
+        gamePaused = !gamePaused;
+        if (!gamePaused) {
+            lastTime = performance.now();
+            animFrameId = requestAnimationFrame(gameLoop);
+        } else {
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffd93d';
+            ctx.font = 'bold 36px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('일시정지', canvas.width / 2, canvas.height / 2);
+            ctx.font = '18px Segoe UI';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('P 키를 눌러 계속', canvas.width / 2, canvas.height / 2 + 40);
+        }
+    }
+
+    // ─── 게임 시작/오버/재시작 ──────────────────────────────
+    function startGame() {
+        canvas = document.getElementById('tetris-canvas');
+        ctx = canvas.getContext('2d');
+        nextCanvas = document.getElementById('next-canvas');
+        nextCtx = nextCanvas.getContext('2d');
+
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'flex';
+        document.getElementById('game-over-screen').style.display = 'none';
+
+        initBoard();
+        score = 0;
+        level = 1;
+        lines = 0;
+        dropInterval = 1000;
+        dropCounter = 0;
+        gamePaused = false;
+        gameRunning = true;
+
+        updateUI();
+        nextPiece = randomPiece();
+        spawnPiece();
+
+        lastTime = performance.now();
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        animFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    function gameOver() {
+        gameRunning = false;
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+
+        // 게임 오버 애니메이션
+        ctx.fillStyle = 'rgba(0,0,0,0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ff6b6b';
+        ctx.font = 'bold 42px Segoe UI';
+        ctx.textAlign =
