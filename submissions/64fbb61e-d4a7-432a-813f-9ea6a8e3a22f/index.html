@@ -1,607 +1,821 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>정유하의 지오메트리 대시</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #1a1a2e; font-family: 'Arial Black', Arial, sans-serif; overflow: hidden; }
-  
-  /* 메인 메뉴 */
-  #mainMenu {
-    position: fixed; inset: 0;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    z-index: 100;
-  }
-  .menu-title {
-    font-size: 52px; font-weight: 900;
-    background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    text-shadow: none;
-    letter-spacing: 3px; margin-bottom: 10px;
-    animation: titlePulse 2s infinite;
-  }
-  .student-name {
-    color: #ffd93d; font-size: 20px; margin-bottom: 50px;
-    text-shadow: 0 0 10px #ffd93d;
-  }
-  @keyframes titlePulse {
-    0%,100% { transform: scale(1); }
-    50% { transform: scale(1.04); }
-  }
-  .menu-btn {
-    padding: 18px 60px; font-size: 26px; font-weight: 900;
-    border: none; border-radius: 16px; cursor: pointer;
-    transition: all 0.15s; letter-spacing: 2px;
-  }
-  #playBtn {
-    background: linear-gradient(135deg, #6bcb77, #4d96ff);
-    color: white; box-shadow: 0 6px 30px rgba(107,203,119,0.5);
-    margin-bottom: 20px;
-  }
-  #playBtn:hover { transform: scale(1.08); box-shadow: 0 10px 40px rgba(107,203,119,0.8); }
-  #settingsBtn {
-    position: fixed; top: 24px; right: 30px;
-    width: 56px; height: 56px; border-radius: 50%;
-    background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.3);
-    color: white; font-size: 28px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; z-index: 200;
-  }
-  #settingsBtn:hover { background: rgba(255,255,255,0.25); transform: rotate(30deg); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정유하의 지오메트리 대시</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  /* 레벨 선택 */
-  #levelSelect {
-    position: fixed; inset: 0;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    display: none; flex-direction: column;
-    align-items: center; justify-content: center;
-    z-index: 100;
-  }
-  .level-title { color: #ffd93d; font-size: 36px; font-weight: 900; margin-bottom: 40px; letter-spacing: 2px; }
-  .level-cards { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
-  .level-card {
-    width: 200px; padding: 30px 20px; border-radius: 20px;
-    cursor: pointer; transition: all 0.2s; text-align: center;
-    border: 3px solid transparent;
-  }
-  .level-card:hover { transform: translateY(-8px) scale(1.05); }
-  .level-card.lv1 { background: linear-gradient(135deg,#4d96ff,#6bcb77); border-color: #6bcb77; }
-  .level-card.lv2 { background: linear-gradient(135deg,#ff6b6b,#ffd93d); border-color: #ffd93d; }
-  .level-card.lv3 { background: linear-gradient(135deg,#a855f7,#ff6b6b); border-color: #ff6b6b; }
-  .level-card .lv-num { font-size: 52px; margin-bottom: 10px; }
-  .level-card .lv-name { color: white; font-size: 22px; font-weight: 900; margin-bottom: 6px; }
-  .level-card .lv-desc { color: rgba(255,255,255,0.85); font-size: 13px; }
-  .back-btn {
-    margin-top: 40px; padding: 12px 40px; background: rgba(255,255,255,0.1);
-    border: 2px solid rgba(255,255,255,0.3); color: white;
-    border-radius: 12px; cursor: pointer; font-size: 18px; font-weight: 700;
-    transition: all 0.2s;
-  }
-  .back-btn:hover { background: rgba(255,255,255,0.25); }
+        body {
+            background: #1a1a2e;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
 
-  /* 설정 패널 */
-  #settingsPanel {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-    display: none; align-items: center; justify-content: center; z-index: 300;
-  }
-  .settings-box {
-    background: #1e1b4b; border-radius: 20px; padding: 40px 50px;
-    border: 2px solid rgba(255,255,255,0.2); min-width: 340px;
-  }
-  .settings-box h2 { color: #ffd93d; font-size: 28px; margin-bottom: 30px; text-align: center; }
-  .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .setting-row label { color: white; font-size: 18px; }
-  .toggle {
-    width: 54px; height: 28px; background: #555; border-radius: 14px;
-    cursor: pointer; position: relative; transition: background 0.3s;
-  }
-  .toggle.on { background: #6bcb77; }
-  .toggle::after {
-    content: ''; position: absolute; top: 3px; left: 3px;
-    width: 22px; height: 22px; background: white; border-radius: 50%;
-    transition: left 0.3s;
-  }
-  .toggle.on::after { left: 29px; }
-  .volume-slider { width: 120px; accent-color: #4d96ff; }
-  .close-settings {
-    width: 100%; padding: 12px; background: #4d96ff;
-    border: none; color: white; font-size: 18px; font-weight: 700;
-    border-radius: 10px; cursor: pointer; margin-top: 10px;
-  }
-  .close-settings:hover { background: #3a7bd5; }
+        /* 시작 화면 */
+        #startScreen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
 
-  /* 게임 캔버스 */
-  #gameCanvas { display: block; }
-  #gameContainer {
-    position: fixed; inset: 0; display: none;
-  }
+        .title-container {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: titleFloat 2s ease-in-out infinite;
+        }
 
-  /* HUD */
-  #hud {
-    position: fixed; top: 0; left: 0; right: 0;
-    display: none; justify-content: space-between; align-items: center;
-    padding: 12px 20px; z-index: 50;
-    background: rgba(0,0,0,0.3);
-  }
-  #hud .hud-text { color: white; font-size: 18px; font-weight: 900; letter-spacing: 1px; }
-  #hud .hud-progress { flex: 1; margin: 0 20px; height: 10px; background: rgba(255,255,255,0.2); border-radius: 5px; overflow: hidden; }
-  #hud .hud-bar { height: 100%; background: linear-gradient(90deg,#6bcb77,#4d96ff); border-radius: 5px; transition: width 0.1s; }
-  #pauseBtn {
-    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
-    color: white; font-size: 20px; width: 40px; height: 40px;
-    border-radius: 8px; cursor: pointer;
-  }
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
 
-  /* 오버레이 (죽음/클리어) */
-  #overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-    display: none; flex-direction: column;
-    align-items: center; justify-content: center; z-index: 150;
-  }
-  #overlay h2 { font-size: 54px; font-weight: 900; margin-bottom: 16px; }
-  #overlay p { color: rgba(255,255,255,0.8); font-size: 22px; margin-bottom: 36px; }
-  .ol-btns { display: flex; gap: 20px; }
-  .ol-btn {
-    padding: 14px 44px; font-size: 20px; font-weight: 900;
-    border: none; border-radius: 12px; cursor: pointer; transition: all 0.15s;
-  }
-  .ol-btn.retry { background: #ff6b6b; color: white; }
-  .ol-btn.retry:hover { background: #e05555; transform: scale(1.05); }
-  .ol-btn.menu { background: #4d96ff; color: white; }
-  .ol-btn.menu:hover { background: #3a7bd5; transform: scale(1.05); }
+        .student-name {
+            color: #ffd700;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #ffd700;
+        }
 
-  /* 모바일 컨트롤 */
-  #mobileCtrl {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    display: none; z-index: 60;
-  }
-  #jumpBtn {
-    width: 120px; height: 70px; background: rgba(255,255,255,0.18);
-    border: 2px solid rgba(255,255,255,0.4); border-radius: 16px;
-    color: white; font-size: 32px; cursor: pointer;
-  }
-  @media (max-width: 700px) { #mobileCtrl { display: block; } }
-</style>
+        .game-title {
+            color: #fff;
+            font-size: 48px;
+            font-weight: 900;
+            text-shadow: 0 0 20px #00f5ff, 0 0 40px #00f5ff;
+            letter-spacing: 3px;
+        }
+
+        .game-subtitle {
+            color: #ff6b6b;
+            font-size: 20px;
+            margin-top: 10px;
+            text-shadow: 0 0 10px #ff6b6b;
+        }
+
+        .play-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffd700);
+            color: #1a1a2e;
+            border: none;
+            padding: 20px 60px;
+            font-size: 28px;
+            font-weight: 900;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.6);
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(255, 107, 107, 0.6); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255, 107, 107, 0.9); }
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1) !important;
+        }
+
+        /* 별 배경 */
+        .stars {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        /* 단계 선택 화면 */
+        #levelScreen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99;
+        }
+
+        .level-title {
+            color: #ffd700;
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px #ffd700;
+        }
+
+        .level-subtitle {
+            color: #aaa;
+            font-size: 16px;
+            margin-bottom: 50px;
+        }
+
+        .level-cards {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .level-card {
+            width: 200px;
+            padding: 30px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-card:hover {
+            transform: scale(1.08) translateY(-5px);
+        }
+
+        .level-card.easy {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            box-shadow: 0 0 30px rgba(56, 239, 125, 0.4);
+        }
+
+        .level-card.hard {
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            box-shadow: 0 0 30px rgba(255, 210, 0, 0.4);
+        }
+
+        .level-card.extreme {
+            background: linear-gradient(135deg, #cb2d3e, #ef473a);
+            box-shadow: 0 0 30px rgba(239, 71, 58, 0.4);
+        }
+
+        .level-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .level-name {
+            color: white;
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .level-desc {
+            color: rgba(255,255,255,0.85);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .level-stars {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .back-btn {
+            margin-top: 40px;
+            background: transparent;
+            color: #aaa;
+            border: 2px solid #aaa;
+            padding: 10px 30px;
+            font-size: 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            color: white;
+            border-color: white;
+        }
+
+        /* 게임 화면 */
+        #gameScreen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            z-index: 50;
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* HUD */
+        #hud {
+            position: fixed;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 60;
+            pointer-events: none;
+        }
+
+        .hud-box {
+            background: rgba(0,0,0,0.6);
+            border-radius: 12px;
+            padding: 8px 18px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        #progressBar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 14px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.3);
+            display: none;
+            z-index: 60;
+            overflow: hidden;
+        }
+
+        #progressFill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #00f5ff, #ff6b6b);
+            transition: width 0.1s;
+            width: 0%;
+        }
+
+        #progressText {
+            position: fixed;
+            bottom: 38px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            display: none;
+            z-index: 60;
+        }
+
+        /* 오버레이 패널 */
+        .overlay-panel {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1a1a2e, #302b63);
+            border: 3px solid #ffd700;
+            border-radius: 25px;
+            padding: 40px 50px;
+            text-align: center;
+            z-index: 200;
+            display: none;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+            min-width: 320px;
+        }
+
+        .overlay-panel h2 {
+            color: #ffd700;
+            font-size: 32px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 15px #ffd700;
+        }
+
+        .overlay-panel p {
+            color: #ddd;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .overlay-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .overlay-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-retry {
+            background: linear-gradient(45deg, #ff6b6b, #ee0979);
+            color: white;
+        }
+
+        .btn-levels {
+            background: linear-gradient(45deg, #4776e6, #8e54e9);
+            color: white;
+        }
+
+        .btn-next {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+            color: white;
+        }
+
+        #overlay-bg {
+            position: fixed;
+            top:0; left:0;
+            width:100%; height:100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 190;
+            display: none;
+        }
+
+        .attempts-count {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
 
-<!-- 메인 메뉴 -->
-<div id="mainMenu">
-  <div class="menu-title">GEOMETRY DASH</div>
-  <div class="student-name">✨ 정유하 ✨</div>
-  <button class="menu-btn" id="playBtn">▶ PLAY</button>
-</div>
-<button id="settingsBtn">⚙️</button>
+<!-- 별 배경 -->
+<div class="stars" id="stars"></div>
 
-<!-- 레벨 선택 -->
-<div id="levelSelect">
-  <div class="level-title">🎮 레벨 선택</div>
-  <div class="level-cards">
-    <div class="level-card lv1" onclick="startGame(1)">
-      <div class="lv-num">🟢</div>
-      <div class="lv-name">1단계</div>
-      <div class="lv-desc">가장 쉬움<br>천천히 즐겨요!</div>
+<!-- 시작 화면 -->
+<div id="startScreen">
+    <div class="title-container" style="position:relative;z-index:1;">
+        <div class="student-name">⭐ 정유하의 게임 ⭐</div>
+        <div class="game-title">GEOMETRY DASH</div>
+        <div class="game-subtitle">🔥 점프하고 살아남아라! 🔥</div>
     </div>
-    <div class="level-card lv2" onclick="startGame(2)">
-      <div class="lv-num">🟡</div>
-      <div class="lv-name">2단계</div>
-      <div class="lv-desc">어려움<br>집중하세요!</div>
+    <button class="play-btn" onclick="showLevelScreen()" style="position:relative;z-index:1;">▶ PLAY</button>
+    <div style="position:relative;z-index:1;color:#888;font-size:13px;margin-top:25px;">
+        스페이스바 / 클릭 / 터치로 점프
     </div>
-    <div class="level-card lv3" onclick="startGame(3)">
-      <div class="lv-num">🔴</div>
-      <div class="lv-name">3단계</div>
-      <div class="lv-desc">엄청 어려움<br>각오하세요! 😈</div>
-    </div>
-  </div>
-  <button class="back-btn" onclick="showMenu()">← 뒤로</button>
 </div>
 
-<!-- 설정 -->
-<div id="settingsPanel">
-  <div class="settings-box">
-    <h2>⚙️ 설정</h2>
-    <div class="setting-row">
-      <label>효과음</label>
-      <div class="toggle on" id="sfxToggle" onclick="this.classList.toggle('on')"></div>
+<!-- 단계 선택 화면 -->
+<div id="levelScreen">
+    <div class="level-title" style="position:relative;z-index:1;">🎮 단계 선택</div>
+    <div class="level-subtitle" style="position:relative;z-index:1;">원하는 단계를 선택하세요!</div>
+    <div class="level-cards" style="position:relative;z-index:1;">
+        <div class="level-card easy" onclick="startGame(1)">
+            <div class="level-icon">😊</div>
+            <div class="level-name">1단계</div>
+            <div class="level-desc">가장 쉬움<br>천천히 즐겨봐요!</div>
+            <div class="level-stars">⭐</div>
+        </div>
+        <div class="level-card hard" onclick="startGame(2)">
+            <div class="level-icon">😤</div>
+            <div class="level-name">2단계</div>
+            <div class="level-desc">어려움<br>집중력이 필요해요!</div>
+            <div class="level-stars">⭐⭐⭐</div>
+        </div>
+        <div class="level-card extreme" onclick="startGame(3)">
+            <div class="level-icon">💀</div>
+            <div class="level-name">3단계</div>
+            <div class="level-desc">엄청 어려움<br>전설의 플레이어만!</div>
+            <div class="level-stars">⭐⭐⭐⭐⭐</div>
+        </div>
     </div>
-    <div class="setting-row">
-      <label>배경음악</label>
-      <div class="toggle on" id="bgmToggle" onclick="this.classList.toggle('on')"></div>
-    </div>
-    <div class="setting-row">
-      <label>볼륨</label>
-      <input type="range" class="volume-slider" id="volSlider" min="0" max="100" value="70">
-    </div>
-    <div class="setting-row">
-      <label>파티클 효과</label>
-      <div class="toggle on" id="particleToggle" onclick="this.classList.toggle('on')"></div>
-    </div>
-    <button class="close-settings" onclick="closeSettings()">닫기</button>
-  </div>
+    <button class="back-btn" onclick="showStartScreen()">← 뒤로</button>
 </div>
 
-<!-- 게임 영역 -->
-<div id="gameContainer">
-  <canvas id="gameCanvas"></canvas>
+<!-- 게임 화면 -->
+<div id="gameScreen">
+    <canvas id="gameCanvas"></canvas>
 </div>
 
 <!-- HUD -->
 <div id="hud">
-  <div class="hud-text" id="hudLevel">LEVEL 1</div>
-  <div class="hud-progress"><div class="hud-bar" id="hudBar" style="width:0%"></div></div>
-  <div class="hud-text" id="hudAttempts">시도: 1</div>
-  <button id="pauseBtn" onclick="togglePause()">⏸</button>
+    <div class="hud-box" id="hudLevel">1단계</div>
+    <div class="hud-box" id="hudAttempts">시도: 1</div>
+    <div class="hud-box" id="hudBest">최고: 0%</div>
 </div>
+
+<div id="progressText">진행도: 0%</div>
+<div id="progressBar"><div id="progressFill"></div></div>
 
 <!-- 오버레이 -->
-<div id="overlay">
-  <h2 id="overlayTitle"></h2>
-  <p id="overlayMsg"></p>
-  <div class="ol-btns">
-    <button class="ol-btn retry" onclick="retryGame()">🔄 다시하기</button>
-    <button class="ol-btn menu" onclick="showMenu()">🏠 메뉴</button>
-  </div>
-</div>
-
-<!-- 모바일 점프 버튼 -->
-<div id="mobileCtrl">
-  <button id="jumpBtn" id="jumpMobile">⬆</button>
+<div id="overlay-bg"></div>
+<div id="overlay-panel" class="overlay-panel">
+    <h2 id="overlay-title">💀 실패!</h2>
+    <p id="overlay-msg">다시 도전해봐요!</p>
+    <div class="attempts-count" id="overlay-attempts"></div>
+    <button class="overlay-btn btn-retry" onclick="retryGame()">🔄 다시 시도</button>
+    <button class="overlay-btn btn-levels" onclick="goToLevels()">📋 단계 선택</button>
+    <button class="overlay-btn btn-next" id="btnNext" onclick="nextLevel()" style="display:none;">➡️ 다음 단계</button>
 </div>
 
 <script>
-// ====== UI 상태 ======
-const mainMenu = document.getElementById('mainMenu');
-const levelSelect = document.getElementById('levelSelect');
-const settingsPanel = document.getElementById('settingsPanel');
-const gameContainer = document.getElementById('gameContainer');
-const hud = document.getElementById('hud');
-const overlay = document.getElementById('overlay');
-const mobileCtrl = document.getElementById('mobileCtrl');
-
-document.getElementById('playBtn').onclick = () => {
-  mainMenu.style.display = 'none';
-  levelSelect.style.display = 'flex';
-};
-document.getElementById('settingsBtn').onclick = () => {
-  settingsPanel.style.display = 'flex';
-};
-function closeSettings() { settingsPanel.style.display = 'none'; }
-function showMenu() {
-  stopGame();
-  mainMenu.style.display = 'flex';
-  levelSelect.style.display = 'none';
-  gameContainer.style.display = 'none';
-  hud.style.display = 'none';
-  overlay.style.display = 'none';
-  mobileCtrl.style.display = 'none';
-  document.getElementById('settingsBtn').style.display = 'flex';
-}
-
-// ====== 게임 엔진 ======
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-let W, H;
-function resizeCanvas() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-// 게임 상태
-let gameState = null;
-let animId = null;
+// =============================================
+// 전역 변수
+// =============================================
+let canvas, ctx;
+let gameState = 'idle'; // idle, playing, dead, clear
 let currentLevel = 1;
 let attempts = 1;
-let paused = false;
+let bestPercent = [0, 0, 0];
+let animId = null;
+let keys = {};
 
-// 레벨 색상 테마
-const THEMES = {
-  1: { bg1:'#0f0c29', bg2:'#302b63', ground:'#4d96ff', groundTop:'#6bcb77', obstacle:'#ff6b6b', portal:'#ffd93d' },
-  2: { bg1:'#1a0533', bg2:'#3d0066', ground:'#a855f7', groundTop:'#ff6b6b', obstacle:'#ff4444', portal:'#00ffcc' },
-  3: { bg1:'#0a0000', bg2:'#2d0000', ground:'#ff2020', groundTop:'#ff6b6b', obstacle:'#ff0000', portal:'#ff00ff' }
+// =============================================
+// 화면 전환 함수
+// =============================================
+function showStartScreen() {
+    document.getElementById('startScreen').style.display = 'flex';
+    document.getElementById('levelScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = 'none';
+    document.getElementById('hud').style.display = 'none';
+    document.getElementById('progressBar').style.display = 'none';
+    document.getElementById('progressText').style.display = 'none';
+    hideOverlay();
+    stopGame();
+}
+
+function showLevelScreen() {
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('levelScreen').style.display = 'flex';
+    document.getElementById('gameScreen').style.display = 'none';
+    document.getElementById('hud').style.display = 'none';
+    document.getElementById('progressBar').style.display = 'none';
+    document.getElementById('progressText').style.display = 'none';
+    hideOverlay();
+    stopGame();
+}
+
+function goToLevels() {
+    showLevelScreen();
+}
+
+function showOverlay(title, msg, showNext) {
+    document.getElementById('overlay-title').textContent = title;
+    document.getElementById('overlay-msg').textContent = msg;
+    document.getElementById('overlay-attempts').textContent = '시도 횟수: ' + attempts + '회';
+    document.getElementById('btnNext').style.display = showNext ? 'block' : 'none';
+    document.getElementById('overlay-bg').style.display = 'block';
+    document.getElementById('overlay-panel').style.display = 'block';
+}
+
+function hideOverlay() {
+    document.getElementById('overlay-bg').style.display = 'none';
+    document.getElementById('overlay-panel').style.display = 'none';
+}
+
+function retryGame() {
+    hideOverlay();
+    attempts++;
+    initGame(currentLevel);
+}
+
+function nextLevel() {
+    hideOverlay();
+    if (currentLevel < 3) {
+        currentLevel++;
+        attempts = 1;
+        initGame(currentLevel);
+    } else {
+        showLevelScreen();
+    }
+}
+
+// =============================================
+// 별 배경 생성
+// =============================================
+function createStars() {
+    const starsDiv = document.getElementById('stars');
+    starsDiv.innerHTML = '';
+    for (let i = 0; i < 80; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 3 + 1;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        star.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+        starsDiv.appendChild(star);
+    }
+}
+createStars();
+
+// =============================================
+// 게임 엔진
+// =============================================
+let W, H;
+let player;
+let obstacles;
+let portals;
+let particles;
+let bgX;
+let levelProgress;
+let levelLength;
+let gameSpeed;
+let gravity;
+let groundY;
+let ceilingY;
+let bgColors;
+let bgColorIdx;
+let bgTransition;
+let shipMode; // false = cube, true = ship
+let shipGravDir; // 1 = down, -1 = up (ship mode)
+let currentBgColor;
+let nextBgColor;
+let flashTimer;
+let deathParticles;
+let clearStars;
+let levelData;
+
+// 레벨별 설정
+const LEVEL_CONFIG = {
+    1: { speed: 5.5, name: '1단계', color1: '#4776e6', color2: '#38ef7d' },
+    2: { speed: 7.5, name: '2단계', color1: '#f7971e', color2: '#ee0979' },
+    3: { speed: 10, name: '3단계', color1: '#cb2d3e', color2: '#8e54e9' }
 };
 
-// 레벨 속도 설정
-const SPEEDS = { 1: 4.5, 2: 6.5, 3: 9.0 };
-
-// 지면 높이
-const GROUND_Y_RATIO = 0.78;
-
-// ====== 레벨 맵 생성 ======
-function generateMap(level) {
-  const obstacles = [];
-  const portals = [];
-  const totalLength = 8000 + level * 4000;
-  
-  const configs = {
-    1: { minGap: 320, spikes: true,  blocks: true,  doubleSpike: false, tripleSpike: false, tallBlock: false },
-    2: { minGap: 200, spikes: true,  blocks: true,  doubleSpike: true,  tripleSpike: false, tallBlock: true  },
-    3: { minGap: 130, spikes: true,  blocks: true,  doubleSpike: true,  tripleSpike: true,  tallBlock: true  }
-  };
-  const cfg = configs[level];
-
-  let x = 1000;
-  while (x < totalLength - 500) {
-    const r = Math.random();
-    let obs = null;
-
-    if (r < 0.30 && cfg.spikes) {
-      obs = { type: 'spike', x, w: 40, h: 50 };
-      x += 40 + cfg.minGap + Math.random() * 120;
-    } else if (r < 0.55 && cfg.doubleSpike) {
-      obs = { type: 'dspike', x, w: 80, h: 50 };
-      x += 80 + cfg.minGap + Math.random() * 100;
-    } else if (r < 0.68 && cfg.tripleSpike) {
-      obs = { type: 'tspike', x, w: 120, h: 50 };
-      x += 120 + cfg.minGap + Math.random() * 80;
-    } else if (r < 0.82 && cfg.blocks) {
-      const h = cfg.tallBlock && Math.random() > 0.5 ? 80 : 50;
-      obs = { type: 'block', x, w: 50, h };
-      x += 50 + cfg.minGap + Math.random() * 100;
-    } else {
-      x += cfg.minGap + Math.random() * 200;
-    }
-
-    if (obs) obstacles.push(obs);
-  }
-
-  // 포탈 추가 (중간 중간에)
-  const portalCount = level + 1;
-  for (let i = 0; i < portalCount; i++) {
-    const px = 1500 + i * (totalLength / (portalCount + 1));
-    portals.push({ x: px, type: (i % 2 === 0) ? 'fly' : 'normal', active: true, timer: 0 });
-  }
-
-  return { obstacles, portals, totalLength };
-}
-
-// ====== 파티클 시스템 ======
-class Particle {
-  constructor(x, y, color) {
-    this.x = x; this.y = y; this.color = color;
-    this.vx = (Math.random()-0.5)*6;
-    this.vy = -Math.random()*5 - 2;
-    this.life = 1.0;
-    this.size = Math.random()*6+3;
-    this.gravity = 0.18;
-    this.rotation = Math.random()*Math.PI*2;
-    this.rotSpeed = (Math.random()-0.5)*0.2;
-  }
-  update() {
-    this.x += this.vx; this.y += this.vy;
-    this.vy += this.gravity; this.life -= 0.025;
-    this.rotation += this.rotSpeed;
-  }
-  draw(ctx) {
-    ctx.save();
-    ctx.globalAlpha = Math.max(0, this.life);
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.rotation);
-    ctx.fillStyle = this.color;
-    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
-    ctx.restore();
-  }
-}
-
-// ====== 게임 시작 ======
 function startGame(level) {
-  currentLevel = level;
-  attempts = 1;
-  levelSelect.style.display = 'none';
-  gameContainer.style.display = 'block';
-  hud.style.display = 'flex';
-  mobileCtrl.style.display = 'block';
-  overlay.style.display = 'none';
-  document.getElementById('settingsBtn').style.display = 'none';
-  document.getElementById('hudLevel').textContent = `LEVEL ${level}`;
-  document.getElementById('hudAttempts').textContent = `시도: ${attempts}`;
-  initGame(level);
-}
-
-function initGame(level) {
-  paused = false;
-  const theme = THEMES[level];
-  const map = generateMap(level);
-  const speed = SPEEDS[level];
-  const groundY = H * GROUND_Y_RATIO;
-
-  gameState = {
-    level, theme, map, speed,
-    camX: 0,
-    groundY,
-    particles: [],
-    stars: generateStars(),
-    bgOffset: 0,
-
-    // 플레이어
-    player: {
-      x: 160,
-      y: groundY - 50,
-      w: 44, h: 44,
-      vy: 0,
-      isGrounded: true,
-      rotation: 0,
-      isFly: false,         // 포탈로 비행모드
-      flyTimer: 0,
-      isDead: false,
-      trailX: [], trailY: [],
-      color: '#4d96ff',
-      innerColor: '#fff',
-      orbAnim: 0,
-    },
-    
-    portalEffect: null,
-    cleared: false,
-    deathAnim: 0,
-  };
-
-  if (animId) cancelAnimationFrame(animId);
-  gameLoop();
-}
-
-function generateStars() {
-  const stars = [];
-  for (let i = 0; i < 80; i++) {
-    stars.push({ x: Math.random()*3000, y: Math.random()*0.7, size: Math.random()*2.5+0.5, speed: Math.random()*0.3+0.1 });
-  }
-  return stars;
-}
-
-// ====== 게임 루프 ======
-function gameLoop() {
-  if (!gameState) return;
-  update();
-  draw();
-  animId = requestAnimationFrame(gameLoop);
+    currentLevel = level;
+    attempts = 1;
+    document.getElementById('levelScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = 'block';
+    document.getElementById('hud').style.display = 'flex';
+    document.getElementById('progressBar').style.display = 'block';
+    document.getElementById('progressText').style.display = 'block';
+    hideOverlay();
+    initGame(level);
 }
 
 function stopGame() {
-  if (animId) { cancelAnimationFrame(animId); animId = null; }
-  gameState = null;
-}
-
-// ====== INPUT ======
-const keys = {};
-window.addEventListener('keydown', e => {
-  keys[e.code] = true;
-  if ((e.code === 'Space' || e.code === 'ArrowUp') && gameState && !paused) {
-    e.preventDefault();
-    handleJump();
-  }
-  if (e.code === 'Escape' && gameState) togglePause();
-});
-window.addEventListener('keyup', e => { keys[e.code] = false; });
-
-canvas.addEventListener('mousedown', () => { if (gameState && !paused) handleJump(); });
-canvas.addEventListener('touchstart', e => { e.preventDefault(); if (gameState && !paused) handleJump(); }, { passive: false });
-document.getElementById('jumpBtn').addEventListener('touchstart', e => {
-  e.preventDefault(); if (gameState && !paused) handleJump();
-}, { passive: false });
-document.getElementById('jumpBtn').addEventListener('mousedown', () => {
-  if (gameState && !paused) handleJump();
-});
-
-let jumpHeld = false;
-function handleJump() {
-  const p = gameState.player;
-  if (p.isDead) return;
-  if (p.isFly) {
-    // 비행 모드: 위로 추진
-    p.vy = -5.5;
-  } else {
-    if (p.isGrounded) {
-      p.vy = -13.5;
-      p.isGrounded = false;
-      spawnJumpParticles();
+    if (animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
     }
-  }
+    gameState = 'idle';
 }
 
-function spawnJumpParticles() {
-  if (!document.getElementById('particleToggle').classList.contains('on')) return;
-  const p = gameState.player;
-  const colors = ['#4d96ff','#6bcb77','#ffd93d','#ff6b6b','#a855f7'];
-  for (let i = 0; i < 8; i++) {
-    gameState.particles.push(new Particle(p.x + p.w/2, p.y + p.h, colors[i%colors.length]));
-  }
+function initGame(level) {
+    if (animId) cancelAnimationFrame(animId);
+
+    canvas = document.getElementById('gameCanvas');
+    ctx = canvas.getContext('2d');
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+
+    groundY = H * 0.75;
+    ceilingY = H * 0.05;
+
+    gameSpeed = LEVEL_CONFIG[level].speed;
+    gravity = 0.65;
+
+    shipMode = false;
+    shipGravDir = 1;
+
+    bgX = 0;
+    bgColors = ['#1a1a2e', '#0f0c29', '#302b63', '#1a2a4a', '#2d1b4e'];
+    bgColorIdx = 0;
+    currentBgColor = bgColors[0];
+    nextBgColor = bgColors[1];
+    bgTransition = 0;
+    flashTimer = 0;
+
+    particles = [];
+    deathParticles = [];
+    clearStars = [];
+
+    levelLength = 8000; // 맵 길이
+    levelProgress = 0;
+
+    // 플레이어
+    player = {
+        x: 120,
+        y: groundY - 44,
+        w: 40,
+        h: 40,
+        vy: 0,
+        vx: 0,
+        onGround: false,
+        rotation: 0,
+        color: '#00f5ff',
+        trail: [],
+        dead: false,
+        shipTrail: []
+    };
+
+    // 레벨 생성
+    obstacles = [];
+    portals = [];
+    generateLevel(level);
+
+    // HUD 업데이트
+    updateHUD();
+
+    gameState = 'playing';
+    gameLoop();
 }
 
-function spawnDeathParticles() {
-  if (!document.getElementById('particleToggle').classList.contains('on')) return;
-  const p = gameState.player;
-  const colors = ['#ff6b6b','#ffd93d','#ff4444','#ffaa00','white'];
-  for (let i = 0; i < 24; i++) {
-    const part = new Particle(p.x + p.w/2, p.y + p.h/2, colors[i%colors.length]);
-    part.vx = (Math.random()-0.5)*12;
-    part.vy = (Math.random()-0.5)*12;
-    part.size = Math.random()*8+4;
-    part.life = 1.2;
-    gameState.particles.push(part);
-  }
+function generateLevel(level) {
+    obstacles = [];
+    portals = [];
+
+    const sp = gameSpeed;
+
+    if (level === 1) {
+        // 1단계: 쉬운 장애물
+        let x = 600;
+        const patterns = [
+            () => { // 단순 삼각형
+                addSpike(x, groundY);
+                x += 150;
+            },
+            () => { // 블록
+                addBlock(x, groundY - 40, 40, 40);
+                x += 180;
+            },
+            () => { // 작은 간격
+                addSpike(x, groundY);
+                addSpike(x + 60, groundY);
+                x += 200;
+            },
+            () => { // 위 장애물
+                addCeilingSpike(x, groundY);
+                x += 160;
+            }
+        ];
+
+        // 포탈 추가 (1000px 근처)
+        portals.push({ x: 950, y: groundY - 100, w: 30, h: 120, type: 'ship', active: true });
+        portals.push({ x: 1600, y: groundY - 100, w: 30, h: 120, type: 'cube', active: true });
+
+        for (let i = 0; i < 30; i++) {
+            const p = patterns[Math.floor(Math.random() * patterns.length)];
+            p();
+            x += 80 + Math.random() * 80;
+        }
+
+        // 포탈 이후 추가 장애물
+        x = 1700;
+        for (let i = 0; i < 20; i++) {
+            const p = patterns[Math.floor(Math.random() * patterns.length)];
+            p();
+            x += 80 + Math.random() * 100;
+        }
+
+    } else if (level === 2) {
+        // 2단계: 중간 난이도
+        let x = 400;
+
+        portals.push({ x: 800, y: groundY - 120, w: 30, h: 140, type: 'ship', active: true });
+        portals.push({ x: 1600, y: groundY - 120, w: 30, h: 140, type: 'cube', active: true });
+        portals.push({ x: 2800, y: groundY - 120, w: 30, h: 140, type: 'ship', active: true });
+        portals.push({ x: 3600, y: groundY - 120, w: 30, h: 140, type: 'cube', active: true });
+
+        const patterns = [
+            () => {
+                addSpike(x, groundY);
+                addSpike(x + 50, groundY);
+                x += 160;
+            },
+            () => {
+                addBlock(x, groundY - 80, 40, 80);
+                x += 200;
+            },
+            () => {
+                addSpike(x, groundY);
+                addBlock(x + 80, groundY - 40, 40, 40);
+                addSpike(x + 140, groundY);
+                x += 240;
+            },
+            () => {
+                addCeilingSpike(x, groundY);
+                addSpike(x + 80, groundY);
+                x += 200;
+            },
+            () => {
+                addBlock(x, groundY - 80, 80, 80);
+                addSpike(x + 100, groundY);
+                x += 220;
+            }
+        ];
+
+        for (let i = 0; i < 60; i++) {
+            patterns[Math.floor(Math.random() * patterns.length)]();
+            x += 50 + Math.random() * 60;
+        }
+
+    } else if (level === 3) {
+        // 3단계: 극한 난이도
+        let x = 300;
+
+        portals.push({ x: 600, y: groundY - 130, w: 30, h: 150, type: 'ship', active: true });
+        portals.push({ x: 1400, y: groundY - 130, w: 30, h: 150, type: 'cube', active: true });
+        portals.push({ x: 2200, y: groundY - 130, w: 30, h: 150, type: 'ship', active: true });
+        portals.push({ x: 3000, y: groundY - 130, w: 30, h: 150, type: 'cube', active: true });
+        portals.push({ x: 4000, y: groundY - 130, w: 30, h: 150, type: 'ship', active: true });
+        portals.push({ x: 5000, y: groundY - 130, w: 30, h: 150, type: 'cube', active: true });
+
+        const patterns = [
+            () => {
+                addSpike(x, groundY); addSpike(x+40, groundY); addSpike(x+80, groundY);
+                x += 160;
+            },
+            () => {
+                addBlock(x, groundY-120, 40, 120);
+                addSpike(x+60, groundY);
+                addBlock(x+110, groundY-80, 40, 80);
+                x += 200;
+            },
+            () => {
+                addCeilingSpike(x, groundY); addCeilingSpike(x+60, groundY);
+                addSpike(x+30, groundY); addSpike(x+90, groundY);
+                x += 200;
+            },
+            () => {
+                addBlock(x, groundY-80, 80, 80);
+                addSpike(x+100, groundY); addSpike(x+140, groundY);
+                addBlock(x+190, groundY-80, 40, 80);
+                x += 260;
+            },
+            () => {
+                addSpike(x, groundY); addSpike(x+45, groundY);
+                addBlock(x+100, groundY-40, 40, 40);
+                addSpike(x+160, groundY); addSpike(x+200, groundY);
+                x += 280;
+            }
+        ];
+
+        for (let i = 0; i < 100; i++) {
+            patterns[Math.floor(Math.random() * patterns.length)]();
+            x += 20 + Math.random() * 40;
+        }
+    }
+
+    levelLength = Math.max(...obstacles.map(o => o.x + 60), ...portals.map(p => p.x + 50), 5000) + 500;
 }
 
-// ====== UPDATE ======
-function update() {
-  if (paused || !gameState) return;
-  const gs = gameState;
-  const p = gs.player;
-  const theme = gs.theme;
+function addSpike(x, groundY) {
+    obstacles.push({ type: 'spike', x: x, y: groundY - 40, w: 40, h: 40 });
+}
 
-  if (p.isDead) {
-    gs.deathAnim++;
-    gs.particles.forEach(pt => pt.update());
-    gs.particles = gs.particles.filter(pt => pt.life > 0);
-    if (gs.deathAnim > 60) showDeath();
-    return;
-  }
-  if (gs.cleared) return;
+function addCeilingSpike(x, groundY) {
+    obstacles.push({ type: 'ceilingSpike', x: x, y: ceilingY + 30, w: 40, h: 40 });
+}
 
-  // 카메라
-  gs.camX += gs.speed;
-  gs.bgOffset += gs.speed * 0.3;
+function addBlock(x, y, w, h) {
+    obstacles.push({ type: 'block', x: x, y: y, w: w, h: h });
+}
 
-  // 플레이어 월드 X = camX + 160 (화면 고정)
-  const worldX = gs.camX + 160;
+// =============================================
+// 파티클
+// =============================================
+function spawnParticles(x, y, color, count) {
+    for (let i = 0; i < count; i++) {
+        particles.push({
+            x: x, y: y,
+            vx: (Math.random() - 0.5) * 8,
+            vy: (Math.random() - 0.5) * 8 - 2,
+            life: 1,
+            color: color,
+            size: Math.random() * 5 + 2
+        });
+    }
+}
 
-  // 중력
-  const gravity = p.isFly ? 0.38 : 0.72;
-  p.vy += gravity;
-  p.y += p.vy;
-
-  // 지면 충돌
-  const groundY = gs.groundY;
-  if (p.y + p.h >= groundY) {
-    p.y = groundY - p.h;
-    p.vy = 0;
-    p.isGrounded = true;
-    if (!p.isFly) p.rotation = Math.round(p.rotation / (Math.PI/2)) * (Math.PI/2);
-  } else {
-    p.isGrounded = false;
-  }
-
-  // 천장 (비행 모드)
-  if (p.isFly && p.y < 60) {
-    p.y = 60; p.vy = 0;
-    // 천장 닿으면 죽음
-    killPlayer(gs);
-    return;
-  }
-
-  // 회전
-  if (!p.isGrounded) {
-    p.rotation += p.isFly ? 0.08 : 0.1;
-  }
-
-  // 비행모드 타이머
-  if (p.isFly) {
-    p.flyTimer--;
-    if (p.flyTimer <= 0) { p.isFly = false; }
-  }
-
-  // trail
-  p.trailX.unshift(p.x + p.w/2); p.trailY.unshift(p.y + p.h/2);
-  if (p.trailX.length > 10) { p.trailX.pop(); p.trailY.pop(); }
-
-  // orb anim
-  p.orbAnim = (p.orbAnim + 0.1) % (Math.PI*2);
-
-  // 파티클 업데이트
-  gs.particles.forEach(pt => pt.update());
-  gs.particles = gs.particles.filter(pt => pt.life > 0);
-
-  // 포탈 충돌
-  gs.map.portals.forEach(portal => {
-    if (!portal.active) return;
-    const px = portal.x - gs.camX;
-    if (px > -60 && px < W + 60) {
-      const pr = { x: px, y: groundY - 100, w: 40, h: 100 };
-      if (rectsOverlap(p.x, p.y, p.w, p.h, pr.x, pr.y, pr.w, pr.h)) {
-        portal.active = false;
-        gs.portalEffect = { x: p.x + p.w/2, y: p.y + p.h/2, timer: 30 };
-        if (portal.type === 'fly') {
+function spawnDeathParticles(x, y) {
+    for (let i = 0; i < 30; i++) {
+        deathParticles.push({
+            x: x, y: y,
+            vx: (Math.random() - 0.5) * 14,
+            vy: (Math.random() - 0.5) * 14 - 3,
+            life: 1,
+            color: ['#ff6b6b','
