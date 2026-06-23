@@ -3,284 +3,512 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>장민서의 블록 블라스트!</title>
+<title>블록 블라스트 - 장민서</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
-  body { 
-    background: #2d5a27; 
-    font-family: 'Arial', sans-serif; 
-    overflow: hidden;
-    user-select: none;
-  }
-
-  /* ===== 메인 화면 ===== */
-  #mainScreen {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    width: 100vw; height: 100vh;
-    background: linear-gradient(135deg, #1a3a14 0%, #2d5a27 40%, #3d7a34 70%, #4a9a3f 100%);
-  }
-  #mainScreen h1 {
-    font-size: 2.4em; color: #fff; text-shadow: 3px 3px 8px #000, 0 0 20px #7fff00;
-    margin-bottom: 8px; letter-spacing: 2px;
-  }
-  #mainScreen .studentName {
-    font-size: 1.1em; color: #c8ffb0; margin-bottom: 30px; font-weight: bold;
-    text-shadow: 1px 1px 4px #000;
-  }
-  .mainBtn {
-    width: 220px; padding: 18px 0; margin: 10px;
-    font-size: 1.4em; font-weight: bold; border: none; border-radius: 16px;
-    cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 6px 0 rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.1);
-  }
-  .mainBtn:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,0.3); }
-  .startBtn { background: linear-gradient(180deg, #ffe44d, #ff9800); color: #5a2000; }
-  .shopBtn  { background: linear-gradient(180deg, #7ef6ff, #009cdb); color: #003a5a; }
-
-  /* ===== 상점 화면 ===== */
-  #shopScreen {
-    display: none; flex-direction: column; align-items: center;
-    width: 100vw; height: 100vh; overflow-y: auto;
-    background: linear-gradient(135deg, #1a3a14, #2d5a27);
-    padding: 20px 10px 40px;
-  }
-  #shopScreen h2 { font-size: 1.9em; color: #ffe44d; margin-bottom: 6px; text-shadow: 2px 2px 6px #000; }
-  .shopSection { width: 100%; max-width: 480px; margin-bottom: 24px; }
-  .shopSection h3 { font-size: 1.2em; color: #c8ffb0; margin-bottom: 10px; text-align: center; }
-
-  /* 난이도 */
-  .diffRow { display: flex; gap: 10px; justify-content: center; }
-  .diffBtn {
-    flex: 1; padding: 14px 8px; font-size: 1.05em; font-weight: bold;
-    border: 3px solid transparent; border-radius: 14px; cursor: pointer; transition: all 0.2s;
-  }
-  .diffBtn.easy   { background: #5dde6a; color: #1a3a00; }
-  .diffBtn.normal { background: #f5c518; color: #3a2000; }
-  .diffBtn.hard   { background: #ff6060; color: #3a0000; }
-  .diffBtn.selected { border-color: #fff; box-shadow: 0 0 12px #fff; transform: scale(1.06); }
-
-  /* 뽑기 */
-  .gacha {
-    background: rgba(255,255,255,0.08); border-radius: 16px; padding: 16px;
-    display: flex; flex-direction: column; align-items: center;
-  }
-  .gachaResult {
-    width: 180px; height: 100px; border-radius: 12px; margin: 12px 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.3em; font-weight: bold; color: #fff;
-    text-shadow: 1px 1px 4px #000; border: 3px solid rgba(255,255,255,0.3);
-    transition: all 0.4s;
-  }
-  .gachaBtn {
-    padding: 12px 32px; font-size: 1.1em; font-weight: bold;
-    background: linear-gradient(180deg, #ff77cc, #cc0077); color: #fff;
-    border: none; border-radius: 14px; cursor: pointer;
-    box-shadow: 0 5px 0 #880044; transition: all 0.15s;
-  }
-  .gachaBtn:active { transform: translateY(3px); box-shadow: 0 2px 0 #880044; }
-  .gachaLabel { font-size: 0.9em; color: #ffc8e8; margin-top: 6px; }
-
-  .backBtn {
-    margin-top: 10px; padding: 12px 36px; font-size: 1.1em; font-weight: bold;
-    background: linear-gradient(180deg, #aaffaa, #33bb33); color: #1a3a00;
-    border: none; border-radius: 14px; cursor: pointer;
-    box-shadow: 0 4px 0 #116611; transition: all 0.15s;
-  }
-  .backBtn:active { transform: translateY(2px); box-shadow: 0 2px 0 #116611; }
-
-  /* ===== 게임 화면 ===== */
-  #gameScreen {
-    display: none; flex-direction: column; align-items: center;
-    width: 100vw; height: 100vh; overflow: hidden;
-  }
-  #gameScreen .topBar {
-    width: 100%; display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 14px; background: rgba(0,0,0,0.35);
-  }
-  .scoreBox { text-align: center; }
-  .scoreLabel { font-size: 0.75em; color: #c8ffb0; }
-  .scoreVal   { font-size: 1.5em; font-weight: bold; color: #ffe44d; text-shadow: 1px 1px 4px #000; }
-  .livesBox   { display: flex; gap: 4px; align-items: center; }
-  .heart { font-size: 1.6em; }
-
-  #gameCanvas {
-    display: block;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #2d5a27;
+    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
     touch-action: none;
   }
+  .student-name {
+    text-align: center;
+    color: #ffe066;
+    font-size: 13px;
+    padding: 4px;
+    background: rgba(0,0,0,0.3);
+    letter-spacing: 1px;
+  }
 
-  /* 팔레트 영역 */
-  #pieceArea {
-    width: 100%; flex: 1;
-    background: rgba(0,0,0,0.25);
-    display: flex; align-items: center; justify-content: space-around;
-    padding: 6px 4px;
+  /* ===== 메인화면 ===== */
+  #mainScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 95vh;
+    padding: 20px;
+  }
+  .main-title {
+    font-size: 48px;
+    font-weight: 900;
+    color: #ffe066;
+    text-shadow: 3px 3px 0 #ff6b00, 6px 6px 0 rgba(0,0,0,0.3);
+    margin-bottom: 10px;
+    animation: bounce 1s infinite alternate;
+  }
+  @keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+  }
+  .main-sub {
+    font-size: 16px;
+    color: #a8e6a8;
+    margin-bottom: 40px;
+  }
+  .main-btn {
+    width: 220px;
+    padding: 18px 0;
+    margin: 10px;
+    border-radius: 50px;
+    border: none;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.3);
+  }
+  .main-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,0.3); }
+  .btn-start { background: linear-gradient(135deg, #ff6b35, #ff4500); color: white; }
+  .btn-shop { background: linear-gradient(135deg, #ffd700, #ffa500); color: #333; }
+
+  /* ===== 상점화면 ===== */
+  #shopScreen {
+    display: none;
+    padding: 20px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .shop-title {
+    text-align: center;
+    font-size: 32px;
+    color: #ffe066;
+    font-weight: 900;
+    text-shadow: 2px 2px 0 #ff6b00;
+    margin-bottom: 20px;
+  }
+  .shop-section {
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .shop-section-title {
+    font-size: 20px;
+    color: #ffe066;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  .difficulty-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .diff-btn {
+    flex: 1;
+    padding: 15px 5px;
+    border-radius: 15px;
+    border: 3px solid transparent;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .diff-btn.easy { background: #4caf50; color: white; }
+  .diff-btn.normal { background: #ff9800; color: white; }
+  .diff-btn.hard { background: #f44336; color: white; }
+  .diff-btn.selected { border-color: #ffe066; transform: scale(1.05); box-shadow: 0 0 15px rgba(255,230,0,0.7); }
+
+  .gacha-btn {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    border-radius: 20px;
+    border: none;
+    background: linear-gradient(135deg, #9c27b0, #673ab7);
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.3);
+  }
+  .gacha-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.3); }
+  .coin-display {
+    text-align: center;
+    font-size: 18px;
+    color: #ffd700;
+    margin-bottom: 10px;
+  }
+  .gacha-result {
+    text-align: center;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 15px;
+    display: none;
+    animation: popIn 0.4s ease;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .bg-collection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .bg-item {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    border: 3px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .bg-item.active { border-color: #ffe066; box-shadow: 0 0 10px #ffe066; }
+  .back-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border-radius: 15px;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  /* ===== 게임화면 ===== */
+  #gameScreen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .game-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 0 5px;
+  }
+  .score-box {
+    background: rgba(0,0,0,0.4);
+    border-radius: 15px;
+    padding: 8px 16px;
+    color: white;
+    text-align: center;
+  }
+  .score-label { font-size: 11px; color: #aaa; }
+  .score-value { font-size: 24px; font-weight: 900; color: #ffe066; }
+  .lives-box {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  .heart {
+    font-size: 28px;
+    transition: all 0.3s;
+  }
+  .heart.lost { opacity: 0.2; transform: scale(0.8); }
+
+  #gameCanvas {
+    border-radius: 15px;
+    border: 4px solid rgba(255,255,255,0.3);
+    touch-action: none;
+    cursor: grab;
+  }
+
+  .pieces-area {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    width: 100%;
+    margin-top: 15px;
+    min-height: 120px;
+    padding: 10px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 20px;
+  }
+  .piece-slot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+    min-height: 100px;
+    cursor: grab;
+    transition: transform 0.2s;
     position: relative;
   }
+  .piece-slot canvas {
+    touch-action: none;
+    pointer-events: none;
+  }
 
-  /* 오버레이 */
-  .overlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.7); display: none;
-    flex-direction: column; align-items: center; justify-content: center; z-index: 999;
+  /* ===== 게임오버 / 클리어 ===== */
+  #overlayScreen {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
   }
-  .overlayBox {
-    background: linear-gradient(135deg, #2d5a27, #3d7a34);
-    border: 4px solid #7fff00; border-radius: 24px;
-    padding: 36px 32px; text-align: center;
-    box-shadow: 0 0 40px rgba(127,255,0,0.4);
+  .overlay-box {
+    background: linear-gradient(135deg, #1a3a1a, #2d5a27);
+    border: 3px solid #ffe066;
+    border-radius: 25px;
+    padding: 40px 30px;
+    text-align: center;
+    animation: popIn 0.4s ease;
   }
-  .overlayBox h2 { font-size: 2em; color: #ffe44d; margin-bottom: 12px; }
-  .overlayBox p  { font-size: 1.1em; color: #c8ffb0; margin-bottom: 20px; }
-  .overlayBtn {
-    padding: 14px 36px; font-size: 1.2em; font-weight: bold;
-    background: linear-gradient(180deg, #ffe44d, #ff9800); color: #5a2000;
-    border: none; border-radius: 14px; cursor: pointer; margin: 6px;
-    box-shadow: 0 5px 0 rgba(0,0,0,0.3); transition: all 0.15s;
+  .overlay-title {
+    font-size: 40px;
+    font-weight: 900;
+    color: #ff4444;
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 10px;
   }
-  .overlayBtn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.3); }
+  .overlay-score {
+    font-size: 24px;
+    color: #ffe066;
+    margin-bottom: 20px;
+  }
+  .overlay-btn {
+    padding: 15px 40px;
+    border-radius: 50px;
+    border: none;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, #ff6b35, #ff4500);
+    color: white;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.3);
+    margin: 5px;
+  }
+  .overlay-btn.menu { background: linear-gradient(135deg, #4caf50, #2e7d32); }
 
-  /* 점수 팝업 */
-  .scorePopup {
-    position: absolute; pointer-events: none; z-index: 900;
-    font-size: 1.4em; font-weight: bold; color: #ffe44d;
-    text-shadow: 2px 2px 6px #000; animation: floatUp 1s forwards;
+  .score-popup {
+    position: absolute;
+    font-size: 22px;
+    font-weight: 900;
+    color: #ffe066;
+    text-shadow: 1px 1px 0 #000;
+    pointer-events: none;
+    animation: floatUp 1s ease forwards;
+    z-index: 50;
   }
   @keyframes floatUp {
-    0%   { opacity:1; transform: translateY(0)  scale(1); }
-    100% { opacity:0; transform: translateY(-70px) scale(1.4); }
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
+  }
+
+  .difficulty-badge {
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
   }
 </style>
 </head>
 <body>
+<div class="student-name">🎮 장민서의 블록 블라스트</div>
 
-<!-- ===== 메인 화면 ===== -->
+<!-- 메인화면 -->
 <div id="mainScreen">
-  <h1>🟩 블록 블라스트!</h1>
-  <div class="studentName">👤 장민서</div>
-  <button class="mainBtn startBtn" onclick="goGame()">🎮 시작하기</button>
-  <button class="mainBtn shopBtn"  onclick="goShop()">🛒 상점</button>
+  <div class="main-title">🟩 블록<br>블라스트!</div>
+  <div class="main-sub">블록을 맞춰 점수를 올려봐요!</div>
+  <button class="main-btn btn-start" onclick="goGame()">🎮 시작하기</button>
+  <button class="main-btn btn-shop" onclick="goShop()">🛒 상점</button>
 </div>
 
-<!-- ===== 상점 화면 ===== -->
+<!-- 상점화면 -->
 <div id="shopScreen">
-  <h2>🛒 상점</h2>
-  <p style="color:#c8ffb0;margin-bottom:16px;font-size:0.9em">👤 장민서</p>
+  <div class="shop-title">🛒 상점</div>
 
-  <div class="shopSection">
-    <h3>⚙️ 난이도 선택</h3>
-    <div class="diffRow">
-      <button class="diffBtn easy"   onclick="selectDiff('easy')"  >😊 쉬움</button>
-      <button class="diffBtn normal" onclick="selectDiff('normal')">😐 보통</button>
-      <button class="diffBtn hard"   onclick="selectDiff('hard')"  >😤 어려움</button>
-    </div>
-    <p id="diffDesc" style="text-align:center;color:#ffe44d;margin-top:10px;font-size:0.95em"></p>
-  </div>
-
-  <div class="shopSection">
-    <h3>🎰 배경 뽑기</h3>
-    <div class="gacha">
-      <div class="gachaResult" id="gachaResult" style="background:linear-gradient(135deg,#2d5a27,#3d7a34)">
-        뽑기를 눌러보세요!
-      </div>
-      <button class="gachaBtn" onclick="doGacha()">🎲 뽑기!</button>
-      <div class="gachaLabel" id="gachaLabel">랜덤 게임 배경을 뽑아보세요 ✨</div>
+  <div class="shop-section">
+    <div class="shop-section-title">⚙️ 난이도 선택</div>
+    <div class="difficulty-btns">
+      <button class="diff-btn easy selected" onclick="selectDiff('easy',this)">😊 쉬움</button>
+      <button class="diff-btn normal" onclick="selectDiff('normal',this)">😐 보통</button>
+      <button class="diff-btn hard" onclick="selectDiff('hard',this)">😈 어려움</button>
     </div>
   </div>
 
-  <button class="backBtn" onclick="goMain()">← 돌아가기</button>
+  <div class="shop-section">
+    <div class="shop-section-title">🎰 배경 뽑기</div>
+    <div class="coin-display" id="coinDisplay">💰 코인: 0</div>
+    <button class="gacha-btn" onclick="doGacha()">🎰 뽑기! (게임 후 코인 획득)</button>
+    <div class="gacha-result" id="gachaResult"></div>
+    <div style="margin-top:10px; color:#aaa; font-size:13px; text-align:center;">획득한 배경 (클릭하여 적용)</div>
+    <div class="bg-collection" id="bgCollection"></div>
+  </div>
+
+  <button class="back-btn" onclick="goMain()">← 돌아가기</button>
 </div>
 
-<!-- ===== 게임 화면 ===== -->
+<!-- 게임화면 -->
 <div id="gameScreen">
-  <div class="topBar">
-    <div class="scoreBox">
-      <div class="scoreLabel">점수</div>
-      <div class="scoreVal" id="scoreVal">0</div>
+  <div class="game-header">
+    <div class="score-box">
+      <div class="score-label">점수</div>
+      <div class="score-value" id="scoreDisplay">0</div>
     </div>
-    <div class="scoreBox">
-      <div class="scoreLabel">최고</div>
-      <div class="scoreVal" id="bestVal">0</div>
+    <div>
+      <div id="diffBadge" class="difficulty-badge" style="background:#4caf50; margin-bottom:5px;">😊 쉬움</div>
     </div>
-    <div class="livesBox" id="livesBox"></div>
+    <div class="lives-box" id="livesDisplay">
+      <span class="heart" id="h1">❤️</span>
+      <span class="heart" id="h2">❤️</span>
+      <span class="heart" id="h3">❤️</span>
+    </div>
   </div>
+
   <canvas id="gameCanvas"></canvas>
-  <div id="pieceArea"></div>
+
+  <div class="pieces-area" id="piecesArea">
+    <div class="piece-slot" id="slot0"><canvas id="pc0"></canvas></div>
+    <div class="piece-slot" id="slot1"><canvas id="pc1"></canvas></div>
+    <div class="piece-slot" id="slot2"><canvas id="pc2"></canvas></div>
+  </div>
+
+  <button onclick="goMain()" style="margin-top:10px; padding:8px 20px; border-radius:20px; border:none; background:rgba(255,255,255,0.2); color:white; font-size:14px; cursor:pointer;">🏠 메뉴</button>
 </div>
 
-<!-- ===== 게임 오버 오버레이 ===== -->
-<div class="overlay" id="gameOverOverlay">
-  <div class="overlayBox">
-    <h2>💀 게임 오버</h2>
-    <p id="gameOverMsg">최종 점수: 0점</p>
-    <button class="overlayBtn" onclick="replayGame()">🔄 다시 하기</button>
-    <button class="overlayBtn" style="background:linear-gradient(180deg,#7ef6ff,#009cdb);color:#003a5a" onclick="goMain()">🏠 메인으로</button>
+<!-- 오버레이 -->
+<div id="overlayScreen">
+  <div class="overlay-box">
+    <div class="overlay-title" id="overlayTitle">💀 게임 오버!</div>
+    <div class="overlay-score" id="overlayScore">점수: 0</div>
+    <div id="overlayHighScore" style="color:#aaa; font-size:16px; margin-bottom:15px;"></div>
+    <button class="overlay-btn" onclick="restartGame()">🔄 다시 하기</button>
+    <button class="overlay-btn menu" onclick="goMain()">🏠 메뉴</button>
   </div>
 </div>
 
 <script>
-// ============================================================
-//  전역 상태
-// ============================================================
-var currentDiff   = 'normal';
-var currentBG     = { label:'초록 숲', bg:'linear-gradient(135deg,#1a3a14,#3d7a34)' };
-var bestScore     = 0;
+// ===== 전역 상태 =====
+var currentDiff = 'easy';
+var coins = 0;
+var score = 0;
+var lives = 3;
+var highScore = 0;
+var selectedBg = 0;
+var ownedBgs = [0]; // 기본 배경
+var gameRunning = false;
 
-var COLS = 8, ROWS = 8;
-var CELL = 44;
-var board   = [];       // ROWS x COLS, 0=empty, 1~7=color idx
-var lives   = 3;
-var score   = 0;
-var pieces  = [];       // 3개 팔레트 블록
-var dragging= null;     // { pieceIdx, offsetX, offsetY, x, y }
-var ghostCell = null;   // { r, c } 보드에 놓을 위치
-
-var COLORS = [
-  null,
-  '#ff4444','#ff9900','#ffe44d','#44dd44',
-  '#44aaff','#aa44ff','#ff66cc'
-];
-var COLOR_NAMES = ['','빨강','주황','노랑','초록','파랑','보라','분홍'];
-var POINTS_FOR_COLOR = [0,1,2,3,4,5,6,7];
-
-// 뽑기 배경 목록
-var GACHA_BGS = [
-  { label:'초록 숲',    bg:'linear-gradient(135deg,#1a3a14,#3d7a34)' },
-  { label:'파란 하늘',  bg:'linear-gradient(135deg,#003a7a,#007acc)' },
-  { label:'보라 우주',  bg:'linear-gradient(135deg,#1a0040,#6600cc)' },
-  { label:'붉은 노을',  bg:'linear-gradient(135deg,#4a0000,#cc3300)' },
-  { label:'분홍 꽃밭',  bg:'linear-gradient(135deg,#4a0030,#cc0066)' },
-  { label:'황금 사막',  bg:'linear-gradient(135deg,#4a3000,#cc8800)' },
-  { label:'청록 바다',  bg:'linear-gradient(135deg,#003030,#00aaaa)' },
-  { label:'밤하늘',     bg:'linear-gradient(135deg,#000010,#101040)' },
+// 배경 목록
+var backgrounds = [
+  { name: '초록 숲', colors: ['#2d5a27','#1a3a1a'], label: '기본' },
+  { name: '하늘 파랑', colors: ['#1565c0','#0d47a1'], label: '🌤️' },
+  { name: '노을 주황', colors: ['#e65100','#bf360c'], label: '🌅' },
+  { name: '보라 우주', colors: ['#4a148c','#1a0033'], label: '🌌' },
+  { name: '핑크 사탕', colors: ['#c2185b','#880e4f'], label: '🍭' },
+  { name: '민트 바다', colors: ['#00695c','#004d40'], label: '🌊' },
+  { name: '황금 사막', colors: ['#f57f17','#e65100'], label: '🏜️' },
+  { name: '아이스 블루', colors: ['#0288d1','#01579b'], label: '❄️' },
 ];
 
-// 난이도별 설정
-var DIFF_CFG = {
-  easy:   { pieceMaxSize:2, label:'😊 쉬움: 블록이 작아요!', chance:0.7 },
-  normal: { pieceMaxSize:3, label:'😐 보통: 표준 크기!',    chance:0.55 },
-  hard:   { pieceMaxSize:4, label:'😤 어려움: 블록이 커요!', chance:0.4 },
+// 난이도 설정
+var diffSettings = {
+  easy:   { cols: 8, rows: 8, maxPieceSize: 3, scoreRange: [1,7] },
+  normal: { cols: 9, rows: 9, maxPieceSize: 4, scoreRange: [1,7] },
+  hard:   { cols: 10, rows: 10, maxPieceSize: 5, scoreRange: [1,7] },
 };
 
-// ============================================================
-//  화면 전환
-// ============================================================
+// 블록 색상들
+var blockColors = [
+  '#ff4444','#ff9800','#ffeb3b','#4caf50','#2196f3','#9c27b0','#00bcd4','#ff69b4'
+];
+
+// 게임 상태
+var grid = [];
+var pieces = [];
+var COLS = 8, ROWS = 8;
+var CELL = 38;
+var canvas, ctx;
+var dragging = false;
+var dragPieceIdx = -1;
+var dragX = 0, dragY = 0;
+var dragOffX = 0, dragOffY = 0;
+var canvasRect;
+var animClearCells = [];
+var animTimer = 0;
+var scorePopups = [];
+
+// 피스 모양들
+function getPieceShapes(maxSize) {
+  var shapes = [
+    // 1x1
+    [[1]],
+    // 1x2
+    [[1,1]],
+    // 2x1
+    [[1],[1]],
+    // 1x3
+    [[1,1,1]],
+    // 3x1
+    [[1],[1],[1]],
+    // 2x2
+    [[1,1],[1,1]],
+    // L자
+    [[1,0],[1,0],[1,1]],
+    [[0,1],[0,1],[1,1]],
+    [[1,1],[1,0],[1,0]],
+    [[1,1],[0,1],[0,1]],
+    // T자
+    [[1,1,1],[0,1,0]],
+    [[0,1],[1,1],[0,1]],
+    // S/Z
+    [[0,1,1],[1,1,0]],
+    [[1,1,0],[0,1,1]],
+    // 2x3
+    [[1,1],[1,1],[1,1]],
+  ];
+  if (maxSize >= 4) {
+    shapes.push([[1,1,1,1]]);
+    shapes.push([[1],[1],[1],[1]]);
+    shapes.push([[1,1,1],[1,0,0],[1,0,0]]);
+    shapes.push([[1,1,1],[0,0,1],[0,0,1]]);
+  }
+  if (maxSize >= 5) {
+    shapes.push([[1,1,1,1,1]]);
+    shapes.push([[1],[1],[1],[1],[1]]);
+    shapes.push([[1,1,1],[1,1,0],[1,0,0]]);
+  }
+  return shapes;
+}
+
+// ===== 화면 전환 =====
 function showScreen(id) {
-  ['mainScreen','shopScreen','gameScreen'].forEach(function(s){
-    document.getElementById(s).style.display = 'none';
-  });
-  var el = document.getElementById(id);
-  el.style.display = 'flex';
+  document.getElementById('mainScreen').style.display = 'none';
+  document.getElementById('shopScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('mainScreen').style.flexDirection = '';
+  if (id === 'mainScreen') {
+    document.getElementById('mainScreen').style.display = 'flex';
+    document.getElementById('mainScreen').style.flexDirection = 'column';
+  } else if (id === 'shopScreen') {
+    document.getElementById('shopScreen').style.display = 'block';
+  } else if (id === 'gameScreen') {
+    document.getElementById('gameScreen').style.display = 'flex';
+    document.getElementById('gameScreen').style.flexDirection = 'column';
+  }
 }
 
 function goMain() {
-  document.getElementById('gameOverOverlay').style.display = 'none';
+  gameRunning = false;
+  document.getElementById('overlayScreen').style.display = 'none';
   showScreen('mainScreen');
 }
 
 function goShop() {
+  updateCoinDisplay();
+  renderBgCollection();
   showScreen('shopScreen');
-  selectDiff(currentDiff);
-  updateGachaDisplay();
 }
 
 function goGame() {
@@ -288,302 +516,190 @@ function goGame() {
   initGame();
 }
 
-// ============================================================
-//  상점
-// ============================================================
-function selectDiff(d) {
+function selectDiff(d, btn) {
   currentDiff = d;
-  ['easy','normal','hard'].forEach(function(x){
-    document.querySelector('.diffBtn.'+x).classList.toggle('selected', x===d);
-  });
-  document.getElementById('diffDesc').textContent = DIFF_CFG[d].label;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
 }
 
-var gachaHistory = [];
+// ===== 상점/뽑기 =====
+function updateCoinDisplay() {
+  document.getElementById('coinDisplay').textContent = '💰 코인: ' + coins;
+}
+
 function doGacha() {
-  var idx = Math.floor(Math.random() * GACHA_BGS.length);
-  currentBG = GACHA_BGS[idx];
-  updateGachaDisplay();
-  var el = document.getElementById('gachaLabel');
-  el.textContent = '✨ "' + currentBG.label + '" 배경 획득!';
-  // 획득 애니메이션
-  var res = document.getElementById('gachaResult');
-  res.style.transform = 'scale(1.15)';
-  setTimeout(function(){ res.style.transform = 'scale(1)'; }, 300);
+  if (coins < 10) {
+    var r = document.getElementById('gachaResult');
+    r.style.display = 'block';
+    r.style.background = 'rgba(255,0,0,0.2)';
+    r.innerHTML = '💰 코인이 부족해요!<br><small>게임을 플레이하면 코인을 얻을 수 있어요!</small>';
+    return;
+  }
+  coins -= 10;
+  updateCoinDisplay();
+  var unowned = [];
+  for (var i = 0; i < backgrounds.length; i++) {
+    if (ownedBgs.indexOf(i) === -1) unowned.push(i);
+  }
+  var got;
+  if (unowned.length === 0) {
+    var r = document.getElementById('gachaResult');
+    r.style.display = 'block';
+    r.style.background = 'rgba(255,255,0,0.2)';
+    r.innerHTML = '✨ 모든 배경을 보유 중이에요!';
+    return;
+  }
+  got = unowned[Math.floor(Math.random() * unowned.length)];
+  ownedBgs.push(got);
+  var bg = backgrounds[got];
+  var r = document.getElementById('gachaResult');
+  r.style.display = 'block';
+  r.style.background = 'linear-gradient(135deg,' + bg.colors[0] + ',' + bg.colors[1] + ')';
+  r.innerHTML = '<span style="font-size:30px">' + bg.label + '</span><br><span style="color:white;font-weight:700;">' + bg.name + ' 배경 획득!</span>';
+  renderBgCollection();
 }
 
-function updateGachaDisplay() {
-  var res = document.getElementById('gachaResult');
-  res.style.background = currentBG.bg;
-  res.textContent = currentBG.label;
+function renderBgCollection() {
+  var c = document.getElementById('bgCollection');
+  c.innerHTML = '';
+  for (var i = 0; i < ownedBgs.length; i++) {
+    var idx = ownedBgs[i];
+    var bg = backgrounds[idx];
+    var div = document.createElement('div');
+    div.className = 'bg-item' + (selectedBg === idx ? ' active' : '');
+    div.style.background = 'linear-gradient(135deg,' + bg.colors[0] + ',' + bg.colors[1] + ')';
+    div.title = bg.name;
+    div.innerHTML = '<span style="font-size:20px;line-height:44px;display:block;text-align:center;">' + bg.label + '</span>';
+    (function(bgIdx, el) {
+      el.onclick = function() {
+        selectedBg = bgIdx;
+        applyBackground();
+        renderBgCollection();
+      };
+    })(idx, div);
+    c.appendChild(div);
+  }
 }
 
-// ============================================================
-//  캔버스 / 보드 초기화
-// ============================================================
-var canvas, ctx, pieceArea;
+function applyBackground() {
+  var bg = backgrounds[selectedBg];
+  document.body.style.background = 'linear-gradient(135deg,' + bg.colors[0] + ',' + bg.colors[1] + ')';
+}
 
+// ===== 게임 초기화 =====
 function initGame() {
-  canvas   = document.getElementById('gameCanvas');
-  ctx      = canvas.getContext('2d');
-  pieceArea= document.getElementById('pieceArea');
+  var s = diffSettings[currentDiff];
+  COLS = s.cols;
+  ROWS = s.rows;
 
-  // 캔버스 크기 계산
-  var topBar  = document.querySelector('#gameScreen .topBar');
-  var topH    = topBar.offsetHeight;
-  var winW    = window.innerWidth;
-  var winH    = window.innerHeight;
-  CELL = Math.floor(Math.min(winW / COLS, (winH - topH - 140) / ROWS));
-  if(CELL < 32) CELL = 32;
-  canvas.width  = CELL * COLS;
-  canvas.height = CELL * ROWS;
-  // pieceArea 높이
-  pieceArea.style.height = (winH - topH - canvas.height) + 'px';
+  var maxW = Math.min(window.innerWidth - 40, 400);
+  CELL = Math.floor(maxW / COLS);
+  if (CELL > 42) CELL = 42;
+  if (CELL < 28) CELL = 28;
 
-  // 배경 적용
-  document.getElementById('gameScreen').style.background = currentBG.bg;
+  canvas = document.getElementById('gameCanvas');
+  canvas.width = COLS * CELL;
+  canvas.height = ROWS * CELL;
+  ctx = canvas.getContext('2d');
 
-  // 상태 초기화
-  lives = 3; score = 0;
-  board = [];
-  for(var r=0;r<ROWS;r++){
-    board.push([]);
-    for(var c=0;c<COLS;c++) board[r].push(0);
-  }
-  dragging = null; ghostCell = null;
+  score = 0;
+  lives = 3;
+  grid = [];
   pieces = [];
+  animClearCells = [];
+  scorePopups = [];
+  gameRunning = true;
+
+  // 그리드 초기화
+  for (var r = 0; r < ROWS; r++) {
+    grid[r] = [];
+    for (var c = 0; c < COLS; c++) {
+      grid[r][c] = null;
+    }
+  }
+
+  updateScoreDisplay();
+  updateLives();
+  updateDiffBadge();
+
   generatePieces();
-
-  document.getElementById('gameOverOverlay').style.display = 'none';
-  updateUI();
-  drawBoard();
-  renderPieceArea();
-
-  // 터치/마우스 이벤트
-  canvas.removeEventListener('touchstart',onTouchStart);
-  canvas.removeEventListener('touchmove', onTouchMove);
-  canvas.removeEventListener('touchend',  onTouchEnd);
-  canvas.removeEventListener('mousedown', onMouseDown);
-  canvas.removeEventListener('mousemove', onMouseMove);
-  canvas.removeEventListener('mouseup',   onMouseUp);
-  pieceArea.removeEventListener('touchstart',onPieceTouchStart);
-  pieceArea.removeEventListener('mousedown',  onPieceMouseDown);
-
-  pieceArea.addEventListener('touchstart', onPieceTouchStart, {passive:false});
-  pieceArea.addEventListener('mousedown',  onPieceMouseDown,  false);
-  canvas.addEventListener('touchmove',  onTouchMove,  {passive:false});
-  canvas.addEventListener('touchend',   onTouchEnd,   false);
-  canvas.addEventListener('mousemove',  onMouseMove,  false);
-  canvas.addEventListener('mouseup',    onMouseUp,    false);
-
-  // 전체 body 이벤트도 추가 (드래그 영역 밖)
-  document.removeEventListener('touchmove',  onBodyTouchMove);
-  document.removeEventListener('touchend',   onBodyTouchEnd);
-  document.removeEventListener('mousemove',  onBodyMouseMove);
-  document.removeEventListener('mouseup',    onBodyMouseUp);
-  document.addEventListener('touchmove',  onBodyTouchMove,{passive:false});
-  document.addEventListener('touchend',   onBodyTouchEnd, false);
-  document.addEventListener('mousemove',  onBodyMouseMove,false);
-  document.addEventListener('mouseup',    onBodyMouseUp,  false);
+  drawGame();
+  setupInput();
 }
 
-function replayGame() {
-  document.getElementById('gameOverOverlay').style.display = 'none';
-  initGame();
-}
-
-// ============================================================
-//  블록 형태 생성
-// ============================================================
-function randomPieceShape(maxSize) {
-  var shapes = [
-    [[1]],
-    [[1,1]],
-    [[1],[1]],
-    [[1,1,1]],
-    [[1],[1],[1]],
-    [[1,1],[1,0]],
-    [[1,1],[0,1]],
-    [[0,1],[1,1]],
-    [[1,0],[1,1]],
-    [[1,1],[1,1]],
-    [[1,1,1],[0,1,0]],
-    [[0,1,0],[1,1,1]],
-    [[1,0,0],[1,1,1]],
-    [[1,1,1],[1,0,0]],
-  ];
-  if(maxSize >= 3) {
-    shapes.push([[1,1,1],[1,0,0],[1,0,0]]);
-    shapes.push([[1,0,0],[1,0,0],[1,1,1]]);
-    shapes.push([[1,1,0],[0,1,0],[0,1,1]]);
-  }
-  if(maxSize >= 4) {
-    shapes.push([[1,1,1,1]]);
-    shapes.push([[1],[1],[1],[1]]);
-    shapes.push([[1,1],[1,1],[1,1]]);
-  }
-  // filter by maxSize
-  var filtered = shapes.filter(function(s){
-    var maxR=0,maxC=0;
-    s.forEach(function(row,r){ row.forEach(function(v,c){ if(v){if(r>maxR)maxR=r;if(c>maxC)maxC=c;} }); });
-    return (maxR+1) <= maxSize && (maxC+1) <= maxSize;
-  });
-  return filtered[Math.floor(Math.random()*filtered.length)];
+function updateDiffBadge() {
+  var b = document.getElementById('diffBadge');
+  if (currentDiff === 'easy') { b.textContent = '😊 쉬움'; b.style.background = '#4caf50'; }
+  else if (currentDiff === 'normal') { b.textContent = '😐 보통'; b.style.background = '#ff9800'; }
+  else { b.textContent = '😈 어려움'; b.style.background = '#f44336'; }
 }
 
 function generatePieces() {
+  var s = diffSettings[currentDiff];
+  var shapes = getPieceShapes(s.maxPieceSize);
   pieces = [];
-  var maxS = DIFF_CFG[currentDiff].pieceMaxSize;
-  for(var i=0;i<3;i++){
-    var colorIdx = Math.floor(Math.random()*7)+1;
-    pieces.push({
-      shape: randomPieceShape(maxS),
-      color: colorIdx,
-      used: false
-    });
+  for (var i = 0; i < 3; i++) {
+    var shape = shapes[Math.floor(Math.random() * shapes.length)];
+    var color = blockColors[Math.floor(Math.random() * blockColors.length)];
+    var pts = Math.floor(Math.random() * 7) + 1; // 1~7점
+    pieces.push({ shape: shape, color: color, points: pts, used: false });
   }
+  renderPieceSlots();
 }
 
-// ============================================================
-//  UI 업데이트
-// ============================================================
-function updateUI() {
-  document.getElementById('scoreVal').textContent = score;
-  if(score > bestScore) bestScore = score;
-  document.getElementById('bestVal').textContent  = bestScore;
-  var lb = document.getElementById('livesBox');
-  lb.innerHTML = '';
-  for(var i=0;i<3;i++){
-    var h = document.createElement('span');
-    h.className = 'heart';
-    h.textContent = i < lives ? '❤️' : '🖤';
-    lb.appendChild(h);
-  }
-}
-
-// ============================================================
-//  보드 그리기
-// ============================================================
-function drawBoard() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // 배경
-  ctx.fillStyle = 'rgba(0,0,0,0.18)';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  // 격자
-  for(var r=0;r<ROWS;r++){
-    for(var c=0;c<COLS;c++){
-      var x=c*CELL, y=r*CELL;
-      // 셀 배경
-      ctx.fillStyle = 'rgba(0,80,0,0.35)';
-      roundRect(ctx, x+1, y+1, CELL-2, CELL-2, 6, true, false);
-      // 내용
-      if(board[r][c]){
-        drawCell(ctx, x, y, CELL, COLORS[board[r][c]]);
-      }
-    }
-  }
-
-  // 고스트
-  if(ghostCell && dragging){
-    var p = pieces[dragging.pieceIdx];
-    if(p && !p.used && canPlace(p.shape, ghostCell.r, ghostCell.c)){
-      ctx.globalAlpha = 0.4;
-      for(var rr=0;rr<p.shape.length;rr++){
-        for(var cc=0;cc<p.shape[rr].length;cc++){
-          if(p.shape[rr][cc]){
-            var gx=(ghostCell.c+cc)*CELL, gy=(ghostCell.r+rr)*CELL;
-            drawCell(ctx, gx, gy, CELL, COLORS[p.color]);
+function renderPieceSlots() {
+  for (var i = 0; i < 3; i++) {
+    var pc = document.getElementById('pc' + i);
+    var slot = document.getElementById('slot' + i);
+    if (!pc) continue;
+    if (pieces[i] && !pieces[i].used) {
+      var s = pieces[i].shape;
+      var rows = s.length, cols = s[0].length;
+      var csize = 22;
+      pc.width = cols * csize + 4;
+      pc.height = rows * csize + 4;
+      var pctx = pc.getContext('2d');
+      pctx.clearRect(0, 0, pc.width, pc.height);
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          if (s[r][c]) {
+            pctx.fillStyle = pieces[i].color;
+            pctx.beginPath();
+            roundRect(pctx, c * csize + 2, r * csize + 2, csize - 2, csize - 2, 4);
+            pctx.fill();
+            pctx.fillStyle = 'rgba(255,255,255,0.3)';
+            pctx.fillRect(c * csize + 4, r * csize + 4, csize - 8, 4);
           }
         }
       }
-      ctx.globalAlpha = 1.0;
+      // 점수 표시
+      pctx.fillStyle = '#ffe066';
+      pctx.font = 'bold 11px Arial';
+      pctx.textAlign = 'center';
+      pctx.fillText('+' + pieces[i].points, pc.width / 2, pc.height - 2);
+      slot.style.opacity = '1';
+    } else {
+      pc.width = 10; pc.height = 10;
+      var pctx2 = pc.getContext('2d');
+      pctx2.clearRect(0, 0, 10, 10);
+      slot.style.opacity = '0.3';
     }
   }
 }
 
-function drawCell(context, x, y, size, color) {
-  var pad = 2;
-  context.fillStyle = color;
-  roundRect(context, x+pad, y+pad, size-pad*2, size-pad*2, 7, true, false);
-  // 하이라이트
-  context.fillStyle = 'rgba(255,255,255,0.35)';
-  roundRect(context, x+pad, y+pad, size-pad*2, (size-pad*2)*0.38, 7, true, false);
-  // 테두리
-  context.strokeStyle = 'rgba(255,255,255,0.5)';
-  context.lineWidth = 1.5;
-  roundRect(context, x+pad, y+pad, size-pad*2, size-pad*2, 7, false, true);
-}
-
-function roundRect(ctx2, x, y, w, h, r, fill, stroke) {
+function roundRect(ctx2, x, y, w, h, r) {
   ctx2.beginPath();
-  ctx2.moveTo(x+r, y);
-  ctx2.lineTo(x+w-r, y);
-  ctx2.quadraticCurveTo(x+w, y, x+w, y+r);
-  ctx2.lineTo(x+w, y+h-r);
-  ctx2.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-  ctx2.lineTo(x+r, y+h);
-  ctx2.quadraticCurveTo(x, y+h, x, y+h-r);
-  ctx2.lineTo(x, y+r);
-  ctx2.quadraticCurveTo(x, y, x+r, y);
+  ctx2.moveTo(x + r, y);
+  ctx2.lineTo(x + w - r, y);
+  ctx2.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx2.lineTo(x + w, y + h - r);
+  ctx2.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx2.lineTo(x + r, y + h);
+  ctx2.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx2.lineTo(x, y + r);
+  ctx2.quadraticCurveTo(x, y, x + r, y);
   ctx2.closePath();
-  if(fill)   ctx2.fill();
-  if(stroke) ctx2.stroke();
 }
 
-// ============================================================
-//  팔레트 블록 렌더링
-// ============================================================
-var PSIZE = 28;
-function renderPieceArea() {
-  pieceArea.innerHTML = '';
-  pieces.forEach(function(p, idx){
-    if(p.used) {
-      var ph = document.createElement('div');
-      ph.style.cssText='width:90px;height:90px;';
-      pieceArea.appendChild(ph);
-      return;
-    }
-    var wrap = document.createElement('canvas');
-    var rows = p.shape.length, cols = p.shape[0].length;
-    wrap.width  = cols * PSIZE + 4;
-    wrap.height = rows * PSIZE + 4;
-    wrap.style.cursor = 'grab';
-    wrap.dataset.pieceIdx = idx;
-    var wctx = wrap.getContext('2d');
-    for(var r=0;r<rows;r++){
-      for(var c=0;c<cols;c++){
-        if(p.shape[r][c]){
-          drawCell(wctx, c*PSIZE, r*PSIZE, PSIZE, COLORS[p.color]);
-        }
-      }
-    }
-    pieceArea.appendChild(wrap);
-  });
-}
-
-// ============================================================
-//  드래그 시작 (피스 영역)
-// ============================================================
-function startDrag(pieceIdx, clientX, clientY) {
-  if(pieces[pieceIdx].used) return;
-  dragging = { pieceIdx: pieceIdx, x: clientX, y: clientY };
-  ghostCell = null;
-  drawBoard();
-}
-
-function onPieceTouchStart(e) {
-  e.preventDefault();
-  var t = e.changedTouches[0];
-  var el = document.elementFromPoint(t.clientX, t.clientY);
-  if(el && el.dataset && el.dataset.pieceIdx !== undefined){
-    startDrag(parseInt(el.dataset.pieceIdx), t.clientX, t.clientY);
-  }
-}
-function onPieceMouseDown(e) {
-  var el = e.target;
-  if(el && el.dataset && el.dataset.pieceIdx !== undefined){
-    startDrag(parseInt(el.dataset.pieceIdx), e.clientX, e.clientY);
-  }
-}
+// ===== 그리기 =====
+function
